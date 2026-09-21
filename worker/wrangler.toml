@@ -1,0 +1,7 @@
+name = "superadmin-worker"
+main = "src/index.js"
+compatibility_date = "2026-09-19"
+
+[vars]
+FIREBASE_PROJECT_ID = "cuentas-cop"
+ALLOWED_ORIGIN = "*"
