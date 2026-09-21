@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-zinc-50 antialiased">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel Maestro de agencia - Gestión de clientes y menús">
+  <title>Panel Maestro - Soluciones de Inteligencia Artificial</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #e4e4e7; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #d4d4d8; }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
+      border-radius: 9999px; background: #18181b; cursor: pointer;
+      border: 2px solid #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 16px; height: 16px; border-radius: 9999px;
+      background: #18181b; cursor: pointer;
+      border: 2px solid #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body class="h-full bg-zinc-50 font-sans text-zinc-900 selection:bg-zinc-900 selection:text-white flex overflow-hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 border-r border-zinc-200 bg-white flex flex-col justify-between shrink-0 select-none">
+    <div>
+      <div class="h-16 px-5 border-b border-zinc-200/80 flex items-center gap-3">
+        <div class="w-8 h-8 rounded-md bg-zinc-900 text-white flex items-center justify-center font-bold text-sm tracking-tight shadow-sm">
+          <i data-lucide="cpu" class="w-4 h-4" aria-hidden="true"></i>
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-xs font-semibold text-zinc-900 tracking-tight leading-none truncate">Soluciones de IA</h1>
+          <p class="text-[11px] font-medium text-zinc-400 mt-1 leading-none tracking-tight">Gestión de Menú</p>
+        </div>
+      </div>
+            <nav class="p-3 space-y-0.5">
+        <div class="px-2.5 py-1.5 text-[10px] font-medium tracking-wider text-zinc-400 uppercase">Plataforma</div>
+        <a href="#" class="flex items-center justify-between px-2.5 py-2 text-xs font-medium bg-zinc-100 text-zinc-900 rounded-md">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="utensils" class="w-4 h-4 text-zinc-900" aria-hidden="true"></i>
+            <span>Clientes &amp; Menús</span>
+          </div>
+        </a>
+        <button data-action="abrir-gestion-pagos" class="w-full flex items-center justify-between px-2.5 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 rounded-md transition-colors">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="credit-card" class="w-4 h-4" aria-hidden="true"></i>
+            <span>Gestión de Pagos</span>
+          </div>
+        </button>
+      </nav>
+    </div>
+    <div class="p-3 border-t border-zinc-200">
+      <div class="flex items-center gap-2.5 min-w-0 p-2">
+        <div class="w-7 h-7 rounded-full bg-zinc-200 border border-zinc-300 text-zinc-700 flex items-center justify-center text-xs font-medium shrink-0">SA</div>
+        <div class="min-w-0">
+          <p class="text-xs font-medium text-zinc-900 truncate">Super Admin</p>
+          <p class="text-[11px] text-zinc-400 truncate">Soluciones de IA</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ÁREA CENTRAL -->
+  <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-zinc-50">
+    <header class="h-16 border-b border-zinc-200 bg-white px-8 flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-2 text-xs text-zinc-400">
+        <span>Organización</span>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-zinc-300" aria-hidden="true"></i>
+        <span class="text-zinc-900 font-medium">Gestión de Clientes</span>
+      </div>
+      <button data-action="abrir-nuevo-cliente" class="h-8 px-3 rounded-md bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 transition-colors flex items-center gap-1.5 shadow-sm">
+        <i data-lucide="plus" class="w-3.5 h-3.5" aria-hidden="true"></i>
+        <span>Nuevo Cliente</span>
+      </button>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-8">
+      <div class="max-w-6xl mx-auto space-y-6">
+        <div>
+          <h2 class="text-xl font-semibold tracking-tight text-zinc-900">Directorio de Clientes</h2>
+          <p class="text-xs text-zinc-500 mt-1">Supervisa y administra el servicio individual de cada cliente registrado.</p>
+        </div>
+
+        <div class="bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-sm">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-zinc-200 bg-zinc-50/50 text-zinc-500 font-medium select-none">
+                <th class="px-6 py-3">Cliente</th>
+                <th class="px-6 py-3">Estado</th>
+                <th class="px-6 py-3">Vencimiento</th>
+                <th class="px-6 py-3 text-right">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-clientes-body" class="divide-y divide-zinc-100 text-zinc-700">
+              <tr><td colspan="4" class="px-6 py-4 text-center text-zinc-500">Cargando portafolio de clientes...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="backdrop" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-40 hidden"></div>
+
+  <!-- DRAWER IZQUIERDO: NUEVO CLIENTE -->
+  <aside
+    id="drawer-nuevo-cliente"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="nuevo-cliente-titulo"
+    class="fixed inset-y-0 left-0 w-full sm:w-[85%] md:w-[60%] lg:w-[42%] lg:min-w-[480px] lg:max-w-[620px] bg-white border-r border-zinc-200 shadow-2xl z-50 flex flex-col overflow-hidden transition-transform duration-300 ease-in-out transform -translate-x-full"
+  >
+    <div class="h-16 px-6 border-b border-zinc-200 flex items-center justify-between shrink-0 bg-white">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-md bg-zinc-900 text-white flex items-center justify-center font-bold text-sm shrink-0">
+          <i data-lucide="user-plus" class="w-4 h-4" aria-hidden="true"></i>
+        </div>
+        <div>
+          <h3 id="nuevo-cliente-titulo" class="text-sm font-semibold text-zinc-900">Registrar Nuevo Cliente</h3>
+          <p class="text-[11px] text-zinc-400 font-mono">Formulario de contacto inicial</p>
+        </div>
+      </div>
+      <button data-action="cerrar-nuevo-cliente" aria-label="Cerrar" class="w-8 h-8 rounded-md border border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 flex items-center justify-center transition-colors">
+        <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <form id="form-nuevo-cliente" class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+
+      <!-- TIPO DE PERSONA -->
+      <section class="border border-zinc-200 rounded-lg p-4 bg-white space-y-3">
+        <h4 class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Tipo de Persona</h4>
+        <div class="flex gap-3">
+          <label class="flex-1 flex items-center gap-2 p-2.5 border border-zinc-200 rounded-md cursor-pointer hover:bg-zinc-50 has-[:checked]:border-zinc-900 has-[:checked]:bg-zinc-50">
+            <input type="radio" name="tipoPersona" value="natural" checked class="accent-zinc-900">
+            <span class="text-xs font-medium">Natural</span>
+          </label>
+          <label class="flex-1 flex items-center gap-2 p-2.5 border border-zinc-200 rounded-md cursor-pointer hover:bg-zinc-50 has-[:checked]:border-zinc-900 has-[:checked]:bg-zinc-50">
+            <input type="radio" name="tipoPersona" value="juridica" class="accent-zinc-900">
+            <span class="text-xs font-medium">Jurídica</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- DATOS DEL CLIENTE -->
+      <section class="border border-zinc-200 rounded-lg p-4 bg-white space-y-3">
+        <h4 class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Datos del Cliente</h4>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label for="nc-tipo-doc" class="text-[11px] font-medium text-zinc-500">Tipo de Documento *</label>
+            <select id="nc-tipo-doc" required class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400"></select>
+          </div>
+          <div class="space-y-1">
+            <label for="nc-num-doc" class="text-[11px] font-medium text-zinc-500">Número de Documento *</label>
+            <input id="nc-num-doc" type="text" required inputmode="numeric" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label for="nc-nombre-cliente" class="text-[11px] font-medium text-zinc-500">Nombre del Cliente *</label>
+          <input id="nc-nombre-cliente" type="text" required autocomplete="name" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
+        </div>
+
+        <div class="space-y-1">
+          <label for="nc-nombre-comercial" class="text-[11px] font-medium text-zinc-500">Nombre Comercial *</label>
+          <input id="nc-nombre-comercial" type="text" required autocomplete="organization" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label for="nc-telefono" class="text-[11px] font-medium text-zinc-500">Teléfono *</label>
+            <input id="nc-telefono" type="tel" required placeholder="+573001234567" autocomplete="tel" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
+          </div>
+          <div class="space-y-1">
+            <label for="nc-correo" class="text-[11px] font-medium text-zinc-500">Correo Operativo *</label>
+            <input id="nc-correo" type="email" required autocomplete="email" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
+          </div>
+        </div>
+      </section>
+
+      <!-- DIRECCIONES -->
+      <section class="border border-zinc-200 rounded-lg p-4 bg-white space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Direcciones</h4>
+          <button type="button" data-action="add-direccion" class="text-[11px] font-medium text-zinc-700 hover:text-zinc-900 flex items-center gap-1">
+            <i data-lucide="plus" class="w-3 h-3" aria-hidden="true"></i> Añadir
+          </button>
+        </div>
+        <div id="nc-direcciones" class="space-y-3"></div>
+      </section>
+
+      <!-- REDES SOCIALES -->
+      <section class="border border-zinc-200 rounded-lg p-4 bg-white space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Redes Sociales</h4>
+          <button type="button" data-action="add-red" class="text-[11px] font-medium text-zinc-700 hover:text-zinc-900 flex items-center gap-1">
+            <i data-lucide="plus" class="w-3 h-3" aria-hidden="true"></i> Añadir
+          </button>
+        </div>
+        <div id="nc-redes" class="space-y-3"></div>
+        <p id="nc-redes-advertencia" class="text-[10px] text-amber-600 font-mono"></p>
+      </section>
+
+      <div class="pt-2 pb-4 flex justify-end gap-2">
+        <button type="button" data-action="cerrar-nuevo-cliente" class="px-3.5 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100 rounded-md">Cancelar</button>
+        <button id="btn-registrar-cliente" type="submit" class="px-3.5 py-1.5 rounded-md bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed">Registrar Cliente</button>
+      </div>
+    </form>
+  </aside>
+
+  <!-- DRAWER DERECHO: GESTIONAR -->
+  <aside
+    id="client-drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="drawer-nombre-cliente"
+    class="fixed inset-y-0 right-0 w-full sm:w-[85%] md:w-[60%] lg:w-[42%] lg:min-w-[480px] lg:max-w-[620px] bg-white border-l border-zinc-200 shadow-2xl z-50 flex flex-col overflow-hidden transition-transform duration-300 ease-in-out transform translate-x-full"
+  >
+    <div class="h-16 px-6 border-b border-zinc-200 flex items-center justify-between shrink-0 bg-white">
+      <div class="flex items-center gap-3 min-w-0">
+        <div id="drawer-avatar" class="w-9 h-9 rounded-md bg-zinc-900 text-white flex items-center justify-center font-bold text-sm shrink-0">CLI</div>
+        <div class="min-w-0">
+          <h3 id="drawer-nombre-cliente" class="text-sm font-semibold text-zinc-900 truncate">Cargando...</h3>
+          <p class="text-[11px] text-zinc-400 font-mono truncate">Panel de Gestión Remota</p>
+        </div>
+      </div>
+      <button data-action="cerrar-panel" aria-label="Cerrar panel" class="w-8 h-8 rounded-md border border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 flex items-center justify-center transition-colors">
+        <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+
+      <!-- MOTOR DE APARIENCIA -->
+      <section class="border border-zinc-200 rounded-lg p-5 bg-white space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-zinc-100">
+          <div class="flex items-center gap-2">
+            <i data-lucide="sliders" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
+            <h4 class="text-xs font-semibold text-zinc-900">Motor de Apariencia</h4>
+          </div>
+          <span class="text-[10px] text-zinc-400 font-mono">Variables CSS</span>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label for="drawer-color-primario" class="text-[11px] font-medium text-zinc-500">Color Primario</label>
+            <div class="flex items-center gap-2.5 bg-zinc-50 border border-zinc-200 rounded-md p-1.5">
+              <input id="drawer-color-primario" type="color" value="#18181b" class="w-7 h-7 rounded border border-zinc-300 p-0 cursor-pointer bg-transparent" data-live="color-primario" />
+              <span id="valor-color-primario" class="text-xs font-mono font-medium text-zinc-700 uppercase">#18181B</span>
+            </div>
+          </div>
+          <div class="space-y-1.5">
+            <label for="drawer-tipografia" class="text-[11px] font-medium text-zinc-500">Tipografía Base</label>
+            <select id="drawer-tipografia" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
+              <option value="Inter">Inter</option>
+              <option value="Roboto">Roboto</option>
+              <option value="Playfair Display">Playfair</option>
+              <option value="Outfit">Outfit</option>
+            </select>
+          </div>
+        </div>
+        <div class="space-y-1.5 pt-2">
+          <div class="flex justify-between items-center text-[11px]">
+            <label for="drawer-radio-bordes" class="font-medium text-zinc-500">Bordes Redondeados</label>
+            <span id="valor-radio-bordes" class="font-mono text-zinc-700 font-medium">8px</span>
+          </div>
+          <input id="drawer-radio-bordes" type="range" min="0" max="24" step="2" value="8" class="w-full accent-zinc-900 cursor-pointer h-1.5 bg-zinc-200 rounded-lg appearance-none" data-live="radio-bordes" />
+        </div>
+        <div class="pt-2 flex justify-end gap-2">
+  <button data-action="publicar-github" id="btn-publicar-github" class="px-3.5 py-1.5 text-xs font-medium border border-zinc-200 text-zinc-700 hover:bg-zinc-100 rounded-md disabled:opacity-60 flex items-center gap-1.5">
+    <i data-lucide="rocket" class="w-3.5 h-3.5" aria-hidden="true"></i>
+    <span>Publicar en GitHub</span>
+  </button>
+  <button data-action="guardar-apariencia" id="btn-guardar-apariencia" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 rounded-md shadow-sm disabled:opacity-60">Guardar Apariencia</button>
+</div>
+      </section>
+
+            <!-- BÓVEDA DE CREDENCIALES -->
+      <section class="border border-zinc-200 rounded-lg p-5 bg-white space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-zinc-100">
+          <div class="flex items-center gap-2">
+            <i data-lucide="vault" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
+            <h4 class="text-xs font-semibold text-zinc-900">Bóveda de Credenciales</h4>
+          </div>
+          <span class="text-[10px] text-zinc-400 font-mono">Subcolección privada</span>
+        </div>
+        <div class="flex gap-1 bg-zinc-100 p-1 rounded-md">
+          <button data-action="boveda-tab" data-provider="google" class="boveda-tab flex-1 px-3 py-1.5 text-[11px] font-medium rounded">Google</button>
+          <button data-action="boveda-tab" data-provider="github" class="boveda-tab flex-1 px-3 py-1.5 text-[11px] font-medium rounded">GitHub</button>
+          <button data-action="boveda-tab" data-provider="firebase" class="boveda-tab flex-1 px-3 py-1.5 text-[11px] font-medium rounded">Firebase</button>
+          <button data-action="boveda-tab" data-provider="cloudflare" class="boveda-tab flex-1 px-3 py-1.5 text-[11px] font-medium rounded">Cloudflare</button>
+        </div>
+
+        <!-- Panel Google -->
+        <div id="boveda-panel-google" class="boveda-panel space-y-3">
+          <div class="space-y-1">
+            <label for="boveda-google-email" class="text-[11px] font-medium text-zinc-500">Correo</label>
+            <input id="boveda-google-email" type="email" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+          </div>
+          <div class="space-y-1">
+            <label for="boveda-google-password" class="text-[11px] font-medium text-zinc-500">Contraseña</label>
+            <div class="flex gap-2">
+              <input id="boveda-google-password" type="password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+              <button type="button" data-action="toggle-token" data-target="boveda-google-password" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
+                <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel GitHub -->
+        <!-- Panel GitHub -->
+<div id="boveda-panel-github" class="boveda-panel space-y-3 hidden">
+  <div class="space-y-1">
+    <label for="boveda-github-repo" class="text-[11px] font-medium text-zinc-500">Repositorio (owner/repo)</label>
+    <input id="boveda-github-repo" type="text" placeholder="usuario/repo" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+    <p class="text-[10px] text-zinc-400">Se guarda en Datos del Cliente → Repo GitHub</p>
+  </div>
+  <div class="space-y-1">
+    <label for="boveda-github-token" class="text-[11px] font-medium text-zinc-500">Personal Access Token</label>
+    <div class="flex gap-2">
+      <input id="boveda-github-token" type="password" placeholder="ghp_..." class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+      <button type="button" data-action="toggle-token" data-target="boveda-github-token" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
+        <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+  <div class="space-y-1">
+    <label for="boveda-github-password" class="text-[11px] font-medium text-zinc-500">Contraseña de la Cuenta</label>
+    <div class="flex gap-2">
+      <input id="boveda-github-password" type="password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+      <button type="button" data-action="toggle-token" data-target="boveda-github-password" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
+        <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+  <div class="grid grid-cols-2 gap-3">
+    <div class="space-y-1">
+      <label for="boveda-github-branch" class="text-[11px] font-medium text-zinc-500">Branch</label>
+      <input id="boveda-github-branch" type="text" value="main" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+    </div>
+    <div class="space-y-1">
+      <label for="boveda-github-path" class="text-[11px] font-medium text-zinc-500">Ruta menu.json</label>
+      <input id="boveda-github-path" type="text" value="data/menu.json" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+    </div>
+  </div>
+</div>
+
+        <!-- Panel Firebase -->
+        <div id="boveda-panel-firebase" class="boveda-panel space-y-3 hidden">
+          <div class="space-y-1">
+            <label for="boveda-firebase-project" class="text-[11px] font-medium text-zinc-500">Project ID</label>
+            <input id="boveda-firebase-project" type="text" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+          </div>
+          <div class="space-y-1">
+            <label for="boveda-firebase-apikey" class="text-[11px] font-medium text-zinc-500">API Key</label>
+            <div class="flex gap-2">
+              <input id="boveda-firebase-apikey" type="password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+              <button type="button" data-action="toggle-token" data-target="boveda-firebase-apikey" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
+                <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+          <div class="space-y-1">
+            <label for="boveda-firebase-password" class="text-[11px] font-medium text-zinc-500">Contraseña de la Cuenta</label>
+            <div class="flex gap-2">
+              <input id="boveda-firebase-password" type="password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+              <button type="button" data-action="toggle-token" data-target="boveda-firebase-password" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
+                <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel Cloudflare -->
+        <div id="boveda-panel-cloudflare" class="boveda-panel space-y-3 hidden">
+          <div class="space-y-1">
+            <label for="boveda-cloudflare-account" class="text-[11px] font-medium text-zinc-500">Account ID</label>
+            <input id="boveda-cloudflare-account" type="text" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+          </div>
+          <div class="space-y-1">
+            <label for="boveda-cloudflare-token" class="text-[11px] font-medium text-zinc-500">API Token</label>
+            <div class="flex gap-2">
+              <input id="boveda-cloudflare-token" type="password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+              <button type="button" data-action="toggle-token" data-target="boveda-cloudflare-token" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
+                <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+          <div class="space-y-1">
+            <label for="boveda-cloudflare-password" class="text-[11px] font-medium text-zinc-500">Contraseña de la Cuenta</label>
+            <div class="flex gap-2">
+              <input id="boveda-cloudflare-password" type="password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+              <button type="button" data-action="toggle-token" data-target="boveda-cloudflare-password" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
+                <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+          <div class="space-y-1">
+            <label for="boveda-cloudflare-zone" class="text-[11px] font-medium text-zinc-500">Zone ID</label>
+            <input id="boveda-cloudflare-zone" type="text" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+          </div>
+        </div>
+
+        <div class="pt-2 flex justify-between items-center gap-2">
+          <span id="boveda-status" class="text-[10px] text-zinc-400 font-mono flex-1"></span>
+          <button data-action="probar-conexion" id="btn-probar-conexion" class="px-3.5 py-1.5 text-xs font-medium border border-zinc-200 text-zinc-700 hover:bg-zinc-100 rounded-md disabled:opacity-60">
+            Probar Conexión
+          </button>
+          <button data-action="guardar-credenciales" id="btn-guardar-credenciales" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 rounded-md shadow-sm disabled:opacity-60">
+            Guardar Credenciales
+          </button>
+        </div>
+      </section>
+
+      <!-- DATOS DEL CLIENTE -->
+      <section class="border border-zinc-200 rounded-lg p-5 bg-white space-y-3">
+        <div class="flex items-center gap-2 pb-3 border-b border-zinc-100">
+          <i data-lucide="id-card" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
+          <h4 class="text-xs font-semibold text-zinc-900">Datos del Cliente</h4>
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div><span class="text-[10px] text-zinc-400 font-mono block">Nombre</span><span id="gd-nombre-cliente" class="font-medium">—</span></div>
+          <div><span class="text-[10px] text-zinc-400 font-mono block">Comercial</span><span id="gd-nombre-comercial" class="font-medium">—</span></div>
+          <div><span class="text-[10px] text-zinc-400 font-mono block">Documento</span><span id="gd-documento" class="font-medium">—</span></div>
+          <div><span class="text-[10px] text-zinc-400 font-mono block">Teléfono</span><span id="gd-telefono" class="font-medium">—</span></div>
+          <div class="col-span-2"><span class="text-[10px] text-zinc-400 font-mono block">Correo</span><span id="gd-correo" class="font-medium">—</span></div>
+          <div class="col-span-2"><span class="text-[10px] text-zinc-400 font-mono block">Repo GitHub</span><span id="gd-github" class="font-medium font-mono">—</span></div>
+        </div>
+      </section>
+
+      <!-- REDES SOCIALES -->
+      <section class="border border-zinc-200 rounded-lg p-5 bg-white space-y-3">
+        <div class="flex items-center justify-between pb-3 border-b border-zinc-100">
+          <div class="flex items-center gap-2">
+            <i data-lucide="share-2" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
+            <h4 class="text-xs font-semibold text-zinc-900">Redes Sociales</h4>
+          </div>
+          <button data-action="toggle-redes" id="btn-toggle-redes" class="text-[11px] font-medium text-zinc-700 hover:text-zinc-900">Editar</button>
+        </div>
+        <div id="gd-redes" class="space-y-2"></div>
+        <div id="gd-redes-acciones" class="pt-2 hidden justify-between items-center gap-2">
+          <button data-action="add-red-gestionar" class="text-[11px] font-medium text-zinc-700 hover:text-zinc-900 flex items-center gap-1">
+            <i data-lucide="plus" class="w-3 h-3" aria-hidden="true"></i> Añadir
+          </button>
+          <button data-action="guardar-redes" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 rounded-md shadow-sm">Guardar Redes</button>
+        </div>
+      </section>
+
+      <!-- DIRECCIONES -->
+      <section class="border border-zinc-200 rounded-lg p-5 bg-white space-y-3">
+        <div class="flex items-center justify-between pb-3 border-b border-zinc-100">
+          <div class="flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
+            <h4 class="text-xs font-semibold text-zinc-900">Direcciones</h4>
+          </div>
+          <button data-action="toggle-direcciones" id="btn-toggle-direcciones" class="text-[11px] font-medium text-zinc-700 hover:text-zinc-900">Editar</button>
+        </div>
+        <div id="gd-direcciones" class="space-y-2"></div>
+        <div id="gd-direcciones-acciones" class="pt-2 hidden justify-between items-center gap-2">
+          <button data-action="add-direccion-gestionar" class="text-[11px] font-medium text-zinc-700 hover:text-zinc-900 flex items-center gap-1">
+            <i data-lucide="plus" class="w-3 h-3" aria-hidden="true"></i> Añadir
+          </button>
+          <button data-action="guardar-direcciones" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 rounded-md shadow-sm">Guardar Direcciones</button>
+        </div>
+      </section>
+
+      <!-- FECHAS -->
+      <section class="border border-zinc-200 rounded-lg p-5 bg-white space-y-3">
+        <div class="flex items-center gap-2 pb-3 border-b border-zinc-100">
+          <i data-lucide="calendar" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
+          <h4 class="text-xs font-semibold text-zinc-900">Fechas</h4>
+        </div>
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between"><span class="text-zinc-500">Fecha de Registro</span><span id="gd-fecha-creacion" class="font-mono">—</span></div>
+          <div class="flex justify-between"><span class="text-zinc-500">Fecha de Producción</span><span id="gd-fecha-produccion" class="font-mono">—</span></div>
+          <div id="gd-fecha-produccion-edit" class="pt-1">
+            <label for="gd-input-produccion" class="text-[10px] text-zinc-400 font-mono block mb-1">Fijar Fecha de Producción (una sola vez)</label>
+            <input id="gd-input-produccion" type="date" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-zinc-400">
+            <div class="flex justify-end mt-2">
+              <button data-action="guardar-fecha-produccion" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 rounded-md shadow-sm">Fijar Producción</button>
+            </div>
+          </div>
+          <div id="gd-fecha-produccion-bloqueada" class="hidden text-[10px] text-zinc-400 font-mono italic pt-1">🔒 Fecha de producción bloqueada (no editable)</div>
+          <div class="flex justify-between"><span class="text-zinc-500">Fecha de Vencimiento</span><span id="gd-fecha-vencimiento" class="font-mono font-medium">—</span></div>
+          <div class="flex justify-between pt-2 border-t border-zinc-100">
+            <span class="text-zinc-500">Prórroga hasta</span>
+            <span id="gd-prorroga" class="font-mono font-medium text-amber-600">—</span>
+          </div>
+          <div class="pt-2">
+            <label for="gd-input-vencimiento" class="text-[10px] text-zinc-400 font-mono block mb-1">Editar Vencimiento</label>
+            <input id="gd-input-vencimiento" type="date" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-zinc-400">
+          </div>
+        </div>
+        <div class="pt-2 flex justify-end">
+          <button data-action="guardar-fechas" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 rounded-md shadow-sm disabled:opacity-60">Guardar Fechas</button>
+        </div>
+      </section>
+      
+    </div>
+  </aside>
+
+    <!-- MODAL: GESTIÓN DE PAGOS -->
+  <div id="modal-gestion-pagos" role="dialog" aria-modal="true" aria-labelledby="gp-titulo" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white border border-zinc-200 rounded-lg shadow-2xl w-full max-w-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-zinc-200 flex justify-between items-center bg-zinc-50">
+        <div class="flex items-center gap-2">
+          <i data-lucide="credit-card" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
+          <h3 id="gp-titulo" class="text-sm font-semibold text-zinc-900">Gestión de Pagos</h3>
+        </div>
+        <button data-action="cerrar-gestion-pagos" aria-label="Cerrar" class="text-zinc-400 hover:text-zinc-900 transition-colors">
+          <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5">
+
+        <!-- BUSCADOR -->
+        <div class="space-y-1 relative">
+          <label for="gp-buscar" class="text-[11px] font-medium text-zinc-500">Buscar Cliente</label>
+          <input id="gp-buscar" type="text" placeholder="Escribe el nombre del cliente..." autocomplete="off" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
+          <div id="gp-resultados" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-zinc-200 rounded-md shadow-lg max-h-60 overflow-y-auto z-10"></div>
+        </div>
+
+        <!-- CLIENTE SELECCIONADO -->
+        <div id="gp-cliente-box" class="hidden border border-zinc-200 rounded-lg p-4 bg-zinc-50/40 space-y-4">
+          <div>
+            <div id="gp-nombre" class="text-sm font-semibold text-zinc-900">—</div>
+            <div id="gp-sub" class="text-[11px] text-zinc-400 font-mono">—</div>
+          </div>
+
+          <!-- ESTADO CLIENTE -->
+          <div class="border-t border-zinc-200 pt-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-[11px] font-medium text-zinc-500">Estado del Cliente</div>
+                <div id="gp-estado-cliente" class="text-xs font-medium mt-0.5">—</div>
+              </div>
+              <button data-action="gp-toggle-cliente" id="gp-btn-cliente" class="px-3 py-1.5 text-xs font-medium border border-zinc-200 rounded-md hover:bg-zinc-100 transition-colors">—</button>
+            </div>
+          </div>
+
+          <!-- ESTADO SERVICIO -->
+          <div class="border-t border-zinc-200 pt-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-[11px] font-medium text-zinc-500">Estado del Servicio</div>
+                <div id="gp-estado-servicio" class="text-xs font-medium mt-0.5">—</div>
+              </div>
+              <button data-action="gp-toggle-servicio" id="gp-btn-servicio" class="px-3 py-1.5 text-xs font-medium border border-zinc-200 rounded-md hover:bg-zinc-100 transition-colors">—</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONFIRMACIÓN RETIRO -->
+        <div id="gp-confirmar-retiro" class="hidden border border-red-200 rounded-lg p-4 bg-red-50/40 space-y-3">
+          <div class="flex items-center gap-2 text-red-700">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-red-600" aria-hidden="true"></i>
+            <h4 class="text-xs font-semibold">Confirmar Retiro del Cliente</h4>
+          </div>
+          <p class="text-[11px] text-red-600/90 leading-relaxed">
+            Esta acción ocultará al cliente del listado principal y suspenderá su servicio. Para confirmar, escribe el nombre exacto:
+          </p>
+          <p id="gp-nombre-a-escribir" class="text-xs font-mono font-medium text-zinc-900 bg-white border border-red-200 rounded-md px-3 py-2">—</p>
+          <input id="gp-input-confirmar" type="text" placeholder="Escribe el nombre exacto" autocomplete="off" class="w-full bg-white border border-red-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-red-400">
+          <div class="flex justify-end gap-2">
+            <button data-action="gp-cancelar-retiro" class="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100 rounded-md">Cancelar</button>
+            <button data-action="gp-confirmar-retiro" id="gp-btn-confirmar" disabled class="px-3 py-1.5 rounded-md bg-red-600 text-white text-xs font-medium hover:bg-red-700 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed">Confirmar Retiro</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  
+  <noscript>
+    <div class="fixed inset-0 bg-white z-[999] flex items-center justify-center p-6 text-center text-sm text-zinc-700">
+      Este panel requiere JavaScript habilitado para funcionar.
+    </div>
+  </noscript>
+
+  <script type="module" src="js/master.js"></script>
+</body>
+</html>
