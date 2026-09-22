@@ -32,6 +32,8 @@ import {
   confirmarRetiro, reactivarCliente, toggleServicio,
   cancelarRetiro, inicializarPagos
 } from './modulos/pagos.js';
+import { auth } from './config/firebase.js';
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 // ==========================================s
 // DOM
@@ -90,7 +92,12 @@ const ACCIONES = {
   'gp-toggle-servicio': () => toggleServicio(),
   'gp-confirmar-retiro': () => confirmarRetiro(),
   'gp-cancelar-retiro': () => cancelarRetiro(),
-  };
+  'cerrar-sesion': async () => {
+    await signOut(auth);
+    window.location.href = 'login.html';
+  },
+};
+  
 
 document.addEventListener('click', (event) => {
   const trigger = event.target.closest('[data-action]');
@@ -157,9 +164,23 @@ if (backdrop) {
 document.getElementById('form-nuevo-cliente').addEventListener('submit', registrarNuevoCliente);
 
 // ==========================================
-// INIT
+// GUARD DE SESIÓN
 // ==========================================
-refrescarIconos();
-cargarClientes();
-inicializarPagos();
-window.addEventListener('load', refrescarIconos);
+const UID_ADMIN = 'hb8ziusuzMeVYflWjsXn43VkcuT2';
+let initHecho = false;
+
+onAuthStateChanged(auth, (user) => {
+  if (!user || user.uid !== UID_ADMIN) {
+    // No autorizado → vuelve al login
+    window.location.href = 'login.html';
+    return;
+  }
+  // Autorizado → arranca el panel (solo una vez)
+  if (!initHecho) {
+    initHecho = true;
+    refrescarIconos();
+    cargarClientes();
+    inicializarPagos();
+    window.addEventListener('load', refrescarIconos);
+  }
+});

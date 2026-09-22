@@ -11,6 +11,7 @@ import {
   renderRedEditor, renderDireccionEditor
 } from '../ui/render.js';
 import { cargarClientes } from './clientes.js';
+import { toast } from '../ui/notificaciones.js';
 
 // ---------- Estado local del módulo (no va al store global) ----------
 let redesNuevoCliente = [];
@@ -119,38 +120,48 @@ export async function registrarNuevoCliente(event) {
   event.preventDefault();
   const btn = document.getElementById('btn-registrar-cliente');
   const textoOrig = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Registrando...';
 
-  const tipoPersona = document.querySelector('input[name="tipoPersona"]:checked').value;
+  // ---- Validaciones (todas con toast) ----
+  const numDoc = document.getElementById('nc-num-doc').value.trim();
+  const nombre = document.getElementById('nc-nombre-cliente').value.trim();
+  const nombreComercial = document.getElementById('nc-nombre-comercial').value.trim();
+  const tel = document.getElementById('nc-telefono').value.trim();
+  const correo = document.getElementById('nc-correo').value.trim();
+
+  if (!numDoc)              { toast('Falta el número de documento.', 'aviso'); return; }
+  if (!nombre)              { toast('Falta el nombre del cliente.', 'aviso'); return; }
+  if (!nombreComercial)     { toast('Falta el nombre comercial.', 'aviso'); return; }
+  if (!/^\+[1-9]\d{7,14}$/.test(tel)) {
+    toast('Teléfono inválido. Formato: +573001234567', 'aviso'); return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
+    toast('Correo inválido. Ejemplo: cliente@dominio.com', 'aviso'); return;
+  }
 
   const redesLimp = redesNuevoCliente.filter((r) => r.valor && r.valor.trim());
   for (const r of redesLimp) {
     const meta = obtenerRedMeta(r.tipo, REDES_DISPONIBLES);
     if (!meta.regex.test(r.valor.trim())) {
-      alert(`Formato inválido en ${meta.label}. Ejemplo: ${meta.placeholder}`);
-      btn.disabled = false; btn.textContent = textoOrig; return;
+      toast(`Formato inválido en ${meta.label}. Ejemplo: ${meta.placeholder}`, 'aviso');
+      return;
     }
   }
 
-  const tel = document.getElementById('nc-telefono').value.trim();
-  if (!/^\+[1-9]\d{7,14}$/.test(tel)) {
-    alert('Teléfono inválido. Formato: +573001234567');
-    btn.disabled = false; btn.textContent = textoOrig; return;
-  }
+  btn.disabled = true;
+  btn.textContent = 'Registrando...';
 
-  const nombreComercial = document.getElementById('nc-nombre-comercial').value.trim();
+  const tipoPersona = document.querySelector('input[name="tipoPersona"]:checked').value;
   const slug = nombreComercial.toLowerCase().replace(/[^a-z0-9]/g, '-').substring(0, 30);
 
   const nuevoCliente = {
     tipoPersona,
     tipoDocumento: document.getElementById('nc-tipo-doc').value,
-    numeroDocumento: document.getElementById('nc-num-doc').value.trim(),
-    nombreCliente: document.getElementById('nc-nombre-cliente').value.trim(),
+    numeroDocumento: numDoc,
+    nombreCliente: nombre,
     nombreComercial,
     slug,
     telefono: tel,
-    correoOperativo: document.getElementById('nc-correo').value.trim(),
+    correoOperativo: correo,
     direcciones: direccionesNuevoCliente.filter((d) => d.direccion && d.direccion.trim()),
     redes: redesLimp.map((r) => ({ tipo: r.tipo, valor: r.valor.trim() })),
     fechaCreacion: new Date(),
@@ -165,9 +176,10 @@ export async function registrarNuevoCliente(event) {
     await addDoc(collection(db, "clientes_agencia"), nuevoCliente);
     cerrarNuevoCliente();
     await cargarClientes();
+    toast(`Cliente "${nombreComercial}" registrado.`, 'exito');
   } catch (error) {
     console.error("Error al registrar cliente:", error);
-    alert("No se pudo registrar el cliente.");
+    toast('No se pudo registrar el cliente.', 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = textoOrig;
