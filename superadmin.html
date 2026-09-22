@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Panel Maestro de agencia - Gestión de clientes y menús">
-  <title>Panel Maestro - Soluciones de Inteligencia Artificial</title>
+  <title>Soluciones de Inteligencia Artificial - Panel Maestro</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest" defer></script>
@@ -13,6 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2318181b'/><text x='16' y='23' font-family='system-ui,sans-serif' font-size='20' font-weight='700' fill='white' text-anchor='middle'>P</text></svg>">
 
   <style>
     ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -310,34 +311,36 @@
         </div>
 
         <!-- Panel Google -->
+         <form onsubmit="return false">
         <div id="boveda-panel-google" class="boveda-panel space-y-3">
           <div class="space-y-1">
             <label for="boveda-google-email" class="text-[11px] font-medium text-zinc-500">Correo</label>
-            <input id="boveda-google-email" type="email" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+            <input id="boveda-google-email" type="email" autocomplete="nope" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
           </div>
           <div class="space-y-1">
             <label for="boveda-google-password" class="text-[11px] font-medium text-zinc-500">Contraseña</label>
             <div class="flex gap-2">
-              <input id="boveda-google-password" type="password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+              <input id="boveda-google-password" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
               <button type="button" data-action="toggle-token" data-target="boveda-google-password" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
                 <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
               </button>
             </div>
           </div>
         </div>
+          </form>
 
-        <!-- Panel GitHub -->
-        <!-- Panel GitHub -->
+          <!-- Panel GitHub -->
+           <form onsubmit="return false">
 <div id="boveda-panel-github" class="boveda-panel space-y-3 hidden">
   <div class="space-y-1">
     <label for="boveda-github-repo" class="text-[11px] font-medium text-zinc-500">Repositorio (owner/repo)</label>
-    <input id="boveda-github-repo" type="text" placeholder="usuario/repo" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+    <input id="boveda-github-repo" type="text" autocomplete="nope" placeholder="usuario/repo" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
     <p class="text-[10px] text-zinc-400">Se guarda en Datos del Cliente → Repo GitHub</p>
   </div>
   <div class="space-y-1">
     <label for="boveda-github-token" class="text-[11px] font-medium text-zinc-500">Personal Access Token</label>
     <div class="flex gap-2">
-      <input id="boveda-github-token" type="password" placeholder="ghp_..." class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+      <input id="boveda-github-token" type="password" autocomplete="new-password" placeholder="ghp_..." class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
       <button type="button" data-action="toggle-token" data-target="boveda-github-token" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
         <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
       </button>
@@ -346,7 +349,7 @@
   <div class="space-y-1">
     <label for="boveda-github-password" class="text-[11px] font-medium text-zinc-500">Contraseña de la Cuenta</label>
     <div class="flex gap-2">
-      <input id="boveda-github-password" type="password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+      <input id="boveda-github-password" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
       <button type="button" data-action="toggle-token" data-target="boveda-github-password" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
         <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
       </button>
@@ -363,17 +366,19 @@
     </div>
   </div>
 </div>
+  </form>
 
         <!-- Panel Firebase -->
+         <form onsubmit="return false">
         <div id="boveda-panel-firebase" class="boveda-panel space-y-3 hidden">
           <div class="space-y-1">
             <label for="boveda-firebase-project" class="text-[11px] font-medium text-zinc-500">Project ID</label>
-            <input id="boveda-firebase-project" type="text" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+            <input id="boveda-firebase-project" type="text" autocomplete="nope" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
           </div>
           <div class="space-y-1">
             <label for="boveda-firebase-apikey" class="text-[11px] font-medium text-zinc-500">API Key</label>
             <div class="flex gap-2">
-              <input id="boveda-firebase-apikey" type="password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+              <input id="boveda-firebase-apikey" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
               <button type="button" data-action="toggle-token" data-target="boveda-firebase-apikey" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
                 <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
               </button>
@@ -382,24 +387,26 @@
           <div class="space-y-1">
             <label for="boveda-firebase-password" class="text-[11px] font-medium text-zinc-500">Contraseña de la Cuenta</label>
             <div class="flex gap-2">
-              <input id="boveda-firebase-password" type="password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+              <input id="boveda-firebase-password" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
               <button type="button" data-action="toggle-token" data-target="boveda-firebase-password" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
                 <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
               </button>
             </div>
           </div>
         </div>
+          </form>
 
         <!-- Panel Cloudflare -->
+         <form onsubmit="return false">
         <div id="boveda-panel-cloudflare" class="boveda-panel space-y-3 hidden">
           <div class="space-y-1">
             <label for="boveda-cloudflare-account" class="text-[11px] font-medium text-zinc-500">Account ID</label>
-            <input id="boveda-cloudflare-account" type="text" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+            <input id="boveda-cloudflare-account" type="text" autocomplete="nope" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
           </div>
           <div class="space-y-1">
             <label for="boveda-cloudflare-token" class="text-[11px] font-medium text-zinc-500">API Token</label>
             <div class="flex gap-2">
-              <input id="boveda-cloudflare-token" type="password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+              <input id="boveda-cloudflare-token" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
               <button type="button" data-action="toggle-token" data-target="boveda-cloudflare-token" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
                 <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
               </button>
@@ -408,7 +415,7 @@
           <div class="space-y-1">
             <label for="boveda-cloudflare-password" class="text-[11px] font-medium text-zinc-500">Contraseña de la Cuenta</label>
             <div class="flex gap-2">
-              <input id="boveda-cloudflare-password" type="password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+              <input id="boveda-cloudflare-password" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
               <button type="button" data-action="toggle-token" data-target="boveda-cloudflare-password" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
                 <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
               </button>
@@ -416,7 +423,7 @@
           </div>
           <div class="space-y-1">
             <label for="boveda-cloudflare-zone" class="text-[11px] font-medium text-zinc-500">Zone ID</label>
-            <input id="boveda-cloudflare-zone" type="text" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
+            <input id="boveda-cloudflare-zone" type="text" autocomplete="nope"  class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
           </div>
         </div>
 
@@ -430,6 +437,7 @@
           </button>
         </div>
       </section>
+        </form>
 
       <!-- DATOS DEL CLIENTE -->
       <section class="border border-zinc-200 rounded-lg p-5 bg-white space-y-3">
