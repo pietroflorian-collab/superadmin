@@ -2,11 +2,15 @@
 // MÓDULO: CLIENTES — Listado en tabla principal
 // ==========================================
 import { db } from '../config/firebase.js';
-import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { DIAS_PRORROGA } from '../config/constantes.js';
 import { esc, refrescarIconos, formatearFecha, sumarDias, inicialesCliente } from '../core/helpers.js';
 import { estadoVencimiento } from '../core/estado-cliente.js';
+import { getState, setState } from '../core/state.js';
 
+// ==========================================
+// CARGA
+// ==========================================
 export async function cargarClientes() {
   const tbody = document.getElementById('tabla-clientes-body');
   if (!tbody) return;
@@ -14,58 +18,148 @@ export async function cargarClientes() {
   tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-zinc-500">Sincronizando con Firestore...</td></tr>';
 
   try {
-    const q = query(collection(db, "clientes_agencia"), where("estadoCliente", "==", "Activo"));
-    const snap = await getDocs(q);
-    tbody.innerHTML = '';
-
-    if (snap.empty) {
-      tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-zinc-500">No hay clientes registrados.</td></tr>';
-      return;
-    }
-
-    snap.forEach((docSnap) => {
-      const data = docSnap.data();
-      const nombre = data.nombreComercial || data.nombreCliente || 'Sin nombre';
-      const iniciales = inicialesCliente(data);
-      const ev = estadoVencimiento(data);
-      const prorroga = data.fechaVencimiento ? sumarDias(data.fechaVencimiento, DIAS_PRORROGA) : null;
-      const estadoTachado = (data.estadoCliente === 'Retirado') ? 'line-through text-zinc-400' : '';
-
-      const filaHTML = `
-        <tr class="hover:bg-zinc-50/70 transition-colors">
-          <td class="px-6 py-4">
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-md bg-zinc-100 border border-zinc-200 text-zinc-700 flex items-center justify-center font-medium text-xs">
-                ${esc(iniciales)}
-              </div>
-              <div>
-                <span class="font-medium text-zinc-900 ${estadoTachado}">${esc(nombre)}</span>
-                <span class="text-[11px] text-zinc-400 font-mono mt-0.5 block">${esc(data.nombreCliente || '')}</span>
-              </div>
-            </div>
-          </td>
-          <td class="px-6 py-4">
-            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-zinc-100 text-zinc-700 border border-zinc-200">
-              <span class="w-2 h-2 rounded-full" style="background:${ev.color}"></span>${esc(ev.label)}
-            </span>
-          </td>
-          <td class="px-6 py-4 text-zinc-500 font-mono text-[11px]">
-            <div>${esc(formatearFecha(data.fechaVencimiento))}</div>
-            ${prorroga ? `<div class="text-[10px] text-amber-600">Prórroga: ${esc(prorroga.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' }))}</div>` : ''}
-          </td>
-          <td class="px-6 py-4 text-right">
-            <button data-action="abrir-panel-cliente" data-cliente-id="${esc(docSnap.id)}" class="px-3 py-1.5 rounded-md border border-zinc-200 text-zinc-700 text-xs font-medium hover:bg-zinc-100">
-              Gestionar
-            </button>
-          </td>
-        </tr>
-      `;
-      tbody.insertAdjacentHTML('beforeend', filaHTML);
-    });
-
-    refrescarIconos();
+    const snap = await getDocs(collection(db, "clientes_agencia"));
+    const clientes = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    setState({ clientes });
+    aplicarFiltrosClientes();
   } catch (error) {
     console.error("Error al cargar clientes:", error);
     tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-red-500">Error de conexión con Firestore.</td></tr>';
   }
+}
+
+// ==========================================
+// APLICAR FILTROS
+// ==========================================
+export function aplicarFiltrosClientes() {
+  const { clientes = [], filtrosClientes = {} } = getState();
+  const q = (filtrosClientes.busqueda || '').trim().toLowerCase();
+  const fEC = filtrosClientes.estadoCliente || 'todos';
+  const fES = filtrosClientes.estadoServicio || 'todos';
+  const fV  = filtrosClientes.vencimiento || 'todos';
+
+  const filtrados = clientes.filter((c) => {
+    // 1) Búsqueda: nombre, nombre comercial, slug, correo
+    if (q) {
+      const campos = [
+        c.nombreCliente,
+        c.nombreComercial,
+        c.slug,
+        c.correoOperativo
+      ].filter(Boolean).map((v) => String(v).toLowerCase());
+      if (!campos.some((v) => v.includes(q))) return false;
+    }
+
+    // 2) Estado cliente
+    if (fEC !== 'todos') {
+      const ec = c.estadoCliente || 'Activo';
+      if (ec !== fEC) return false;
+    }
+
+    // 3) Estado servicio
+    if (fES !== 'todos') {
+      const es = c.estadoServicio || 'Activo';
+      if (es !== fES) return false;
+    }
+
+    // 4) Vencimiento (alineado con los badges)
+    if (fV !== 'todos') {
+      const es = c.estadoServicio || 'Activo';
+      // Suspendido no aplica a filtros de vencimiento (ya tiene su propio filtro)
+      if (es === 'Suspendido') return false;
+
+      const ev = estadoVencimiento(c);
+      let cat;
+      switch (ev.label) {
+        case 'Activo':           cat = 'al-dia';            break;
+        case 'Por vencer':       cat = 'por-vencer';        break;
+        case 'En prórroga':      cat = 'en-prorroga';       break;
+        case 'Prórroga vencida': cat = 'prorroga-vencida';  break;
+        case 'Sin fecha':        cat = 'sin-fecha';         break;
+        default:                 cat = 'sin-fecha';
+      }
+      if (cat !== fV) return false;
+    }
+
+    return true;
+  });
+
+  renderTablaClientes(filtrados);
+}
+
+// ==========================================
+// RENDER
+// ==========================================
+function renderTablaClientes(lista) {
+  const tbody = document.getElementById('tabla-clientes-body');
+  if (!tbody) return;
+
+  if (lista.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-zinc-500">No hay clientes que coincidan con los filtros.</td></tr>';
+    refrescarIconos();
+    return;
+  }
+
+  tbody.innerHTML = '';
+
+  lista.forEach((c) => {
+    const nombre = c.nombreComercial || c.nombreCliente || 'Sin nombre';
+    const iniciales = inicialesCliente(c);
+    const ev = estadoVencimiento(c);
+    const prorroga = c.fechaVencimiento ? sumarDias(c.fechaVencimiento, DIAS_PRORROGA) : null;
+    const estadoTachado = (c.estadoCliente === 'Retirado') ? 'line-through text-zinc-400' : '';
+
+    const filaHTML = `
+      <tr class="hover:bg-zinc-50/70 transition-colors">
+        <td class="px-6 py-4">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-md bg-zinc-100 border border-zinc-200 text-zinc-700 flex items-center justify-center font-medium text-xs">
+              ${esc(iniciales)}
+            </div>
+            <div>
+              <span class="font-medium text-zinc-900 ${estadoTachado}">${esc(nombre)}</span>
+              <span class="text-[11px] text-zinc-400 font-mono mt-0.5 block">${esc(c.nombreCliente || '')}</span>
+            </div>
+          </div>
+        </td>
+        <td class="px-6 py-4">
+          <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-zinc-100 text-zinc-700 border border-zinc-200">
+            <span class="w-2 h-2 rounded-full" style="background:${ev.color}"></span>${esc(ev.label)}
+          </span>
+        </td>
+        <td class="px-6 py-4 text-zinc-500 font-mono text-[11px]">
+          <div>${esc(formatearFecha(c.fechaVencimiento))}</div>
+          ${prorroga ? `<div class="text-[10px] text-amber-600">Prórroga: ${esc(prorroga.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' }))}</div>` : ''}
+        </td>
+        <td class="px-6 py-4 text-right">
+          <button data-action="abrir-panel-cliente" data-cliente-id="${esc(c.id)}" class="px-3 py-1.5 rounded-md border border-zinc-200 text-zinc-700 text-xs font-medium hover:bg-zinc-100">
+            Gestionar
+          </button>
+        </td>
+      </tr>
+    `;
+    tbody.insertAdjacentHTML('beforeend', filaHTML);
+  });
+
+  refrescarIconos();
+}
+
+// ==========================================
+// SETTERS DE FILTROS (invocados desde master.js)
+// ==========================================
+export function setFiltroBusqueda(valor) {
+  setState({ filtrosClientes: { ...getState().filtrosClientes, busqueda: valor } });
+  aplicarFiltrosClientes();
+}
+export function setFiltroEstadoCliente(valor) {
+  setState({ filtrosClientes: { ...getState().filtrosClientes, estadoCliente: valor } });
+  aplicarFiltrosClientes();
+}
+export function setFiltroEstadoServicio(valor) {
+  setState({ filtrosClientes: { ...getState().filtrosClientes, estadoServicio: valor } });
+  aplicarFiltrosClientes();
+}
+export function setFiltroVencimiento(valor) {
+  setState({ filtrosClientes: { ...getState().filtrosClientes, vencimiento: valor } });
+  aplicarFiltrosClientes();
 }

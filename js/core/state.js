@@ -12,6 +12,17 @@ const state = {
   // Cliente seleccionado en el modal Gestión de Pagos
   gpClienteSeleccionado: null,
   gpClientesCache: [],
+
+  // Lista completa de clientes (todos los estados)
+  clientes: [],
+
+  // Filtros activos de la tabla principal
+  filtrosClientes: {
+    busqueda: '',
+    estadoCliente: 'todos',      // todos | Activo | Retirado
+    estadoServicio: 'todos',     // todos | Activo | Suspendido
+    vencimiento: 'todos'         // todos | al-dia | por-vencer | en-prorroga | prorroga-vencida | sin-fecha
+  },
 };
 
 export const getState = () => state;
