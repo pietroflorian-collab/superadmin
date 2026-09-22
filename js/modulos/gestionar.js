@@ -1,7 +1,7 @@
 // ==========================================
 // MÓDULO: GESTIONAR — Drawer derecho
 // ==========================================
-import { db } from '../config/firebase.js';
+import { db, auth } from '../config/firebase.js';
 import { doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { DIAS_PRORROGA, REDES_DISPONIBLES } from '../config/constantes.js';
 import { getState, setState } from '../core/state.js';
@@ -14,7 +14,7 @@ import {
   renderDireccionesGestionar, renderDireccionEditor
 } from '../ui/render.js';
 import { cargarClientes } from './clientes.js';
-import { WORKER_URL, WORKER_API_KEY } from '../config/constantes.js';
+import { WORKER_URL } from '../config/constantes.js';
 import { toast, confirmar } from '../ui/notificaciones.js';
 
 // ---------- Estado local del módulo ----------
@@ -298,9 +298,10 @@ export async function publicarEnGitHub() {
       radioBordes: document.getElementById('drawer-radio-bordes').value
     };
 
+        const idToken = await auth.currentUser.getIdToken();
     const res = await fetch(`${WORKER_URL}/publicar`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-API-Key': WORKER_API_KEY },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
       body: JSON.stringify({
         repo: c.githubRepo,
         branch: ghData.branch || 'main',

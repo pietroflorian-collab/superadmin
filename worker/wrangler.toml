@@ -4,4 +4,5 @@ compatibility_date = "2026-09-19"
 
 [vars]
 FIREBASE_PROJECT_ID = "cuentas-cop"
+ADMIN_UID = "hb8ziusuzMeVYflWjsXn43VkcuT2"
 ALLOWED_ORIGIN = "http://127.0.0.1:5500"
