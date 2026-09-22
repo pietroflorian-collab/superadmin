@@ -33,6 +33,7 @@ import {
   cancelarRetiro, inicializarPagos
 } from './modulos/pagos.js';
 import { auth } from './config/firebase.js';
+import { iniciarVigilancia } from './core/sesion.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 // ==========================================s
@@ -181,11 +182,12 @@ onAuthStateChanged(auth, (user) => {
   if (overlay) overlay.remove();
 
     // Arranca el panel (solo una vez)
-  if (!initHecho) {
+    if (!initHecho) {
     initHecho = true;
     refrescarIconos();
     cargarClientes();
     inicializarPagos();
     window.addEventListener('load', refrescarIconos);
+    iniciarVigilancia(30);   // 30 min — luego configurable en Bloque 2C
   }
-});
+  });
