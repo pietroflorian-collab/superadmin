@@ -1,15 +1,14 @@
 // ==========================================
 // LOGIN — Firebase Auth
 // ==========================================
-import { auth } from './config/firebase.js';
+import { auth, db } from './config/firebase.js';
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-
-const UID_ADMIN = 'hb8ziusuzMeVYflWjsXn43VkcuT2';
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const form = document.getElementById('form-login');
 const emailInput = document.getElementById('login-email');
@@ -29,17 +28,25 @@ function mostrarStatus(msg, tipo = 'info') {
   status.textContent = msg;
 }
 
-function verificarAdmin(user) {
-  if (user.uid !== UID_ADMIN) {
-    mostrarStatus('✗ Esta cuenta no tiene permisos de administrador.', 'error');
+// Verifica que el UID esté en la colección admins/{uid}
+async function verificarAdmin(user) {
+     try {
+    const snap = await getDoc(doc(db, 'admins', user.uid));
+    if (!snap.exists()) {
+      mostrarStatus('✗ Esta cuenta no tiene permisos de administrador.', 'error');
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error('Error al verificar admin:', e);
+    mostrarStatus('✗ No se pudo verificar permisos.', 'error');
     return false;
   }
-  return true;
 }
 
 // Si ya hay sesión válida, redirige
-onAuthStateChanged(auth, (user) => {
-  if (user && user.uid === UID_ADMIN) {
+onAuthStateChanged(auth, async (user) => {
+  if (user && (await verificarAdmin(user))) {
     window.location.href = 'superadmin.html';
   }
 });
@@ -63,7 +70,7 @@ form.addEventListener('submit', async (e) => {
 
   try {
     const cred = await signInWithEmailAndPassword(auth, email, pass);
-    if (!verificarAdmin(cred.user)) {
+    if (!(await verificarAdmin(cred.user))) {
       await auth.signOut();
       return;
     }
@@ -91,7 +98,7 @@ btnGoogle.addEventListener('click', async () => {
   try {
     const provider = new GoogleAuthProvider();
     const cred = await signInWithPopup(auth, provider);
-    if (!verificarAdmin(cred.user)) {
+    if (!(await verificarAdmin(cred.user))) {
       await auth.signOut();
       return;
     }

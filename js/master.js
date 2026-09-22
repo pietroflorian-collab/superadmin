@@ -179,12 +179,24 @@ document.getElementById('form-nuevo-cliente').addEventListener('submit', registr
 // ==========================================
 // GUARD DE SESIÓN
 // ==========================================
-const UID_ADMIN = 'hb8ziusuzMeVYflWjsXn43VkcuT2';
 let initHecho = false;
 
-onAuthStateChanged(auth, (user) => {
-  if (!user || user.uid !== UID_ADMIN) {
-    // No autorizado → vuelve al login
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  // Verificar que el UID está registrado en admins/{uid}
+  try {
+    const snap = await getDoc(doc(db, 'admins', user.uid));
+    if (!snap.exists()) {
+      await signOut(auth);
+      window.location.href = 'login.html';
+      return;
+    }
+  } catch (e) {
+    console.error('Error al verificar admin:', e);
     window.location.href = 'login.html';
     return;
   }
@@ -193,14 +205,14 @@ onAuthStateChanged(auth, (user) => {
   const overlay = document.getElementById('boot-overlay');
   if (overlay) overlay.remove();
 
-    // Arranca el panel (solo una vez)
-      if (!initHecho) {
+  // Arranca el panel (solo una vez)
+  if (!initHecho) {
     initHecho = true;
     refrescarIconos();
     cargarClientes();
     inicializarPagos();
     initPerfil();
     window.addEventListener('load', refrescarIconos);
-    iniciarVigilancia();   // lee config de localStorage (default 30 min)
+    iniciarVigilancia();
   }
-  });
+});
