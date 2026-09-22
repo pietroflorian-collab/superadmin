@@ -1,10 +1,10 @@
 // ==========================================
 // MÓDULO: BÓVEDA DE CREDENCIALES
 // ==========================================
-import { db } from '../config/firebase.js';
+import { db, auth } from '../config/firebase.js';
 import { doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { getState, setState } from '../core/state.js';
-import { WORKER_URL, WORKER_API_KEY } from '../config/constantes.js';
+import { WORKER_URL } from '../config/constantes.js';
 
 // ---------- Estado local del módulo ----------
 let proveedorActivo = 'google';
@@ -208,11 +208,13 @@ export async function probarConexion() {
       const apiKey = document.getElementById('boveda-firebase-apikey').value.trim();
       if (!projectId || !apiKey) throw new Error('Falta projectId o apiKey');
 
+            const idToken = await auth.currentUser.getIdToken();
       const res = await fetch(`${WORKER_URL}/validar/firebase`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-API-Key': WORKER_API_KEY },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
         body: JSON.stringify({ projectId, apiKey })
       });
+      
       const data = await res.json();
       mensaje = data.ok ? `✓ ${data.mensaje}` : `✗ ${data.error}`;
       ok = data.ok;
@@ -222,9 +224,10 @@ export async function probarConexion() {
       const zoneId = document.getElementById('boveda-cloudflare-zone').value.trim();
       if (!apiToken) throw new Error('Falta API Token');
 
+      const idToken = await auth.currentUser.getIdToken();
       const res = await fetch(`${WORKER_URL}/validar/cloudflare`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-API-Key': WORKER_API_KEY },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
         body: JSON.stringify({ apiToken, zoneId })
       });
       const data = await res.json();

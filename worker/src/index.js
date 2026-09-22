@@ -1,8 +1,10 @@
 // ==========================================
-// SUPERADMIN WORKER — Proxy seguro para:
-//   - Validar Firebase (evita CORS)
-//   - Validar Cloudflare (evita CORS)
-//   - Publicar apariencia en GitHub (push real)
+// SUPERADMIN WORKER — Proxy seguro con Bearer ID Token
+//   - Valida Firebase (evita CORS)
+//   - Valida Cloudflare (evita CORS)
+//   - Publica apariencia en GitHub
+// Auth: Firebase ID Token en Authorization: Bearer <token>
+// Verificación: JWKS local (sin llamadas extra por request)
 // ==========================================
 
 // ---------- CORS ----------
@@ -10,7 +12,7 @@ function corsHeaders(env) {
   return {
     "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN || "*",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, X-API-Key",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Max-Age": "86400",
   };
 }
@@ -37,11 +39,100 @@ function b64DecodeUnicode(b64) {
   return new TextDecoder().decode(bytes);
 }
 
-// ---------- Auth: API Key simple ----------
-function verificarApiKey(request, env) {
-  const apiKey = request.headers.get("X-API-Key");
-  if (!apiKey || apiKey !== env.API_KEY) return false;
-  return true;
+// ==========================================
+// VERIFICACIÓN DE ID TOKEN (JWKS)
+// ==========================================
+let jwksCache = null;      // { keys, expiresAt }
+
+function base64UrlToUint8Array(b64url) {
+  const b64 = b64url.replace(/-/g, "+").replace(/_/g, "/")
+    .padEnd(b64url.length + (4 - (b64url.length % 4)) % 4, "=");
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+function decodeJwtPart(part) {
+  const json = new TextDecoder().decode(base64UrlToUint8Array(part));
+  return JSON.parse(json);
+}
+
+async function getJwks() {
+  const now = Date.now();
+  if (jwksCache && jwksCache.expiresAt > now) return jwksCache;
+
+  const res = await fetch(
+    "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"
+  );
+  if (!res.ok) throw new Error(`JWKS fetch falló: ${res.status}`);
+  const data = await res.json();
+
+  // cache-control de Google: max-age suele ser 21600s (6h). Guardamos 1h por seguridad.
+  jwksCache = { keys: data.keys, expiresAt: now + 60 * 60 * 1000 };
+  return jwksCache;
+}
+
+async function importarClave(jwk) {
+  return crypto.subtle.importKey(
+    "jwk",
+    { kty: jwk.kty, n: jwk.n, e: jwk.e, alg: jwk.alg || "RS256", ext: true },
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+    false,
+    ["verify"]
+  );
+}
+
+async function verificarIdToken(idToken, env) {
+  try {
+    const partes = idToken.split(".");
+    if (partes.length !== 3) return { ok: false, error: "JWT mal formado" };
+
+    const header = decodeJwtPart(partes[0]);
+    const payload = decodeJwtPart(partes[1]);
+
+    if (header.alg !== "RS256") return { ok: false, error: "Algoritmo no soportado" };
+
+    // Validar claims
+    const projectId = env.FIREBASE_PROJECT_ID;
+    if (payload.aud !== projectId) return { ok: false, error: "aud inválido" };
+    if (payload.iss !== `https://securetoken.google.com/${projectId}`)
+      return { ok: false, error: "iss inválido" };
+    if (!payload.exp || payload.exp * 1000 < Date.now())
+      return { ok: false, error: "Token expirado" };
+    if (payload.sub !== env.ADMIN_UID) return { ok: false, error: "UID no autorizado" };
+
+    // Verificar firma
+    const { keys } = await getJwks();
+    const jwk = keys.find((k) => k.kid === header.kid);
+    if (!jwk) return { ok: false, error: "kid no encontrado" };
+
+    const key = await importarClave(jwk);
+    const data = new TextEncoder().encode(`${partes[0]}.${partes[1]}`);
+    const firma = base64UrlToUint8Array(partes[2]);
+
+    const valida = await crypto.subtle.verify(
+      { name: "RSASSA-PKCS1-v1_5" },
+      key,
+      firma,
+      data
+    );
+
+    if (!valida) return { ok: false, error: "Firma inválida" };
+
+    return { ok: true, uid: payload.sub };
+  } catch (e) {
+    return { ok: false, error: e.message };
+  }
+}
+
+async function verificarAuth(request, env) {
+  const auth = request.headers.get("Authorization");
+  if (!auth || !auth.startsWith("Bearer ")) {
+    return { ok: false, error: "Falta Authorization: Bearer" };
+  }
+  const idToken = auth.slice(7);
+  return verificarIdToken(idToken, env);
 }
 
 // ==========================================
@@ -60,12 +151,10 @@ async function validarFirebase(request, env) {
     const res = await fetch(url);
     const data = await res.json();
 
-    // Si devuelve projectId, la key es válida
     if (data.projectId) {
       return jsonResponse({ ok: true, mensaje: `API Key válida · ${data.projectId}` }, 200, env);
     }
 
-    // Si devuelve error de key inválida
     if (data.error) {
       return jsonResponse({ ok: false, error: data.error.message || "API Key inválida" }, 200, env);
     }
@@ -222,12 +311,14 @@ export default {
       return jsonResponse({ status: "ok", service: "superadmin-worker" }, 200, env);
     }
 
-    if (!verificarApiKey(request, env)) {
-      return jsonResponse({ ok: false, error: "No autorizado" }, 401, env);
-    }
-
     if (request.method !== "POST") {
       return jsonResponse({ ok: false, error: "Método no permitido" }, 405, env);
+    }
+
+    // Verificar ID Token de Firebase
+    const auth = await verificarAuth(request, env);
+    if (!auth.ok) {
+      return jsonResponse({ ok: false, error: `No autorizado: ${auth.error}` }, 401, env);
     }
 
     if (path === "/validar/firebase") return validarFirebase(request, env);

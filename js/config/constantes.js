@@ -27,4 +27,3 @@ export const REDES_OBLIGATORIAS = ['instagram', 'facebook', 'whatsapp', 'dominio
 
 // ---------- WORKER ----------
 export const WORKER_URL = "https://superadmin-worker.pietro-florian.workers.dev";
-export const WORKER_API_KEY = "fcbae6510b63021691be5eb7ce4ad4c10cfeec6181fb8892b25a8ba7a85526c3";
