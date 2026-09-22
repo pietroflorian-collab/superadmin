@@ -62,14 +62,18 @@
       </nav>
     </div>
     <div class="p-3 border-t border-zinc-200">
-      <div class="flex items-center gap-2.5 min-w-0 p-2">
-        <div class="w-7 h-7 rounded-full bg-zinc-200 border border-zinc-300 text-zinc-700 flex items-center justify-center text-xs font-medium shrink-0">SA</div>
-        <div class="min-w-0">
-          <p class="text-xs font-medium text-zinc-900 truncate">Super Admin</p>
-          <p class="text-[11px] text-zinc-400 truncate">Soluciones de IA</p>
-        </div>
-      </div>
+  <div class="flex items-center gap-2.5 min-w-0 p-2">
+    <div class="w-7 h-7 rounded-full bg-zinc-200 border border-zinc-300 text-zinc-700 flex items-center justify-center text-xs font-medium shrink-0">SA</div>
+    <div class="min-w-0 flex-1">
+      <p class="text-xs font-medium text-zinc-900 truncate">Super Admin</p>
+      <p class="text-[11px] text-zinc-400 truncate">Soluciones de IA</p>
     </div>
+    <button data-action="cerrar-sesion" aria-label="Cerrar sesión" title="Cerrar sesión"
+            class="w-7 h-7 rounded-md text-zinc-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors shrink-0">
+      <i data-lucide="log-out" class="w-3.5 h-3.5" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>
   </aside>
 
   <!-- ÁREA CENTRAL -->
@@ -112,6 +116,7 @@
     </main>
   </div>
 
+  <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
   <div id="backdrop" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-40 hidden"></div>
 
   <!-- DRAWER IZQUIERDO: NUEVO CLIENTE -->
@@ -137,7 +142,7 @@
       </button>
     </div>
 
-    <form id="form-nuevo-cliente" class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+    <form id="form-nuevo-cliente" novalidate class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
 
       <!-- TIPO DE PERSONA -->
       <section class="border border-zinc-200 rounded-lg p-4 bg-white space-y-3">
@@ -514,8 +519,8 @@
 
     <!-- MODAL: GESTIÓN DE PAGOS -->
   <div id="modal-gestion-pagos" role="dialog" aria-modal="true" aria-labelledby="gp-titulo" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white border border-zinc-200 rounded-lg shadow-2xl w-full max-w-lg overflow-hidden">
-      <div class="px-6 py-4 border-b border-zinc-200 flex justify-between items-center bg-zinc-50">
+    <div class="bg-white border border-zinc-200 rounded-lg shadow-2xl w-full max-w-md">
+      <div class="px-4 py-2.5 border-b border-zinc-200 flex justify-between items-center bg-zinc-50 rounded-t-lg">
         <div class="flex items-center gap-2">
           <i data-lucide="credit-card" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
           <h3 id="gp-titulo" class="text-sm font-semibold text-zinc-900">Gestión de Pagos</h3>
@@ -525,14 +530,14 @@
         </button>
       </div>
 
-      <div class="p-6 space-y-5">
+      <div class="p-4 space-y-3">
 
         <!-- BUSCADOR -->
-        <div class="space-y-1 relative">
-          <label for="gp-buscar" class="text-[11px] font-medium text-zinc-500">Buscar Cliente</label>
-          <input id="gp-buscar" type="text" placeholder="Escribe el nombre del cliente..." autocomplete="off" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
-          <div id="gp-resultados" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-zinc-200 rounded-md shadow-lg max-h-60 overflow-y-auto z-10"></div>
-        </div>
+        <div>
+  <label for="gp-buscar" class="text-[11px] font-medium text-zinc-500 block mb-1">Buscar Cliente</label>
+  <input id="gp-buscar" type="text" placeholder="Escribe el nombre del cliente..." autocomplete="off" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
+  <div id="gp-resultados" class="hidden mt-2 border border-zinc-200 rounded-md overflow-hidden max-h-72 overflow-y-auto"></div>
+</div>
 
         <!-- CLIENTE SELECCIONADO -->
         <div id="gp-cliente-box" class="hidden border border-zinc-200 rounded-lg p-4 bg-zinc-50/40 space-y-4">
@@ -590,6 +595,20 @@
       Este panel requiere JavaScript habilitado para funcionar.
     </div>
   </noscript>
+<div id="modal-confirmar" role="dialog" aria-modal="true" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-[90] flex items-center justify-center hidden p-4">
+  <<div class="bg-white border border-zinc-200 rounded-lg shadow-2xl w-full max-w-2xl">
+    <div class="px-5 py-3.5 border-b border-zinc-200 bg-zinc-50">
+      <h3 data-role="titulo" class="text-sm font-semibold text-zinc-900">Confirmar</h3>
+    </div>
+    <div class="p-5">
+      <p data-role="mensaje" class="text-xs text-zinc-600 leading-relaxed whitespace-pre-line"></p>
+    </div>
+    <div class="px-5 py-3.5 bg-zinc-50 border-t border-zinc-200 flex justify-end gap-2">
+      <button type="button" data-role="cancelar" class="px-3.5 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100 rounded-md">Cancelar</button>
+      <button type="button" data-role="confirmar" class="px-3.5 py-1.5 rounded-md bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 shadow-sm">Confirmar</button>
+    </div>
+  </div>
+</div>
 
   <script type="module" src="js/master.js"></script>
 </body>

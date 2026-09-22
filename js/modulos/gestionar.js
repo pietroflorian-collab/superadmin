@@ -15,6 +15,7 @@ import {
 } from '../ui/render.js';
 import { cargarClientes } from './clientes.js';
 import { WORKER_URL, WORKER_API_KEY } from '../config/constantes.js';
+import { toast, confirmar } from '../ui/notificaciones.js';
 
 // ---------- Estado local del módulo ----------
 let redesGestionar = [];
@@ -127,8 +128,8 @@ export async function guardarConfiguracion() {
     await updateDoc(doc(db, "clientes_agencia", c.id), { apariencia: nueva });
     const s = await getDoc(doc(db, "clientes_agencia", c.id));
     if (s.exists()) setState({ clienteSeleccionado: { id: c.id, ...s.data() } });
-    alert("Apariencia actualizada.");
-  } catch (e) { console.error(e); alert("Error al guardar."); }
+     toast('Apariencia actualizada.', 'exito');
+  } catch (e) { console.error(e); toast('Error al guardar.', 'error'); }
   finally { btn.textContent = orig; btn.disabled = false; }
 }
 
@@ -140,7 +141,7 @@ export async function guardarRedes() {
   for (const r of redesLimp) {
     const meta = obtenerRedMeta(r.tipo, REDES_DISPONIBLES);
     if (!meta.regex.test(r.valor.trim())) {
-      alert(`Formato inválido en ${meta.label}: ${meta.placeholder}`);
+      toast(`Formato inválido en ${meta.label}: ${meta.placeholder}`, 'aviso'); return;
       return;
     }
   }
@@ -149,13 +150,13 @@ export async function guardarRedes() {
       redes: redesLimp.map((r) => ({ tipo: r.tipo, valor: r.valor.trim() }))
     });
     setState({ clienteSeleccionado: { ...c, redes: redesLimp } });
-    alert("Redes guardadas.");
+    toast('Redes guardadas.', 'exito');
     editandoRedes = false;
     renderRedesGestionar(document.getElementById('gd-redes'), redesLimp);
     document.getElementById('gd-redes-acciones').classList.add('hidden');
     document.getElementById('gd-redes-acciones').classList.remove('flex');
     document.getElementById('btn-toggle-redes').textContent = 'Editar';
-  } catch (e) { console.error(e); alert("Error al guardar redes."); }
+  } catch (e) { console.error(e); toast('Error al guardar redes.', 'error'); }
 }
 
 // ---------- Guardar: Direcciones ----------
@@ -166,13 +167,13 @@ export async function guardarDirecciones() {
   try {
     await updateDoc(doc(db, "clientes_agencia", c.id), { direcciones: limpias });
     setState({ clienteSeleccionado: { ...c, direcciones: limpias } });
-    alert("Direcciones guardadas.");
+    toast('Direcciones guardadas.', 'exito');
     editandoDirecciones = false;
     renderDireccionesGestionar(document.getElementById('gd-direcciones'), limpias);
     document.getElementById('gd-direcciones-acciones').classList.add('hidden');
     document.getElementById('gd-direcciones-acciones').classList.remove('flex');
     document.getElementById('btn-toggle-direcciones').textContent = 'Editar';
-  } catch (e) { console.error(e); alert("Error al guardar direcciones."); }
+  } catch (e) { console.error(e); toast('Error al guardar direcciones.', 'error'); }
 }
 
 // ---------- Guardar: Fechas ----------
@@ -180,15 +181,15 @@ export async function guardarFechas() {
   const c = getState().clienteSeleccionado;
   if (!c) return;
   const fv = document.getElementById('gd-input-vencimiento').value;
-  if (!fv) { alert("Selecciona una fecha de vencimiento."); return; }
+  if (!fv) { toast('Selecciona una fecha de vencimiento.', 'aviso'); return; }
   try {
     await updateDoc(doc(db, "clientes_agencia", c.id), { fechaVencimiento: fv });
     setState({ clienteSeleccionado: { ...c, fechaVencimiento: fv } });
     document.getElementById('gd-fecha-vencimiento').textContent = formatearFecha(fv);
     const pr = sumarDias(fv, DIAS_PRORROGA);
     document.getElementById('gd-prorroga').textContent = pr ? formatearFecha(pr) : '—';
-    alert("Fecha de vencimiento actualizada.");
-  } catch (e) { console.error(e); alert("Error al guardar."); }
+    toast('Fecha de vencimiento actualizada.', 'exito');
+  } catch (e) { console.error(e); toast('Error al guardar.', 'error'); }
 }
 
 // ---------- Guardar: Fecha Producción ----------
@@ -196,19 +197,19 @@ export async function guardarFechaProduccion() {
   const c = getState().clienteSeleccionado;
   if (!c) return;
   if (c.fechaProduccion) {
-    alert("La fecha de producción ya está fijada y no puede modificarse.");
+    toast('La fecha de producción ya está fijada y no puede modificarse.', 'aviso'); return;
     return;
   }
   const fp = document.getElementById('gd-input-produccion').value;
-  if (!fp) { alert("Selecciona una fecha de producción."); return; }
+  if (!fp) { toast('Selecciona una fecha de producción.', 'aviso'); return; }
   try {
     await updateDoc(doc(db, "clientes_agencia", c.id), { fechaProduccion: fp });
     setState({ clienteSeleccionado: { ...c, fechaProduccion: fp } });
     document.getElementById('gd-fecha-produccion').textContent = formatearFecha(fp);
     document.getElementById('gd-fecha-produccion-edit').classList.add('hidden');
     document.getElementById('gd-fecha-produccion-bloqueada').classList.remove('hidden');
-    alert("Fecha de producción fijada.");
-  } catch (e) { console.error(e); alert("Error al guardar."); }
+    toast('Fecha de producción fijada.', 'exito');
+  } catch (e) { console.error(e); toast('Error al guardar.', 'error');}
 }
 
 // ---------- Toggle edición: Redes ----------
@@ -311,13 +312,13 @@ export async function publicarEnGitHub() {
     const data = await res.json();
 
     if (data.ok) {
-      alert(`✓ ${data.mensaje}\n\nCommit: ${data.commit?.substring(0, 7) || '—'}`);
-    } else {
-      alert(`✗ Error: ${data.error}`);
-    }
+    toast(`✓ ${data.mensaje}\nCommit: ${data.commit?.substring(0, 7) || '—'}`, 'exito');
+  } else {
+    toast(`✗ Error: ${data.error}`, 'error');
+}
   } catch (e) {
     console.error(e);
-    alert(`Error: ${e.message}`);
+    toast(`Error: ${e.message}`, 'error');
   } finally {
     btn.innerHTML = orig;
     btn.disabled = false;

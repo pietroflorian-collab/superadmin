@@ -8,6 +8,8 @@ import {
 import { getState, setState } from '../core/state.js';
 import { esc, refrescarIconos } from '../core/helpers.js';
 import { cargarClientes } from './clientes.js';
+import { toast, confirmar } from '../ui/notificaciones.js';
+
 
 // ---------- Abrir ----------
 export async function abrirGestionPagos() {
@@ -59,16 +61,24 @@ export function gpBuscarCliente(query) {
   }).slice(0, 8);
 
   if (matches.length === 0) {
-    gpResultados.innerHTML = '<div class="px-3 py-2 text-xs text-zinc-400 italic">Sin resultados</div>';
-  } else {
-    gpResultados.innerHTML = matches.map((c) => `
-      <button data-action="gp-seleccionar" data-cliente-id="${esc(c.id)}" class="w-full text-left px-3 py-2 hover:bg-zinc-50 transition-colors border-b border-zinc-100 last:border-0">
-        <div class="text-xs font-medium text-zinc-900">${esc(c.nombreComercial || c.nombreCliente || 'Sin nombre')}</div>
-        <div class="text-[10px] text-zinc-400 font-mono">${esc(c.nombreCliente || '')}</div>
-      </button>
-    `).join('');
-  }
-  gpResultados.classList.remove('hidden');
+  gpResultados.innerHTML = '<div class="px-4 py-3 text-xs text-zinc-400 italic">Sin resultados</div>';
+} else {
+  gpResultados.innerHTML = matches.map((c) => `
+    <button data-action="gp-seleccionar" data-cliente-id="${esc(c.id)}" class="w-full text-left px-4 py-3 hover:bg-zinc-50 transition-colors border-b border-zinc-100 last:border-0">
+      <div class="flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <div class="text-xs font-medium text-zinc-900 truncate">${esc(c.nombreComercial || c.nombreCliente || 'Sin nombre')}</div>
+          <div class="text-[11px] text-zinc-400 font-mono truncate">${esc(c.nombreCliente || '')}</div>
+        </div>
+        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full shrink-0 ${
+          c.estadoCliente === 'Retirado' ? 'bg-zinc-100 text-zinc-500' : 'bg-emerald-50 text-emerald-700'
+        }">${c.estadoCliente === 'Retirado' ? 'Retirado' : 'Activo'}</span>
+      </div>
+    </button>
+  `).join('');
+}
+gpResultados.classList.remove('hidden');
+ 
 }
 
 export function seleccionarCliente(id) {
@@ -163,9 +173,10 @@ export async function confirmarRetiro() {
     document.getElementById('gp-confirmar-retiro').classList.add('hidden');
     refrescarUI();
     await cargarClientes();
+    toast('Cliente retirado.', 'exito');
   } catch (e) {
     console.error(e);
-    alert("No se pudo retirar el cliente.");
+    toast('No se pudo retirar el cliente.', 'error');
   }
 }
 
@@ -173,9 +184,14 @@ export async function confirmarRetiro() {
 export async function reactivarCliente() {
   const c = getState().gpClienteSeleccionado;
   if (!c) return;
-  const nombre = c.nombreComercial || 'este cliente';
+  const nombre = c.nombreComercial || c.nombreCliente || 'este cliente';
 
-  if (!confirm(`Reactivar cliente: ${nombre}\n\nQuedará activo con su servicio Suspendido.`)) return;
+  const ok = await confirmar({
+    titulo: 'Reactivar cliente',
+    mensaje: `Se reactivará a "${nombre}".\nQuedará activo con su servicio Suspendido.`,
+    textoConfirmar: 'Reactivar'
+  });
+  if (!ok) return;
 
   try {
     await updateDoc(doc(db, "clientes_agencia", c.id), {
@@ -185,9 +201,10 @@ export async function reactivarCliente() {
     setState({ gpClienteSeleccionado: { ...c, estadoCliente: 'Activo', estadoServicio: 'Suspendido' } });
     refrescarUI();
     await cargarClientes();
+    toast('Cliente reactivado.', 'exito');
   } catch (e) {
     console.error(e);
-    alert("No se pudo reactivar.");
+    toast('No se pudo reactivar.', 'error');
   }
 }
 
@@ -201,16 +218,23 @@ export async function toggleServicio() {
   const nuevo = es === 'Activo' ? 'Suspendido' : 'Activo';
   const accion = nuevo === 'Suspendido' ? 'Suspender' : 'Reactivar';
 
-  if (!confirm(`${accion} servicio de: ${c.nombreComercial || ''}\n\n¿Continuar?`)) return;
+  const ok = await confirmar({
+    titulo: `${accion} servicio`,
+    mensaje: `${accion} el servicio de "${c.nombreComercial || c.nombreCliente || ''}"?`,
+    textoConfirmar: accion,
+    peligro: nuevo === 'Suspendido'
+  });
+  if (!ok) return;
 
   try {
     await updateDoc(doc(db, "clientes_agencia", c.id), { estadoServicio: nuevo });
     setState({ gpClienteSeleccionado: { ...c, estadoServicio: nuevo } });
     refrescarUI();
     await cargarClientes();
+    toast(`Servicio ${nuevo.toLowerCase()}.`, 'exito');
   } catch (e) {
     console.error(e);
-    alert("No se pudo actualizar el servicio.");
+    toast('No se pudo actualizar el servicio.', 'error');
   }
 }
 
