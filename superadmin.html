@@ -34,6 +34,11 @@
   </style>
 </head>
 <body class="h-full bg-zinc-50 font-sans text-zinc-900 selection:bg-zinc-900 selection:text-white flex overflow-hidden">
+  
+  <!-- Overlay de arranque: oculta el panel hasta validar sesión -->
+  <div id="boot-overlay" class="fixed inset-0 z-50 bg-zinc-50 flex items-center justify-center">
+    <div class="w-6 h-6 border-2 border-zinc-300 border-t-zinc-900 rounded-full animate-spin"></div>
+  </div>
 
   <!-- SIDEBAR -->
   <aside class="w-64 border-r border-zinc-200 bg-white flex flex-col justify-between shrink-0 select-none">
