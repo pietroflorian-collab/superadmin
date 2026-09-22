@@ -173,7 +173,7 @@ export async function confirmarRetiro() {
     document.getElementById('gp-confirmar-retiro').classList.add('hidden');
     refrescarUI();
     await cargarClientes();
-    toast('Cliente retirado.', 'exito');
+    toast('Cliente retirado correctamente.', 'exito')
   } catch (e) {
     console.error(e);
     toast('No se pudo retirar el cliente.', 'error');
@@ -201,10 +201,10 @@ export async function reactivarCliente() {
     setState({ gpClienteSeleccionado: { ...c, estadoCliente: 'Activo', estadoServicio: 'Suspendido' } });
     refrescarUI();
     await cargarClientes();
-    toast('Cliente reactivado.', 'exito');
+    toast('Cliente reactivado correctamente.', 'exito')
   } catch (e) {
     console.error(e);
-    toast('No se pudo reactivar.', 'error');
+        toast('No se pudo reactivar el cliente.', 'error');
   }
 }
 
@@ -231,7 +231,7 @@ export async function toggleServicio() {
     setState({ gpClienteSeleccionado: { ...c, estadoServicio: nuevo } });
     refrescarUI();
     await cargarClientes();
-    toast(`Servicio ${nuevo.toLowerCase()}.`, 'exito');
+        toast(nuevo === 'Suspendido' ? 'Servicio suspendido correctamente.' : 'Servicio reactivado correctamente.', 'exito');
   } catch (e) {
     console.error(e);
     toast('No se pudo actualizar el servicio.', 'error');
