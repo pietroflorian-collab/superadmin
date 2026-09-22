@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html lang="es" class="h-full bg-zinc-50 antialiased">
+<head>
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel Maestro de agencia - GestiÃ³n de clientes y menÃºs">
+  <title>Panel Maestro - Soluciones de Inteligencia Artificial</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #e4e4e7; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #d4d4d8; }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
+      border-radius: 9999px; background: #18181b; cursor: pointer;
+      border: 2px solid #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 16px; height: 16px; border-radius: 9999px;
+      background: #18181b; cursor: pointer;
+      border: 2px solid #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body class="h-full bg-zinc-50 font-sans text-zinc-900 selection:bg-zinc-900 selection:text-white flex overflow-hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 border-r border-zinc-200 bg-white flex flex-col justify-between shrink-0 select-none">
+    <div>
+      <div class="h-16 px-5 border-b border-zinc-200/80 flex items-center gap-3">
