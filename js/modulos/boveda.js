@@ -126,9 +126,18 @@ export async function guardarCredenciales() {
         zoneId: document.getElementById('boveda-cloudflare-zone').value.trim(),
         actualizadoEn: ts
       };
+       } else if (proveedorActivo === 'firebase') {
+      docRef = doc(db, 'clientes_agencia', c.id, 'secretos', 'firebase');
+      payload = {
+        projectId: document.getElementById('boveda-firebase-project').value.trim(),
+        apiKey: document.getElementById('boveda-firebase-apikey').value.trim(),
+        password: document.getElementById('boveda-firebase-password').value,
+        actualizadoEn: ts
+      };
     }
 
     await setDoc(docRef, payload, { merge: true });
+     
 
     // Persistir githubRepo top-level si estamos en GitHub
 if (proveedorActivo === 'github') {
