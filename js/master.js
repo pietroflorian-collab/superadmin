@@ -175,7 +175,12 @@ onAuthStateChanged(auth, (user) => {
     window.location.href = 'login.html';
     return;
   }
-  // Autorizado → arranca el panel (solo una vez)
+
+  // Autorizado → quitar overlay de arranque
+  const overlay = document.getElementById('boot-overlay');
+  if (overlay) overlay.remove();
+
+    // Arranca el panel (solo una vez)
   if (!initHecho) {
     initHecho = true;
     refrescarIconos();
