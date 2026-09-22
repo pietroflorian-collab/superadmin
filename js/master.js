@@ -6,7 +6,13 @@ import {
   doc, updateDoc, getDoc, getDocs, collection, setDoc
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { refrescarIconos } from './core/helpers.js';
-import { cargarClientes } from './modulos/clientes.js';
+import {
+  cargarClientes,
+  setFiltroBusqueda,
+  setFiltroEstadoCliente,
+  setFiltroEstadoServicio,
+  setFiltroVencimiento
+} from './modulos/clientes.js';
 import {
   abrirNuevoCliente, cerrarNuevoCliente, registrarNuevoCliente,
   addRedNuevo, rmRedNuevo, addDireccionNuevo, rmDireccionNuevo
@@ -123,6 +129,9 @@ document.addEventListener('change', (e) => {
     const opciones = tipo === 'juridica' ? JUR : NAT;
     sel.innerHTML = opciones.map((t) => `<option value="${t}">${t}</option>`).join('');
   }
+    if (e.target.id === 'filtro-estado-cliente')  setFiltroEstadoCliente(e.target.value);
+  if (e.target.id === 'filtro-estado-servicio') setFiltroEstadoServicio(e.target.value);
+  if (e.target.id === 'filtro-vencimiento')     setFiltroVencimiento(e.target.value);
 });
 
 // ==========================================
@@ -138,6 +147,7 @@ document.addEventListener('input', (event) => {
     const s = document.getElementById('valor-radio-bordes');
     if (s) s.textContent = event.target.value + 'px';
   }
+    if (event.target.id === 'filtro-busqueda') setFiltroBusqueda(event.target.value);
 });
 
 // ==========================================

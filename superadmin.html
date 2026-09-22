@@ -140,6 +140,36 @@
           <h2 class="text-xl font-semibold tracking-tight text-zinc-900">Directorio de Clientes</h2>
           <p class="text-xs text-zinc-500 mt-1">Supervisa y administra el servicio individual de cada cliente registrado.</p>
         </div>
+        
+ <!-- Barra de filtros -->
+        <div class="flex flex-wrap items-center gap-2 bg-white border border-zinc-200 rounded-lg p-3 shadow-sm">
+          <div class="flex-1 min-w-[200px] relative">
+            <i data-lucide="search" class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" aria-hidden="true"></i>
+            <input id="filtro-busqueda" type="text" placeholder="Buscar por nombre, slug o correo…"
+                   class="w-full pl-8 pr-3 py-1.5 text-xs bg-zinc-50 border border-zinc-200 rounded-md focus:outline-none focus:border-zinc-400">
+          </div>
+
+          <select id="filtro-estado-cliente" class="text-xs bg-zinc-50 border border-zinc-200 rounded-md px-2 py-1.5 focus:outline-none focus:border-zinc-400">
+            <option value="todos">Estado: Todos</option>
+            <option value="Activo">Solo activos</option>
+            <option value="Retirado">Solo retirados</option>
+          </select>
+
+          <select id="filtro-estado-servicio" class="text-xs bg-zinc-50 border border-zinc-200 rounded-md px-2 py-1.5 focus:outline-none focus:border-zinc-400">
+            <option value="todos">Servicio: Todos</option>
+            <option value="Activo">Servicio activo</option>
+            <option value="Suspendido">Servicio suspendido</option>
+          </select>
+
+          <select id="filtro-vencimiento" class="text-xs bg-zinc-50 border border-zinc-200 rounded-md px-2 py-1.5 focus:outline-none focus:border-zinc-400">
+            <option value="todos">Vencimiento: Todos</option>
+            <option value="al-dia">🟢 Al día</option>
+            <option value="por-vencer">🟡 Por vencer</option>
+            <option value="en-prorroga">🔴 En prórroga</option>
+            <option value="prorroga-vencida">⚪ Prórroga vencida</option>
+            <option value="sin-fecha">⚪ Sin fecha</option>
+          </select>
+        </div>
 
         <div class="bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-sm">
           <table class="w-full text-left text-xs">
