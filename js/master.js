@@ -34,6 +34,7 @@ import {
 } from './modulos/pagos.js';
 import { auth } from './config/firebase.js';
 import { iniciarVigilancia } from './core/sesion.js';
+import { initPerfil, solicitarCambioPassword } from './modulos/perfil.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 // ==========================================s
@@ -93,6 +94,7 @@ const ACCIONES = {
   'gp-toggle-servicio': () => toggleServicio(),
   'gp-confirmar-retiro': () => confirmarRetiro(),
   'gp-cancelar-retiro': () => cancelarRetiro(),
+  'cambiar-password': () => solicitarCambioPassword(),
   'cerrar-sesion': async () => {
     await signOut(auth);
     window.location.href = 'login.html';
@@ -182,12 +184,13 @@ onAuthStateChanged(auth, (user) => {
   if (overlay) overlay.remove();
 
     // Arranca el panel (solo una vez)
-    if (!initHecho) {
+      if (!initHecho) {
     initHecho = true;
     refrescarIconos();
     cargarClientes();
     inicializarPagos();
+    initPerfil();
     window.addEventListener('load', refrescarIconos);
-    iniciarVigilancia(30);   // 30 min — luego configurable en Bloque 2C
+    iniciarVigilancia();   // lee config de localStorage (default 30 min)
   }
   });

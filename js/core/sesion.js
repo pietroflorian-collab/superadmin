@@ -41,9 +41,10 @@ async function expirar() {
   await signOut(auth);
 }
 
-export function iniciarVigilancia(minutos = 30) {
+export function iniciarVigilancia(minutos = getTimeoutConfigurado()) {
+  if (minutos === 0) { detenerVigilancia(); return; }
   detenerVigilancia();                    // idempotente por si acaso
-  timeoutMs = Math.max(1, minutos) * 60 * 1000;
+  timeoutMs = minutos * 60 * 1000;
   ultimaActividad = Date.now();
   expirando = false;
 
@@ -61,4 +62,19 @@ export function detenerVigilancia() {
     window.removeEventListener(ev, registrarActividad)
   );
   document.removeEventListener('visibilitychange', alVolverALaPestana);
+}
+
+// ---------- Configuración persistente ----------
+const STORAGE_KEY = 'superadmin.timeoutMin';
+const DEFAULT_MIN = 30;
+
+export function getTimeoutConfigurado() {
+  const v = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+  return isNaN(v) ? DEFAULT_MIN : v;
+}
+
+export function setTimeoutConfigurado(minutos) {
+  localStorage.setItem(STORAGE_KEY, String(minutos));
+  if (minutos === 0) detenerVigilancia();
+  else iniciarVigilancia(minutos);
 }
