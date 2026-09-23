@@ -12,10 +12,12 @@ import {
 } from '../ui/render.js';
 import { cargarClientes } from './clientes.js';
 import { toast } from '../ui/notificaciones.js';
+import { activarFocusTrap } from '../ui/focus-trap.js';
 
 // ---------- Estado local del módulo (no va al store global) ----------
 let redesNuevoCliente = [];
 let direccionesNuevoCliente = [];
+let ncTrapDesactivar = null;
 
 // ---------- Abrir / Cerrar ----------
 export function abrirNuevoCliente() {
@@ -49,6 +51,10 @@ export function abrirNuevoCliente() {
   drawerNuevo.classList.remove('-translate-x-full');
   backdrop.classList.remove('hidden');
   refrescarIconos();
+
+  // Focus trap del drawer
+  if (ncTrapDesactivar) ncTrapDesactivar();
+  ncTrapDesactivar = activarFocusTrap(drawerNuevo);
 }
 
 export function cerrarNuevoCliente() {
@@ -61,6 +67,9 @@ export function cerrarNuevoCliente() {
   formNuevoCliente.reset();
   redesNuevoCliente = [];
   direccionesNuevoCliente = [];
+
+  // Desactivar focus trap
+  if (ncTrapDesactivar) { ncTrapDesactivar(); ncTrapDesactivar = null; }
 }
 
 // ---------- Advertencia redes ----------

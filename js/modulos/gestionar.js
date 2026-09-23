@@ -16,12 +16,14 @@ import {
 import { cargarClientes } from './clientes.js';
 import { WORKER_URL } from '../config/constantes.js';
 import { toast, confirmar } from '../ui/notificaciones.js';
+import { activarFocusTrap } from '../ui/focus-trap.js';
 
 // ---------- Estado local del módulo ----------
 let redesGestionar = [];
 let direccionesGestionar = [];
 let editandoRedes = false;
 let editandoDirecciones = false;
+let drawerTrapDesactivar = null;
 
 // ---------- Abrir ----------
 export async function abrirPanelCliente(id) {
@@ -88,15 +90,18 @@ export async function abrirPanelCliente(id) {
     radioInput.value = ap.radioBordes ?? '8';
     document.getElementById('valor-radio-bordes').textContent = radioInput.value + 'px';
 
-    drawer.classList.remove('translate-x-full');
+        drawer.classList.remove('translate-x-full');
     backdrop.classList.remove('hidden');
     refrescarIconos();
+
+    // Focus trap del drawer
+    if (drawerTrapDesactivar) drawerTrapDesactivar();
+    drawerTrapDesactivar = activarFocusTrap(drawer);
   } catch (error) {
     console.error("Error al abrir panel:", error);
   }
 }
 
-// ---------- Cerrar ----------
 export function cerrarPanel() {
   const drawer = document.getElementById('client-drawer');
   const backdrop = document.getElementById('backdrop');
@@ -106,6 +111,9 @@ export function cerrarPanel() {
   setState({ clienteSeleccionado: null });
   editandoRedes = false;
   editandoDirecciones = false;
+
+  // Desactivar focus trap
+  if (drawerTrapDesactivar) { drawerTrapDesactivar(); drawerTrapDesactivar = null; }
 
   // Limpieza de bóveda la hace master.js al cerrar
 }
