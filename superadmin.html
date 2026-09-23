@@ -7,6 +7,9 @@
   <meta name="description" content="Panel Maestro de agencia - Gestión de clientes y menús">
   <title>Soluciones de Inteligencia Artificial - Panel Maestro</title>
 
+    <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest" defer></script>
 
@@ -93,17 +96,20 @@
       </div>
 
       <!-- Acciones -->
-      <div class="flex gap-1.5 px-2">
+            <div class="flex gap-1.5 px-2">
         <button data-action="cambiar-password" class="flex-1 h-7 rounded-md border border-zinc-200 text-zinc-600 hover:bg-zinc-100 text-[10px] font-medium flex items-center justify-center gap-1">
           <i data-lucide="key-round" class="w-3 h-3" aria-hidden="true"></i>
           <span>Contraseña</span>
+        </button>
+        <button id="btn-toggle-dark" data-action="toggle-dark" aria-label="Modo oscuro" title="Modo oscuro"
+                class="h-7 w-7 rounded-md text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 flex items-center justify-center transition-colors shrink-0">
+          <i id="icon-dark-toggle" data-lucide="moon" class="w-3.5 h-3.5" aria-hidden="true"></i>
         </button>
         <button data-action="cerrar-sesion" aria-label="Cerrar sesión" title="Cerrar sesión"
                 class="h-7 px-2 rounded-md text-zinc-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors shrink-0">
           <i data-lucide="log-out" class="w-3.5 h-3.5" aria-hidden="true"></i>
         </button>
       </div>
-    </div>
   </aside>
 
     <!-- ÁREA CENTRAL -->

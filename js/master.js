@@ -40,7 +40,7 @@ import {
 } from './modulos/pagos.js';
 import { auth } from './config/firebase.js';
 import { iniciarVigilancia } from './core/sesion.js';
-import { initPerfil, solicitarCambioPassword } from './modulos/perfil.js';
+import { initPerfil, solicitarCambioPassword, toggleDarkMode } from './modulos/perfil.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 // ==========================================s
@@ -101,6 +101,7 @@ const ACCIONES = {
   'gp-confirmar-retiro': () => confirmarRetiro(),
   'gp-cancelar-retiro': () => cancelarRetiro(),
   'cambiar-password': () => solicitarCambioPassword(),
+    'toggle-dark': () => toggleDarkMode(),
   'cerrar-sesion': async () => {
     await signOut(auth);
     window.location.href = 'login.html';

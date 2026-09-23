@@ -6,6 +6,33 @@ import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.19
 import { toast, confirmar } from '../ui/notificaciones.js';
 import { getTimeoutConfigurado, setTimeoutConfigurado } from '../core/sesion.js';
 
+// ---------- Modo oscuro ----------
+const DARK_KEY = 'superadmin.darkMode';
+
+function aplicarTema(oscuro) {
+  const html = document.documentElement;
+  if (oscuro) html.classList.add('dark');
+  else html.classList.remove('dark');
+
+  const icono = document.getElementById('icon-dark-toggle');
+  if (icono) {
+    icono.setAttribute('data-lucide', oscuro ? 'sun' : 'moon');
+    if (window.lucide) window.lucide.createIcons();
+  }
+}
+
+export function getDarkMode() {
+  return localStorage.getItem(DARK_KEY) === '1';
+}
+
+export function toggleDarkMode() {
+  const nuevo = !getDarkMode();
+  localStorage.setItem(DARK_KEY, nuevo ? '1' : '0');
+  aplicarTema(nuevo);
+  toast(nuevo ? 'Modo oscuro activado' : 'Modo claro activado', 'info', 2000);
+}
+
+// ---------- Init perfil ----------
 export function initPerfil() {
   const user = auth.currentUser;
   if (!user) return;
@@ -29,6 +56,9 @@ export function initPerfil() {
       toast(min === 0 ? 'Expiración desactivada' : `Expiración: ${min} min`, 'exito');
     });
   }
+
+  // Aplicar tema guardado al cargar
+  aplicarTema(getDarkMode());
 }
 
 export async function solicitarCambioPassword() {
