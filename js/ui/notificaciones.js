@@ -1,7 +1,7 @@
 // ==========================================
 // UI: NOTIFICACIONES — Toast + Confirm modal
 // ==========================================
-
+import { activarFocusTrap } from './focus-trap.js';
 let toastContainer = null;
 
 function getToastContainer() {
@@ -68,9 +68,12 @@ export function confirmar({
         : 'bg-zinc-900 text-white hover:bg-zinc-800'
     }`;
 
-    modal.classList.remove('hidden');
+        modal.classList.remove('hidden');
     if (window.lucide) window.lucide.createIcons();
     setTimeout(() => btnOk.focus(), 50);
+
+    // Focus trap: Tab y Shift+Tab se quedan dentro del modal
+    const desactivarTrap = activarFocusTrap(modal);
 
     function cerrar(resultado) {
       modal.classList.add('hidden');
@@ -78,6 +81,7 @@ export function confirmar({
       btnCancel.removeEventListener('click', onCancel);
       modal.removeEventListener('click', onBackdrop);
       document.removeEventListener('keydown', onKey);
+      desactivarTrap();
       resolve(resultado);
     }
     function onOk() { cerrar(true); }

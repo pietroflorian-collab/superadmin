@@ -9,7 +9,10 @@ import { getState, setState } from '../core/state.js';
 import { esc, refrescarIconos } from '../core/helpers.js';
 import { cargarClientes } from './clientes.js';
 import { toast, confirmar } from '../ui/notificaciones.js';
+import { activarFocusTrap } from '../ui/focus-trap.js';
 
+// ---------- Estado local ----------
+let gpTrapDesactivar = null;
 
 // ---------- Abrir ----------
 export async function abrirGestionPagos() {
@@ -22,8 +25,12 @@ export async function abrirGestionPagos() {
   gpBuscar.value = '';
   document.getElementById('gp-cliente-box').classList.add('hidden');
   document.getElementById('gp-confirmar-retiro').classList.add('hidden');
-  gpResultados.classList.add('hidden');
+    gpResultados.classList.add('hidden');
   refrescarIconos();
+
+  // Focus trap del modal
+  if (gpTrapDesactivar) gpTrapDesactivar();
+  gpTrapDesactivar = activarFocusTrap(modal);
 
   try {
     const snap = await getDocs(collection(db, "clientes_agencia"));
@@ -45,6 +52,9 @@ export function cerrarGestionPagos() {
   gpResultados.classList.add('hidden');
   document.getElementById('gp-cliente-box').classList.add('hidden');
   document.getElementById('gp-confirmar-retiro').classList.add('hidden');
+
+  // Desactivar focus trap
+  if (gpTrapDesactivar) { gpTrapDesactivar(); gpTrapDesactivar = null; }
 }
 
 // ---------- Buscador ----------
