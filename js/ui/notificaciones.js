@@ -15,15 +15,15 @@ export function toast(mensaje, tipo = 'info', duracion = 3500) {
   const cont = getToastContainer();
   if (!cont) { console.warn('toast-container no encontrado'); return; }
 
-  const cfg = {
-    info:  { bg: 'bg-zinc-900',   icon: 'info' },
-    exito: { bg: 'bg-emerald-600', icon: 'check-circle' },
-    error: { bg: 'bg-red-600',     icon: 'alert-circle' },
-    aviso: { bg: 'bg-amber-500',   icon: 'alert-triangle' }
-  }[tipo] || { bg: 'bg-zinc-900', icon: 'info' };
+   const cfg = {
+    info:  { bg: 'bg-zinc-900 dark:bg-zinc-100',    text: 'text-white dark:text-zinc-900', icon: 'info' },
+    exito: { bg: 'bg-emerald-600',                   text: 'text-white',                    icon: 'check-circle' },
+    error: { bg: 'bg-red-600',                       text: 'text-white',                    icon: 'alert-circle' },
+    aviso: { bg: 'bg-amber-500',                     text: 'text-white',                    icon: 'alert-triangle' }
+  }[tipo] || { bg: 'bg-zinc-900 dark:bg-zinc-100', text: 'text-white dark:text-zinc-900', icon: 'info' };
 
   const el = document.createElement('div');
-  el.className = `pointer-events-auto flex items-start gap-2.5 px-3.5 py-2.5 rounded-md shadow-lg text-white text-xs font-medium ${cfg.bg} opacity-0 translate-y-2 transition-all duration-200 max-w-sm`;
+  el.className = `pointer-events-auto flex items-start gap-2.5 px-3.5 py-2.5 rounded-md shadow-lg text-xs font-medium ${cfg.bg} ${cfg.text} opacity-0 translate-y-2 transition-all duration-200 max-w-sm`;
   el.innerHTML = `
     <i data-lucide="${cfg.icon}" class="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true"></i>
     <span class="flex-1 whitespace-pre-line">${escapeHTML(mensaje)}</span>
