@@ -298,49 +298,49 @@
     </form>
   </aside>
   
-  <!-- DRAWER DERECHO: GESTIONAR -->
+   <!-- DRAWER DERECHO: GESTIONAR -->
   <aside
     id="client-drawer"
     role="dialog"
     aria-modal="true"
     aria-labelledby="drawer-nombre-cliente"
-    class="fixed inset-y-0 right-0 w-full sm:w-[85%] md:w-[60%] lg:w-[42%] lg:min-w-[480px] lg:max-w-[620px] bg-white border-l border-zinc-200 shadow-2xl z-50 flex flex-col overflow-hidden transition-transform duration-300 ease-in-out transform translate-x-full"
+    class="fixed inset-y-0 right-0 w-full sm:w-[85%] md:w-[60%] lg:w-[42%] lg:min-w-[480px] lg:max-w-[620px] bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800 shadow-2xl z-50 flex flex-col overflow-hidden transition-transform duration-300 ease-in-out transform translate-x-full"
   >
-    <div class="h-16 px-6 border-b border-zinc-200 flex items-center justify-between shrink-0 bg-white">
+    <div class="h-16 px-6 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between shrink-0 bg-white dark:bg-zinc-900">
       <div class="flex items-center gap-3 min-w-0">
-        <div id="drawer-avatar" class="w-9 h-9 rounded-md bg-zinc-900 text-white flex items-center justify-center font-bold text-sm shrink-0">CLI</div>
+        <div id="drawer-avatar" class="w-9 h-9 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center font-bold text-sm shrink-0">CLI</div>
         <div class="min-w-0">
-          <h3 id="drawer-nombre-cliente" class="text-sm font-semibold text-zinc-900 truncate">Cargando...</h3>
-          <p class="text-[11px] text-zinc-400 font-mono truncate">Panel de Gestión Remota</p>
+          <h3 id="drawer-nombre-cliente" class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">Cargando...</h3>
+          <p class="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono truncate">Panel de Gestión Remota</p>
         </div>
       </div>
-      <button data-action="cerrar-panel" aria-label="Cerrar panel" class="w-8 h-8 rounded-md border border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 flex items-center justify-center transition-colors">
+      <button data-action="cerrar-panel" aria-label="Cerrar panel" class="w-8 h-8 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors">
         <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
       </button>
     </div>
 
-    <div class="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+    <div class="flex-1 overflow-y-auto px-6 py-5 space-y-6 bg-zinc-50 dark:bg-zinc-950">
 
       <!-- MOTOR DE APARIENCIA -->
-      <section class="border border-zinc-200 rounded-lg p-5 bg-white space-y-4">
-        <div class="flex items-center justify-between pb-3 border-b border-zinc-100">
+      <section class="border border-zinc-200 dark:border-zinc-800 rounded-lg p-5 bg-white dark:bg-zinc-900 space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
           <div class="flex items-center gap-2">
-            <i data-lucide="sliders" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
-            <h4 class="text-xs font-semibold text-zinc-900">Motor de Apariencia</h4>
+            <i data-lucide="sliders" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" aria-hidden="true"></i>
+            <h4 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Motor de Apariencia</h4>
           </div>
-          <span class="text-[10px] text-zinc-400 font-mono">Variables CSS</span>
+          <span class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono">Variables CSS</span>
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-1.5">
-            <label for="drawer-color-primario" class="text-[11px] font-medium text-zinc-500">Color Primario</label>
-            <div class="flex items-center gap-2.5 bg-zinc-50 border border-zinc-200 rounded-md p-1.5">
-              <input id="drawer-color-primario" type="color" value="#18181b" class="w-7 h-7 rounded border border-zinc-300 p-0 cursor-pointer bg-transparent" data-live="color-primario" />
-              <span id="valor-color-primario" class="text-xs font-mono font-medium text-zinc-700 uppercase">#18181B</span>
+            <label for="drawer-color-primario" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Color Primario</label>
+            <div class="flex items-center gap-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md p-1.5">
+              <input id="drawer-color-primario" type="color" value="#18181b" class="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 p-0 cursor-pointer bg-transparent" data-live="color-primario" />
+              <span id="valor-color-primario" class="text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300 uppercase">#18181B</span>
             </div>
           </div>
           <div class="space-y-1.5">
-            <label for="drawer-tipografia" class="text-[11px] font-medium text-zinc-500">Tipografía Base</label>
-            <select id="drawer-tipografia" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
+            <label for="drawer-tipografia" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Tipografía Base</label>
+            <select id="drawer-tipografia" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
               <option value="Inter">Inter</option>
               <option value="Roboto">Roboto</option>
               <option value="Playfair Display">Playfair</option>
@@ -350,30 +350,30 @@
         </div>
         <div class="space-y-1.5 pt-2">
           <div class="flex justify-between items-center text-[11px]">
-            <label for="drawer-radio-bordes" class="font-medium text-zinc-500">Bordes Redondeados</label>
-            <span id="valor-radio-bordes" class="font-mono text-zinc-700 font-medium">8px</span>
+            <label for="drawer-radio-bordes" class="font-medium text-zinc-500 dark:text-zinc-400">Bordes Redondeados</label>
+            <span id="valor-radio-bordes" class="font-mono text-zinc-700 dark:text-zinc-300 font-medium">8px</span>
           </div>
-          <input id="drawer-radio-bordes" type="range" min="0" max="24" step="2" value="8" class="w-full accent-zinc-900 cursor-pointer h-1.5 bg-zinc-200 rounded-lg appearance-none" data-live="radio-bordes" />
+          <input id="drawer-radio-bordes" type="range" min="0" max="24" step="2" value="8" class="w-full accent-zinc-900 dark:accent-zinc-100 cursor-pointer h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none" data-live="radio-bordes" />
         </div>
         <div class="pt-2 flex justify-end gap-2">
-  <button data-action="publicar-github" id="btn-publicar-github" class="px-3.5 py-1.5 text-xs font-medium border border-zinc-200 text-zinc-700 hover:bg-zinc-100 rounded-md disabled:opacity-60 flex items-center gap-1.5">
-    <i data-lucide="rocket" class="w-3.5 h-3.5" aria-hidden="true"></i>
-    <span>Publicar en GitHub</span>
-  </button>
-  <button data-action="guardar-apariencia" id="btn-guardar-apariencia" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 rounded-md shadow-sm disabled:opacity-60">Guardar Apariencia</button>
-</div>
+          <button data-action="publicar-github" id="btn-publicar-github" class="px-3.5 py-1.5 text-xs font-medium border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md disabled:opacity-60 flex items-center gap-1.5">
+            <i data-lucide="rocket" class="w-3.5 h-3.5" aria-hidden="true"></i>
+            <span>Publicar en GitHub</span>
+          </button>
+          <button data-action="guardar-apariencia" id="btn-guardar-apariencia" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 rounded-md shadow-sm disabled:opacity-60">Guardar Apariencia</button>
+        </div>
       </section>
 
-            <!-- BÓVEDA DE CREDENCIALES -->
-      <section class="border border-zinc-200 rounded-lg p-5 bg-white space-y-4">
-        <div class="flex items-center justify-between pb-3 border-b border-zinc-100">
+      <!-- BÓVEDA DE CREDENCIALES -->
+      <section class="border border-zinc-200 dark:border-zinc-800 rounded-lg p-5 bg-white dark:bg-zinc-900 space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
           <div class="flex items-center gap-2">
-            <i data-lucide="vault" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
-            <h4 class="text-xs font-semibold text-zinc-900">Bóveda de Credenciales</h4>
+            <i data-lucide="vault" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" aria-hidden="true"></i>
+            <h4 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Bóveda de Credenciales</h4>
           </div>
-          <span class="text-[10px] text-zinc-400 font-mono">Subcolección privada</span>
+          <span class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono">Subcolección privada</span>
         </div>
-        <div class="flex gap-1 bg-zinc-100 p-1 rounded-md">
+        <div class="flex gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-md">
           <button data-action="boveda-tab" data-provider="google" class="boveda-tab flex-1 px-3 py-1.5 text-[11px] font-medium rounded">Google</button>
           <button data-action="boveda-tab" data-provider="github" class="boveda-tab flex-1 px-3 py-1.5 text-[11px] font-medium rounded">GitHub</button>
           <button data-action="boveda-tab" data-provider="firebase" class="boveda-tab flex-1 px-3 py-1.5 text-[11px] font-medium rounded">Firebase</button>
@@ -381,218 +381,218 @@
         </div>
 
         <!-- Panel Google -->
-         <form onsubmit="return false">
-        <div id="boveda-panel-google" class="boveda-panel space-y-3">
-          <div class="space-y-1">
-            <label for="boveda-google-email" class="text-[11px] font-medium text-zinc-500">Correo</label>
-            <input id="boveda-google-email" type="email" autocomplete="nope" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
-          </div>
-          <div class="space-y-1">
-            <label for="boveda-google-password" class="text-[11px] font-medium text-zinc-500">Contraseña</label>
-            <div class="flex gap-2">
-              <input id="boveda-google-password" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
-              <button type="button" data-action="toggle-token" data-target="boveda-google-password" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
-                <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
-              </button>
+        <form onsubmit="return false">
+          <div id="boveda-panel-google" class="boveda-panel space-y-3">
+            <div class="space-y-1">
+              <label for="boveda-google-email" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Correo</label>
+              <input id="boveda-google-email" type="email" autocomplete="nope" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+            </div>
+            <div class="space-y-1">
+              <label for="boveda-google-password" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Contraseña</label>
+              <div class="flex gap-2">
+                <input id="boveda-google-password" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+                <button type="button" data-action="toggle-token" data-target="boveda-google-password" class="px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Mostrar">
+                  <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-          </form>
-
-          <!-- Panel GitHub -->
-           <form onsubmit="return false">
-<div id="boveda-panel-github" class="boveda-panel space-y-3 hidden">
-  <div class="space-y-1">
-    <label for="boveda-github-repo" class="text-[11px] font-medium text-zinc-500">Repositorio (owner/repo)</label>
-    <input id="boveda-github-repo" type="text" autocomplete="nope" placeholder="usuario/repo" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
-    <p class="text-[10px] text-zinc-400">Se guarda en Datos del Cliente → Repo GitHub</p>
-  </div>
-  <div class="space-y-1">
-    <label for="boveda-github-token" class="text-[11px] font-medium text-zinc-500">Personal Access Token</label>
-    <div class="flex gap-2">
-      <input id="boveda-github-token" type="password" autocomplete="new-password" placeholder="ghp_..." class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
-      <button type="button" data-action="toggle-token" data-target="boveda-github-token" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
-        <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
-      </button>
-    </div>
-  </div>
-  <div class="space-y-1">
-    <label for="boveda-github-password" class="text-[11px] font-medium text-zinc-500">Contraseña de la Cuenta</label>
-    <div class="flex gap-2">
-      <input id="boveda-github-password" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
-      <button type="button" data-action="toggle-token" data-target="boveda-github-password" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
-        <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
-      </button>
-    </div>
-  </div>
-  <div class="grid grid-cols-2 gap-3">
-    <div class="space-y-1">
-      <label for="boveda-github-branch" class="text-[11px] font-medium text-zinc-500">Branch</label>
-      <input id="boveda-github-branch" type="text" value="main" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
-    </div>
-    <div class="space-y-1">
-      <label for="boveda-github-path" class="text-[11px] font-medium text-zinc-500">Ruta menu.json</label>
-      <input id="boveda-github-path" type="text" value="data/menu.json" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
-    </div>
-  </div>
-</div>
-  </form>
-
-        <!-- Panel Firebase -->
-         <form onsubmit="return false">
-        <div id="boveda-panel-firebase" class="boveda-panel space-y-3 hidden">
-          <div class="space-y-1">
-            <label for="boveda-firebase-project" class="text-[11px] font-medium text-zinc-500">Project ID</label>
-            <input id="boveda-firebase-project" type="text" autocomplete="nope" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
-          </div>
-          <div class="space-y-1">
-            <label for="boveda-firebase-apikey" class="text-[11px] font-medium text-zinc-500">API Key</label>
-            <div class="flex gap-2">
-              <input id="boveda-firebase-apikey" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
-              <button type="button" data-action="toggle-token" data-target="boveda-firebase-apikey" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
-                <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
-              </button>
-            </div>
-          </div>
-          <div class="space-y-1">
-            <label for="boveda-firebase-password" class="text-[11px] font-medium text-zinc-500">Contraseña de la Cuenta</label>
-            <div class="flex gap-2">
-              <input id="boveda-firebase-password" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
-              <button type="button" data-action="toggle-token" data-target="boveda-firebase-password" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
-                <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-          </form>
-
-        <!-- Panel Cloudflare -->
-         <form onsubmit="return false">
-        <div id="boveda-panel-cloudflare" class="boveda-panel space-y-3 hidden">
-          <div class="space-y-1">
-            <label for="boveda-cloudflare-account" class="text-[11px] font-medium text-zinc-500">Account ID</label>
-            <input id="boveda-cloudflare-account" type="text" autocomplete="nope" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
-          </div>
-          <div class="space-y-1">
-            <label for="boveda-cloudflare-token" class="text-[11px] font-medium text-zinc-500">API Token</label>
-            <div class="flex gap-2">
-              <input id="boveda-cloudflare-token" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
-              <button type="button" data-action="toggle-token" data-target="boveda-cloudflare-token" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
-                <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
-              </button>
-            </div>
-          </div>
-          <div class="space-y-1">
-            <label for="boveda-cloudflare-password" class="text-[11px] font-medium text-zinc-500">Contraseña de la Cuenta</label>
-            <div class="flex gap-2">
-              <input id="boveda-cloudflare-password" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
-              <button type="button" data-action="toggle-token" data-target="boveda-cloudflare-password" class="px-2.5 rounded-md border border-zinc-200 text-zinc-500 hover:bg-zinc-100" aria-label="Mostrar">
-                <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
-              </button>
-            </div>
-          </div>
-          <div class="space-y-1">
-            <label for="boveda-cloudflare-zone" class="text-[11px] font-medium text-zinc-500">Zone ID</label>
-            <input id="boveda-cloudflare-zone" type="text" autocomplete="nope"  class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-zinc-400">
-          </div>
-        </div>
-
-        <div class="pt-2 flex justify-between items-center gap-2">
-          <span id="boveda-status" class="text-[10px] text-zinc-400 font-mono flex-1"></span>
-          <button data-action="probar-conexion" id="btn-probar-conexion" class="px-3.5 py-1.5 text-xs font-medium border border-zinc-200 text-zinc-700 hover:bg-zinc-100 rounded-md disabled:opacity-60">
-            Probar Conexión
-          </button>
-          <button data-action="guardar-credenciales" id="btn-guardar-credenciales" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 rounded-md shadow-sm disabled:opacity-60">
-            Guardar Credenciales
-          </button>
-        </div>
-      </section>
         </form>
 
+        <!-- Panel GitHub -->
+        <form onsubmit="return false">
+          <div id="boveda-panel-github" class="boveda-panel space-y-3 hidden">
+            <div class="space-y-1">
+              <label for="boveda-github-repo" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Repositorio (owner/repo)</label>
+              <input id="boveda-github-repo" type="text" autocomplete="nope" placeholder="usuario/repo" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+              <p class="text-[10px] text-zinc-400 dark:text-zinc-500">Se guarda en Datos del Cliente → Repo GitHub</p>
+            </div>
+            <div class="space-y-1">
+              <label for="boveda-github-token" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Personal Access Token</label>
+              <div class="flex gap-2">
+                <input id="boveda-github-token" type="password" autocomplete="new-password" placeholder="ghp_..." class="flex-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+                <button type="button" data-action="toggle-token" data-target="boveda-github-token" class="px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Mostrar">
+                  <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="space-y-1">
+              <label for="boveda-github-password" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Contraseña de la Cuenta</label>
+              <div class="flex gap-2">
+                <input id="boveda-github-password" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+                <button type="button" data-action="toggle-token" data-target="boveda-github-password" class="px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Mostrar">
+                  <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label for="boveda-github-branch" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Branch</label>
+                <input id="boveda-github-branch" type="text" value="main" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+              </div>
+              <div class="space-y-1">
+                <label for="boveda-github-path" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Ruta menu.json</label>
+                <input id="boveda-github-path" type="text" value="data/menu.json" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <!-- Panel Firebase -->
+        <form onsubmit="return false">
+          <div id="boveda-panel-firebase" class="boveda-panel space-y-3 hidden">
+            <div class="space-y-1">
+              <label for="boveda-firebase-project" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Project ID</label>
+              <input id="boveda-firebase-project" type="text" autocomplete="nope" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+            </div>
+            <div class="space-y-1">
+              <label for="boveda-firebase-apikey" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">API Key</label>
+              <div class="flex gap-2">
+                <input id="boveda-firebase-apikey" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+                <button type="button" data-action="toggle-token" data-target="boveda-firebase-apikey" class="px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Mostrar">
+                  <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="space-y-1">
+              <label for="boveda-firebase-password" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Contraseña de la Cuenta</label>
+              <div class="flex gap-2">
+                <input id="boveda-firebase-password" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+                <button type="button" data-action="toggle-token" data-target="boveda-firebase-password" class="px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Mostrar">
+                  <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <!-- Panel Cloudflare -->
+        <form onsubmit="return false">
+          <div id="boveda-panel-cloudflare" class="boveda-panel space-y-3 hidden">
+            <div class="space-y-1">
+              <label for="boveda-cloudflare-account" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Account ID</label>
+              <input id="boveda-cloudflare-account" type="text" autocomplete="nope" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+            </div>
+            <div class="space-y-1">
+              <label for="boveda-cloudflare-token" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">API Token</label>
+              <div class="flex gap-2">
+                <input id="boveda-cloudflare-token" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+                <button type="button" data-action="toggle-token" data-target="boveda-cloudflare-token" class="px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Mostrar">
+                  <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="space-y-1">
+              <label for="boveda-cloudflare-password" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Contraseña de la Cuenta</label>
+              <div class="flex gap-2">
+                <input id="boveda-cloudflare-password" type="password" autocomplete="new-password" class="flex-1 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+                <button type="button" data-action="toggle-token" data-target="boveda-cloudflare-password" class="px-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Mostrar">
+                  <i data-lucide="eye" class="w-3.5 h-3.5" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="space-y-1">
+              <label for="boveda-cloudflare-zone" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Zone ID</label>
+              <input id="boveda-cloudflare-zone" type="text" autocomplete="nope" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+            </div>
+          </div>
+
+          <div class="pt-2 flex justify-between items-center gap-2">
+            <span id="boveda-status" class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono flex-1"></span>
+            <button data-action="probar-conexion" id="btn-probar-conexion" class="px-3.5 py-1.5 text-xs font-medium border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md disabled:opacity-60">
+              Probar Conexión
+            </button>
+            <button data-action="guardar-credenciales" id="btn-guardar-credenciales" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 rounded-md shadow-sm disabled:opacity-60">
+              Guardar Credenciales
+            </button>
+          </div>
+        </form>
+      </section>
+
       <!-- DATOS DEL CLIENTE -->
-      <section class="border border-zinc-200 rounded-lg p-5 bg-white space-y-3">
-        <div class="flex items-center gap-2 pb-3 border-b border-zinc-100">
-          <i data-lucide="id-card" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
-          <h4 class="text-xs font-semibold text-zinc-900">Datos del Cliente</h4>
+      <section class="border border-zinc-200 dark:border-zinc-800 rounded-lg p-5 bg-white dark:bg-zinc-900 space-y-3">
+        <div class="flex items-center gap-2 pb-3 border-b border-zinc-100 dark:border-zinc-800">
+          <i data-lucide="id-card" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" aria-hidden="true"></i>
+          <h4 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Datos del Cliente</h4>
         </div>
         <div class="grid grid-cols-2 gap-3 text-xs">
-          <div><span class="text-[10px] text-zinc-400 font-mono block">Nombre</span><span id="gd-nombre-cliente" class="font-medium">—</span></div>
-          <div><span class="text-[10px] text-zinc-400 font-mono block">Comercial</span><span id="gd-nombre-comercial" class="font-medium">—</span></div>
-          <div><span class="text-[10px] text-zinc-400 font-mono block">Documento</span><span id="gd-documento" class="font-medium">—</span></div>
-          <div><span class="text-[10px] text-zinc-400 font-mono block">Teléfono</span><span id="gd-telefono" class="font-medium">—</span></div>
-          <div class="col-span-2"><span class="text-[10px] text-zinc-400 font-mono block">Correo</span><span id="gd-correo" class="font-medium">—</span></div>
-          <div class="col-span-2"><span class="text-[10px] text-zinc-400 font-mono block">Repo GitHub</span><span id="gd-github" class="font-medium font-mono">—</span></div>
+          <div><span class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono block">Nombre</span><span id="gd-nombre-cliente" class="font-medium text-zinc-900 dark:text-zinc-100">—</span></div>
+          <div><span class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono block">Comercial</span><span id="gd-nombre-comercial" class="font-medium text-zinc-900 dark:text-zinc-100">—</span></div>
+          <div><span class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono block">Documento</span><span id="gd-documento" class="font-medium text-zinc-900 dark:text-zinc-100">—</span></div>
+          <div><span class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono block">Teléfono</span><span id="gd-telefono" class="font-medium text-zinc-900 dark:text-zinc-100">—</span></div>
+          <div class="col-span-2"><span class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono block">Correo</span><span id="gd-correo" class="font-medium text-zinc-900 dark:text-zinc-100">—</span></div>
+          <div class="col-span-2"><span class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono block">Repo GitHub</span><span id="gd-github" class="font-medium font-mono text-zinc-900 dark:text-zinc-100">—</span></div>
         </div>
       </section>
 
       <!-- REDES SOCIALES -->
-      <section class="border border-zinc-200 rounded-lg p-5 bg-white space-y-3">
-        <div class="flex items-center justify-between pb-3 border-b border-zinc-100">
+      <section class="border border-zinc-200 dark:border-zinc-800 rounded-lg p-5 bg-white dark:bg-zinc-900 space-y-3">
+        <div class="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
           <div class="flex items-center gap-2">
-            <i data-lucide="share-2" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
-            <h4 class="text-xs font-semibold text-zinc-900">Redes Sociales</h4>
+            <i data-lucide="share-2" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" aria-hidden="true"></i>
+            <h4 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Redes Sociales</h4>
           </div>
-          <button data-action="toggle-redes" id="btn-toggle-redes" class="text-[11px] font-medium text-zinc-700 hover:text-zinc-900">Editar</button>
+          <button data-action="toggle-redes" id="btn-toggle-redes" class="text-[11px] font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100">Editar</button>
         </div>
         <div id="gd-redes" class="space-y-2"></div>
         <div id="gd-redes-acciones" class="pt-2 hidden justify-between items-center gap-2">
-          <button data-action="add-red-gestionar" class="text-[11px] font-medium text-zinc-700 hover:text-zinc-900 flex items-center gap-1">
+          <button data-action="add-red-gestionar" class="text-[11px] font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1">
             <i data-lucide="plus" class="w-3 h-3" aria-hidden="true"></i> Añadir
           </button>
-          <button data-action="guardar-redes" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 rounded-md shadow-sm">Guardar Redes</button>
+          <button data-action="guardar-redes" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 rounded-md shadow-sm">Guardar Redes</button>
         </div>
       </section>
 
       <!-- DIRECCIONES -->
-      <section class="border border-zinc-200 rounded-lg p-5 bg-white space-y-3">
-        <div class="flex items-center justify-between pb-3 border-b border-zinc-100">
+      <section class="border border-zinc-200 dark:border-zinc-800 rounded-lg p-5 bg-white dark:bg-zinc-900 space-y-3">
+        <div class="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
           <div class="flex items-center gap-2">
-            <i data-lucide="map-pin" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
-            <h4 class="text-xs font-semibold text-zinc-900">Direcciones</h4>
+            <i data-lucide="map-pin" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" aria-hidden="true"></i>
+            <h4 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Direcciones</h4>
           </div>
-          <button data-action="toggle-direcciones" id="btn-toggle-direcciones" class="text-[11px] font-medium text-zinc-700 hover:text-zinc-900">Editar</button>
+          <button data-action="toggle-direcciones" id="btn-toggle-direcciones" class="text-[11px] font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100">Editar</button>
         </div>
         <div id="gd-direcciones" class="space-y-2"></div>
         <div id="gd-direcciones-acciones" class="pt-2 hidden justify-between items-center gap-2">
-          <button data-action="add-direccion-gestionar" class="text-[11px] font-medium text-zinc-700 hover:text-zinc-900 flex items-center gap-1">
+          <button data-action="add-direccion-gestionar" class="text-[11px] font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1">
             <i data-lucide="plus" class="w-3 h-3" aria-hidden="true"></i> Añadir
           </button>
-          <button data-action="guardar-direcciones" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 rounded-md shadow-sm">Guardar Direcciones</button>
+          <button data-action="guardar-direcciones" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 rounded-md shadow-sm">Guardar Direcciones</button>
         </div>
       </section>
 
       <!-- FECHAS -->
-      <section class="border border-zinc-200 rounded-lg p-5 bg-white space-y-3">
-        <div class="flex items-center gap-2 pb-3 border-b border-zinc-100">
-          <i data-lucide="calendar" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
-          <h4 class="text-xs font-semibold text-zinc-900">Fechas</h4>
+      <section class="border border-zinc-200 dark:border-zinc-800 rounded-lg p-5 bg-white dark:bg-zinc-900 space-y-3">
+        <div class="flex items-center gap-2 pb-3 border-b border-zinc-100 dark:border-zinc-800">
+          <i data-lucide="calendar" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" aria-hidden="true"></i>
+          <h4 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Fechas</h4>
         </div>
         <div class="space-y-2 text-xs">
-          <div class="flex justify-between"><span class="text-zinc-500">Fecha de Registro</span><span id="gd-fecha-creacion" class="font-mono">—</span></div>
-          <div class="flex justify-between"><span class="text-zinc-500">Fecha de Producción</span><span id="gd-fecha-produccion" class="font-mono">—</span></div>
+          <div class="flex justify-between"><span class="text-zinc-500 dark:text-zinc-400">Fecha de Registro</span><span id="gd-fecha-creacion" class="font-mono text-zinc-900 dark:text-zinc-100">—</span></div>
+          <div class="flex justify-between"><span class="text-zinc-500 dark:text-zinc-400">Fecha de Producción</span><span id="gd-fecha-produccion" class="font-mono text-zinc-900 dark:text-zinc-100">—</span></div>
           <div id="gd-fecha-produccion-edit" class="pt-1">
-            <label for="gd-input-produccion" class="text-[10px] text-zinc-400 font-mono block mb-1">Fijar Fecha de Producción (una sola vez)</label>
-            <input id="gd-input-produccion" type="date" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-zinc-400">
+            <label for="gd-input-produccion" class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono block mb-1">Fijar Fecha de Producción (una sola vez)</label>
+            <input id="gd-input-produccion" type="date" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
             <div class="flex justify-end mt-2">
-              <button data-action="guardar-fecha-produccion" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 rounded-md shadow-sm">Fijar Producción</button>
+              <button data-action="guardar-fecha-produccion" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 rounded-md shadow-sm">Fijar Producción</button>
             </div>
           </div>
-          <div id="gd-fecha-produccion-bloqueada" class="hidden text-[10px] text-zinc-400 font-mono italic pt-1">🔒 Fecha de producción bloqueada (no editable)</div>
-          <div class="flex justify-between"><span class="text-zinc-500">Fecha de Vencimiento</span><span id="gd-fecha-vencimiento" class="font-mono font-medium">—</span></div>
-          <div class="flex justify-between pt-2 border-t border-zinc-100">
-            <span class="text-zinc-500">Prórroga hasta</span>
-            <span id="gd-prorroga" class="font-mono font-medium text-amber-600">—</span>
+          <div id="gd-fecha-produccion-bloqueada" class="hidden text-[10px] text-zinc-400 dark:text-zinc-500 font-mono italic pt-1">🔒 Fecha de producción bloqueada (no editable)</div>
+          <div class="flex justify-between"><span class="text-zinc-500 dark:text-zinc-400">Fecha de Vencimiento</span><span id="gd-fecha-vencimiento" class="font-mono font-medium text-zinc-900 dark:text-zinc-100">—</span></div>
+          <div class="flex justify-between pt-2 border-t border-zinc-100 dark:border-zinc-800">
+            <span class="text-zinc-500 dark:text-zinc-400">Prórroga hasta</span>
+            <span id="gd-prorroga" class="font-mono font-medium text-amber-600 dark:text-amber-400">—</span>
           </div>
           <div class="pt-2">
-            <label for="gd-input-vencimiento" class="text-[10px] text-zinc-400 font-mono block mb-1">Editar Vencimiento</label>
-            <input id="gd-input-vencimiento" type="date" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:border-zinc-400">
+            <label for="gd-input-vencimiento" class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono block mb-1">Editar Vencimiento</label>
+            <input id="gd-input-vencimiento" type="date" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
           </div>
         </div>
         <div class="pt-2 flex justify-end">
-          <button data-action="guardar-fechas" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 text-white hover:bg-zinc-800 rounded-md shadow-sm disabled:opacity-60">Guardar Fechas</button>
+          <button data-action="guardar-fechas" class="px-3.5 py-1.5 text-xs font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 rounded-md shadow-sm disabled:opacity-60">Guardar Fechas</button>
         </div>
       </section>
-      
+
     </div>
   </aside>
 
