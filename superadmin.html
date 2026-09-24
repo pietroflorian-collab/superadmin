@@ -596,15 +596,15 @@
     </div>
   </aside>
 
-    <!-- MODAL: GESTIÓN DE PAGOS -->
+      <!-- MODAL: GESTIÓN DE PAGOS -->
   <div id="modal-gestion-pagos" role="dialog" aria-modal="true" aria-labelledby="gp-titulo" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white border border-zinc-200 rounded-lg shadow-2xl w-full max-w-md">
-      <div class="px-4 py-2.5 border-b border-zinc-200 flex justify-between items-center bg-zinc-50 rounded-t-lg">
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-2xl w-full max-w-md">
+      <div class="px-4 py-2.5 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center bg-zinc-50 dark:bg-zinc-800 rounded-t-lg">
         <div class="flex items-center gap-2">
-          <i data-lucide="credit-card" class="w-4 h-4 text-zinc-500" aria-hidden="true"></i>
-          <h3 id="gp-titulo" class="text-sm font-semibold text-zinc-900">Gestión de Pagos</h3>
+          <i data-lucide="credit-card" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" aria-hidden="true"></i>
+          <h3 id="gp-titulo" class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Gestión de Pagos</h3>
         </div>
-        <button data-action="cerrar-gestion-pagos" aria-label="Cerrar" class="text-zinc-400 hover:text-zinc-900 transition-colors">
+        <button data-action="cerrar-gestion-pagos" aria-label="Cerrar" class="text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
           <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
         </button>
       </div>
@@ -613,54 +613,54 @@
 
         <!-- BUSCADOR -->
         <div>
-  <label for="gp-buscar" class="text-[11px] font-medium text-zinc-500 block mb-1">Buscar Cliente</label>
-  <input id="gp-buscar" type="text" placeholder="Escribe el nombre del cliente..." autocomplete="off" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
-  <div id="gp-resultados" class="hidden mt-2 border border-zinc-200 rounded-md overflow-hidden max-h-72 overflow-y-auto"></div>
-</div>
+          <label for="gp-buscar" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400 block mb-1">Buscar Cliente</label>
+          <input id="gp-buscar" type="text" placeholder="Escribe el nombre del cliente..." autocomplete="off" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+          <div id="gp-resultados" class="hidden mt-2 border border-zinc-200 dark:border-zinc-700 rounded-md overflow-hidden max-h-72 overflow-y-auto"></div>
+        </div>
 
         <!-- CLIENTE SELECCIONADO -->
-        <div id="gp-cliente-box" class="hidden border border-zinc-200 rounded-lg p-4 bg-zinc-50/40 space-y-4">
+        <div id="gp-cliente-box" class="hidden border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 bg-zinc-50/40 dark:bg-zinc-800/40 space-y-4">
           <div>
-            <div id="gp-nombre" class="text-sm font-semibold text-zinc-900">—</div>
-            <div id="gp-sub" class="text-[11px] text-zinc-400 font-mono">—</div>
+            <div id="gp-nombre" class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">—</div>
+            <div id="gp-sub" class="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">—</div>
           </div>
 
           <!-- ESTADO CLIENTE -->
-          <div class="border-t border-zinc-200 pt-3">
+          <div class="border-t border-zinc-200 dark:border-zinc-700 pt-3">
             <div class="flex items-center justify-between">
               <div>
-                <div class="text-[11px] font-medium text-zinc-500">Estado del Cliente</div>
+                <div class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Estado del Cliente</div>
                 <div id="gp-estado-cliente" class="text-xs font-medium mt-0.5">—</div>
               </div>
-              <button data-action="gp-toggle-cliente" id="gp-btn-cliente" class="px-3 py-1.5 text-xs font-medium border border-zinc-200 rounded-md hover:bg-zinc-100 transition-colors">—</button>
+              <button data-action="gp-toggle-cliente" id="gp-btn-cliente" class="px-3 py-1.5 text-xs font-medium border border-zinc-200 dark:border-zinc-700 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-900 dark:text-zinc-100">—</button>
             </div>
           </div>
 
           <!-- ESTADO SERVICIO -->
-          <div class="border-t border-zinc-200 pt-3">
+          <div class="border-t border-zinc-200 dark:border-zinc-700 pt-3">
             <div class="flex items-center justify-between">
               <div>
-                <div class="text-[11px] font-medium text-zinc-500">Estado del Servicio</div>
+                <div class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Estado del Servicio</div>
                 <div id="gp-estado-servicio" class="text-xs font-medium mt-0.5">—</div>
               </div>
-              <button data-action="gp-toggle-servicio" id="gp-btn-servicio" class="px-3 py-1.5 text-xs font-medium border border-zinc-200 rounded-md hover:bg-zinc-100 transition-colors">—</button>
+              <button data-action="gp-toggle-servicio" id="gp-btn-servicio" class="px-3 py-1.5 text-xs font-medium border border-zinc-200 dark:border-zinc-700 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-900 dark:text-zinc-100">—</button>
             </div>
           </div>
         </div>
 
         <!-- CONFIRMACIÓN RETIRO -->
-        <div id="gp-confirmar-retiro" class="hidden border border-red-200 rounded-lg p-4 bg-red-50/40 space-y-3">
-          <div class="flex items-center gap-2 text-red-700">
-            <i data-lucide="alert-triangle" class="w-4 h-4 text-red-600" aria-hidden="true"></i>
+        <div id="gp-confirmar-retiro" class="hidden border border-red-200 dark:border-red-900 rounded-lg p-4 bg-red-50/40 dark:bg-red-950/20 space-y-3">
+          <div class="flex items-center gap-2 text-red-700 dark:text-red-400">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-red-600 dark:text-red-500" aria-hidden="true"></i>
             <h4 class="text-xs font-semibold">Confirmar Retiro del Cliente</h4>
           </div>
-          <p class="text-[11px] text-red-600/90 leading-relaxed">
+          <p class="text-[11px] text-red-600/90 dark:text-red-400/90 leading-relaxed">
             Esta acción ocultará al cliente del listado principal y suspenderá su servicio. Para confirmar, escribe el nombre exacto:
           </p>
-          <p id="gp-nombre-a-escribir" class="text-xs font-mono font-medium text-zinc-900 bg-white border border-red-200 rounded-md px-3 py-2">—</p>
-          <input id="gp-input-confirmar" type="text" placeholder="Escribe el nombre exacto" autocomplete="off" class="w-full bg-white border border-red-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-red-400">
+          <p id="gp-nombre-a-escribir" class="text-xs font-mono font-medium text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800 border border-red-200 dark:border-red-900 rounded-md px-3 py-2">—</p>
+          <input id="gp-input-confirmar" type="text" placeholder="Escribe el nombre exacto" autocomplete="off" class="w-full bg-white dark:bg-zinc-800 border border-red-200 dark:border-red-900 rounded-md px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-red-400">
           <div class="flex justify-end gap-2">
-            <button data-action="gp-cancelar-retiro" class="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100 rounded-md">Cancelar</button>
+            <button data-action="gp-cancelar-retiro" class="px-3 py-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md">Cancelar</button>
             <button data-action="gp-confirmar-retiro" id="gp-btn-confirmar" disabled class="px-3 py-1.5 rounded-md bg-red-600 text-white text-xs font-medium hover:bg-red-700 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed">Confirmar Retiro</button>
           </div>
         </div>
@@ -674,17 +674,20 @@
       Este panel requiere JavaScript habilitado para funcionar.
     </div>
   </noscript>
+
+   <!-- MODAL: Confirmar -->
+    
 <div id="modal-confirmar" role="dialog" aria-modal="true" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-[90] flex items-center justify-center hidden p-4">
-    <div class="bg-white border border-zinc-200 rounded-lg shadow-2xl w-full max-w-2xl">
-    <div class="px-5 py-3.5 border-b border-zinc-200 bg-zinc-50">
-      <h3 data-role="titulo" class="text-sm font-semibold text-zinc-900">Confirmar</h3>
+  <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-2xl w-full max-w-2xl">
+    <div class="px-5 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800">
+      <h3 data-role="titulo" class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Confirmar</h3>
     </div>
     <div class="p-5">
-      <p data-role="mensaje" class="text-xs text-zinc-600 leading-relaxed whitespace-pre-line"></p>
+      <p data-role="mensaje" class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed whitespace-pre-line"></p>
     </div>
-    <div class="px-5 py-3.5 bg-zinc-50 border-t border-zinc-200 flex justify-end gap-2">
-      <button type="button" data-role="cancelar" class="px-3.5 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100 rounded-md">Cancelar</button>
-      <button type="button" data-role="confirmar" class="px-3.5 py-1.5 rounded-md bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 shadow-sm">Confirmar</button>
+    <div class="px-5 py-3.5 bg-zinc-50 dark:bg-zinc-800 border-t border-zinc-200 dark:border-zinc-800 flex justify-end gap-2">
+      <button type="button" data-role="cancelar" class="px-3.5 py-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-md">Cancelar</button>
+      <button type="button" data-role="confirmar" class="px-3.5 py-1.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 shadow-sm">Confirmar</button>
     </div>
   </div>
 </div>
