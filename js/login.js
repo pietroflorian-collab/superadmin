@@ -10,6 +10,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
+// Aplicar tema guardado (mismo key que el panel)
+if (localStorage.getItem('superadmin.darkMode') === '1') {
+  document.documentElement.classList.add('dark');
+}
+
 const form = document.getElementById('form-login');
 const emailInput = document.getElementById('login-email');
 const passInput = document.getElementById('login-password');
