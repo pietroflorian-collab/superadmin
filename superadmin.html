@@ -38,32 +38,32 @@
 </head>
 <body class="h-full bg-zinc-50 font-sans text-zinc-900 selection:bg-zinc-900 selection:text-white flex overflow-hidden">
   
-  <!-- Overlay de arranque: oculta el panel hasta validar sesión -->
-  <div id="boot-overlay" class="fixed inset-0 z-50 bg-zinc-50 flex items-center justify-center">
-    <div class="w-6 h-6 border-2 border-zinc-300 border-t-zinc-900 rounded-full animate-spin"></div>
+   <!-- Overlay de arranque: oculta el panel hasta validar sesión -->
+  <div id="boot-overlay" class="fixed inset-0 z-50 bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center">
+    <div class="w-6 h-6 border-2 border-zinc-300 dark:border-zinc-700 border-t-zinc-900 dark:border-t-zinc-100 rounded-full animate-spin"></div>
   </div>
 
-    <!-- SIDEBAR -->
-  <aside class="w-64 border-r border-zinc-200 bg-white flex flex-col justify-between shrink-0 select-none">
+  <!-- SIDEBAR -->
+  <aside class="w-64 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col justify-between shrink-0 select-none">
     <div>
-      <div class="h-16 px-5 border-b border-zinc-200/80 flex items-center gap-3">
-        <div class="w-8 h-8 rounded-md bg-zinc-900 text-white flex items-center justify-center font-bold text-sm tracking-tight shadow-sm">
+      <div class="h-16 px-5 border-b border-zinc-200/80 dark:border-zinc-800 flex items-center gap-3">
+        <div class="w-8 h-8 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center font-bold text-sm tracking-tight shadow-sm">
           <i data-lucide="cpu" class="w-4 h-4" aria-hidden="true"></i>
         </div>
         <div class="min-w-0">
-          <h1 class="text-xs font-semibold text-zinc-900 tracking-tight leading-none truncate">Soluciones de IA</h1>
-          <p class="text-[11px] font-medium text-zinc-400 mt-1 leading-none tracking-tight">Gestión de Menú</p>
+          <h1 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight leading-none truncate">Soluciones de IA</h1>
+          <p class="text-[11px] font-medium text-zinc-400 dark:text-zinc-500 mt-1 leading-none tracking-tight">Gestión de Menú</p>
         </div>
       </div>
       <nav class="p-3 space-y-0.5">
-        <div class="px-2.5 py-1.5 text-[10px] font-medium tracking-wider text-zinc-400 uppercase">Plataforma</div>
-        <a href="#" class="flex items-center justify-between px-2.5 py-2 text-xs font-medium bg-zinc-100 text-zinc-900 rounded-md">
+        <div class="px-2.5 py-1.5 text-[10px] font-medium tracking-wider text-zinc-400 dark:text-zinc-500 uppercase">Plataforma</div>
+        <a href="#" class="flex items-center justify-between px-2.5 py-2 text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-md">
           <div class="flex items-center gap-2.5">
-            <i data-lucide="utensils" class="w-4 h-4 text-zinc-900" aria-hidden="true"></i>
+            <i data-lucide="utensils" class="w-4 h-4 text-zinc-900 dark:text-zinc-100" aria-hidden="true"></i>
             <span>Clientes &amp; Menús</span>
           </div>
         </a>
-        <button data-action="abrir-gestion-pagos" class="w-full flex items-center justify-between px-2.5 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 rounded-md transition-colors">
+        <button data-action="abrir-gestion-pagos" class="w-full flex items-center justify-between px-2.5 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-md transition-colors">
           <div class="flex items-center gap-2.5">
             <i data-lucide="credit-card" class="w-4 h-4" aria-hidden="true"></i>
             <span>Gestión de Pagos</span>
@@ -72,20 +72,20 @@
       </nav>
     </div>
 
-    <div class="p-3 border-t border-zinc-200 space-y-2">
+    <div class="p-3 border-t border-zinc-200 dark:border-zinc-800 space-y-2">
       <!-- Perfil admin -->
       <div class="flex items-center gap-2.5 min-w-0 p-2">
-        <div id="perfil-avatar" class="w-7 h-7 rounded-full bg-zinc-200 border border-zinc-300 text-zinc-700 flex items-center justify-center text-[10px] font-medium shrink-0">SA</div>
+        <div id="perfil-avatar" class="w-7 h-7 rounded-full bg-zinc-200 dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 flex items-center justify-center text-[10px] font-medium shrink-0">SA</div>
         <div class="min-w-0 flex-1">
-          <p id="perfil-email" class="text-[11px] font-medium text-zinc-900 truncate">Cargando…</p>
-          <p class="text-[10px] text-zinc-400 truncate">Super Admin</p>
+          <p id="perfil-email" class="text-[11px] font-medium text-zinc-900 dark:text-zinc-100 truncate">Cargando…</p>
+          <p class="text-[10px] text-zinc-400 dark:text-zinc-500 truncate">Super Admin</p>
         </div>
       </div>
 
       <!-- Timeout configurable -->
       <div class="px-2 space-y-1">
-        <label for="perfil-timeout" class="text-[10px] text-zinc-400 font-medium">Expiración de sesión</label>
-        <select id="perfil-timeout" class="w-full text-[11px] bg-zinc-50 border border-zinc-200 rounded-md px-2 py-1.5 focus:outline-none focus:border-zinc-400">
+        <label for="perfil-timeout" class="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium">Expiración de sesión</label>
+        <select id="perfil-timeout" class="w-full text-[11px] bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-2 py-1.5 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
           <option value="5">5 minutos</option>
           <option value="15">15 minutos</option>
           <option value="30">30 minutos</option>
@@ -96,20 +96,21 @@
       </div>
 
       <!-- Acciones -->
-            <div class="flex gap-1.5 px-2">
-        <button data-action="cambiar-password" class="flex-1 h-7 rounded-md border border-zinc-200 text-zinc-600 hover:bg-zinc-100 text-[10px] font-medium flex items-center justify-center gap-1">
+      <div class="flex gap-1.5 px-2">
+        <button data-action="cambiar-password" class="flex-1 h-7 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-[10px] font-medium flex items-center justify-center gap-1">
           <i data-lucide="key-round" class="w-3 h-3" aria-hidden="true"></i>
           <span>Contraseña</span>
         </button>
         <button id="btn-toggle-dark" data-action="toggle-dark" aria-label="Modo oscuro" title="Modo oscuro"
-                class="h-7 w-7 rounded-md text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 flex items-center justify-center transition-colors shrink-0">
+                class="h-7 w-7 rounded-md text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors shrink-0">
           <i id="icon-dark-toggle" data-lucide="moon" class="w-3.5 h-3.5" aria-hidden="true"></i>
         </button>
         <button data-action="cerrar-sesion" aria-label="Cerrar sesión" title="Cerrar sesión"
-                class="h-7 px-2 rounded-md text-zinc-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors shrink-0">
+                class="h-7 px-2 rounded-md text-zinc-400 dark:text-zinc-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center justify-center transition-colors shrink-0">
           <i data-lucide="log-out" class="w-3.5 h-3.5" aria-hidden="true"></i>
         </button>
       </div>
+    </div>
   </aside>
 
     <!-- ÁREA CENTRAL -->
