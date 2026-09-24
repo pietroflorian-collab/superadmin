@@ -191,88 +191,88 @@
       </div>
     </main>
 
-  <!-- DRAWER IZQUIERDO: NUEVO CLIENTE -->
+    <!-- DRAWER IZQUIERDO: NUEVO CLIENTE -->
   <aside
     id="drawer-nuevo-cliente"
     role="dialog"
     aria-modal="true"
     aria-labelledby="nuevo-cliente-titulo"
-    class="fixed inset-y-0 left-0 w-full sm:w-[85%] md:w-[60%] lg:w-[42%] lg:min-w-[480px] lg:max-w-[620px] bg-white border-r border-zinc-200 shadow-2xl z-50 flex flex-col overflow-hidden transition-transform duration-300 ease-in-out transform -translate-x-full"
+    class="fixed inset-y-0 left-0 w-full sm:w-[85%] md:w-[60%] lg:w-[42%] lg:min-w-[480px] lg:max-w-[620px] bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 shadow-2xl z-50 flex flex-col overflow-hidden transition-transform duration-300 ease-in-out transform -translate-x-full"
   >
-    <div class="h-16 px-6 border-b border-zinc-200 flex items-center justify-between shrink-0 bg-white">
+    <div class="h-16 px-6 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between shrink-0 bg-white dark:bg-zinc-900">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-md bg-zinc-900 text-white flex items-center justify-center font-bold text-sm shrink-0">
+        <div class="w-9 h-9 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center font-bold text-sm shrink-0">
           <i data-lucide="user-plus" class="w-4 h-4" aria-hidden="true"></i>
         </div>
         <div>
-          <h3 id="nuevo-cliente-titulo" class="text-sm font-semibold text-zinc-900">Registrar Nuevo Cliente</h3>
-          <p class="text-[11px] text-zinc-400 font-mono">Formulario de contacto inicial</p>
+          <h3 id="nuevo-cliente-titulo" class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Registrar Nuevo Cliente</h3>
+          <p class="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">Formulario de contacto inicial</p>
         </div>
       </div>
-      <button data-action="cerrar-nuevo-cliente" aria-label="Cerrar" class="w-8 h-8 rounded-md border border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 flex items-center justify-center transition-colors">
+      <button data-action="cerrar-nuevo-cliente" aria-label="Cerrar" class="w-8 h-8 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors">
         <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
       </button>
     </div>
 
-    <form id="form-nuevo-cliente" novalidate class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+    <form id="form-nuevo-cliente" novalidate class="flex-1 overflow-y-auto px-6 py-5 space-y-5 bg-zinc-50 dark:bg-zinc-950">
 
       <!-- TIPO DE PERSONA -->
-      <section class="border border-zinc-200 rounded-lg p-4 bg-white space-y-3">
-        <h4 class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Tipo de Persona</h4>
+      <section class="border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 bg-white dark:bg-zinc-900 space-y-3">
+        <h4 class="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Tipo de Persona</h4>
         <div class="flex gap-3">
-          <label class="flex-1 flex items-center gap-2 p-2.5 border border-zinc-200 rounded-md cursor-pointer hover:bg-zinc-50 has-[:checked]:border-zinc-900 has-[:checked]:bg-zinc-50">
-            <input type="radio" name="tipoPersona" value="natural" checked class="accent-zinc-900">
-            <span class="text-xs font-medium">Natural</span>
+          <label class="flex-1 flex items-center gap-2 p-2.5 border border-zinc-200 dark:border-zinc-700 rounded-md cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800 has-[:checked]:border-zinc-900 dark:has-[:checked]:border-zinc-100 has-[:checked]:bg-zinc-50 dark:has-[:checked]:bg-zinc-800">
+            <input type="radio" name="tipoPersona" value="natural" checked class="accent-zinc-900 dark:accent-zinc-100">
+            <span class="text-xs font-medium text-zinc-900 dark:text-zinc-100">Natural</span>
           </label>
-          <label class="flex-1 flex items-center gap-2 p-2.5 border border-zinc-200 rounded-md cursor-pointer hover:bg-zinc-50 has-[:checked]:border-zinc-900 has-[:checked]:bg-zinc-50">
-            <input type="radio" name="tipoPersona" value="juridica" class="accent-zinc-900">
-            <span class="text-xs font-medium">Jurídica</span>
+          <label class="flex-1 flex items-center gap-2 p-2.5 border border-zinc-200 dark:border-zinc-700 rounded-md cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800 has-[:checked]:border-zinc-900 dark:has-[:checked]:border-zinc-100 has-[:checked]:bg-zinc-50 dark:has-[:checked]:bg-zinc-800">
+            <input type="radio" name="tipoPersona" value="juridica" class="accent-zinc-900 dark:accent-zinc-100">
+            <span class="text-xs font-medium text-zinc-900 dark:text-zinc-100">Jurídica</span>
           </label>
         </div>
       </section>
 
       <!-- DATOS DEL CLIENTE -->
-      <section class="border border-zinc-200 rounded-lg p-4 bg-white space-y-3">
-        <h4 class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Datos del Cliente</h4>
+      <section class="border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 bg-white dark:bg-zinc-900 space-y-3">
+        <h4 class="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Datos del Cliente</h4>
 
         <div class="grid grid-cols-2 gap-3">
           <div class="space-y-1">
-            <label for="nc-tipo-doc" class="text-[11px] font-medium text-zinc-500">Tipo de Documento *</label>
-            <select id="nc-tipo-doc" required class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400"></select>
+            <label for="nc-tipo-doc" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Tipo de Documento *</label>
+            <select id="nc-tipo-doc" required class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500"></select>
           </div>
           <div class="space-y-1">
-            <label for="nc-num-doc" class="text-[11px] font-medium text-zinc-500">Número de Documento *</label>
-            <input id="nc-num-doc" type="text" required inputmode="numeric" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
+            <label for="nc-num-doc" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Número de Documento *</label>
+            <input id="nc-num-doc" type="text" required inputmode="numeric" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
           </div>
         </div>
 
         <div class="space-y-1">
-          <label for="nc-nombre-cliente" class="text-[11px] font-medium text-zinc-500">Nombre del Cliente *</label>
-          <input id="nc-nombre-cliente" type="text" required autocomplete="name" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
+          <label for="nc-nombre-cliente" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Nombre del Cliente *</label>
+          <input id="nc-nombre-cliente" type="text" required autocomplete="name" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
         </div>
 
         <div class="space-y-1">
-          <label for="nc-nombre-comercial" class="text-[11px] font-medium text-zinc-500">Nombre Comercial *</label>
-          <input id="nc-nombre-comercial" type="text" required autocomplete="organization" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
+          <label for="nc-nombre-comercial" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Nombre Comercial *</label>
+          <input id="nc-nombre-comercial" type="text" required autocomplete="organization" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div class="space-y-1">
-            <label for="nc-telefono" class="text-[11px] font-medium text-zinc-500">Teléfono *</label>
-            <input id="nc-telefono" type="tel" required placeholder="+573001234567" autocomplete="tel" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
+            <label for="nc-telefono" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Teléfono *</label>
+            <input id="nc-telefono" type="tel" required placeholder="+573001234567" autocomplete="tel" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
           </div>
           <div class="space-y-1">
-            <label for="nc-correo" class="text-[11px] font-medium text-zinc-500">Correo Operativo *</label>
-            <input id="nc-correo" type="email" required autocomplete="email" class="w-full bg-zinc-50 border border-zinc-200 rounded-md px-3 py-2 text-xs focus:outline-none focus:border-zinc-400">
+            <label for="nc-correo" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Correo Operativo *</label>
+            <input id="nc-correo" type="email" required autocomplete="email" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
           </div>
         </div>
       </section>
 
       <!-- DIRECCIONES -->
-      <section class="border border-zinc-200 rounded-lg p-4 bg-white space-y-3">
+      <section class="border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 bg-white dark:bg-zinc-900 space-y-3">
         <div class="flex items-center justify-between">
-          <h4 class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Direcciones</h4>
-          <button type="button" data-action="add-direccion" class="text-[11px] font-medium text-zinc-700 hover:text-zinc-900 flex items-center gap-1">
+          <h4 class="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Direcciones</h4>
+          <button type="button" data-action="add-direccion" class="text-[11px] font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1">
             <i data-lucide="plus" class="w-3 h-3" aria-hidden="true"></i> Añadir
           </button>
         </div>
@@ -280,24 +280,24 @@
       </section>
 
       <!-- REDES SOCIALES -->
-      <section class="border border-zinc-200 rounded-lg p-4 bg-white space-y-3">
+      <section class="border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 bg-white dark:bg-zinc-900 space-y-3">
         <div class="flex items-center justify-between">
-          <h4 class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Redes Sociales</h4>
-          <button type="button" data-action="add-red" class="text-[11px] font-medium text-zinc-700 hover:text-zinc-900 flex items-center gap-1">
+          <h4 class="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Redes Sociales</h4>
+          <button type="button" data-action="add-red" class="text-[11px] font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1">
             <i data-lucide="plus" class="w-3 h-3" aria-hidden="true"></i> Añadir
           </button>
         </div>
         <div id="nc-redes" class="space-y-3"></div>
-        <p id="nc-redes-advertencia" class="text-[10px] text-amber-600 font-mono"></p>
+        <p id="nc-redes-advertencia" class="text-[10px] text-amber-600 dark:text-amber-400 font-mono"></p>
       </section>
 
       <div class="pt-2 pb-4 flex justify-end gap-2">
-        <button type="button" data-action="cerrar-nuevo-cliente" class="px-3.5 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100 rounded-md">Cancelar</button>
-        <button id="btn-registrar-cliente" type="submit" class="px-3.5 py-1.5 rounded-md bg-zinc-900 text-white text-xs font-medium hover:bg-zinc-800 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed">Registrar Cliente</button>
+        <button type="button" data-action="cerrar-nuevo-cliente" class="px-3.5 py-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md">Cancelar</button>
+        <button id="btn-registrar-cliente" type="submit" class="px-3.5 py-1.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed">Registrar Cliente</button>
       </div>
     </form>
   </aside>
-
+  
   <!-- DRAWER DERECHO: GESTIONAR -->
   <aside
     id="client-drawer"
@@ -676,7 +676,7 @@
   </noscript>
 
    <!-- MODAL: Confirmar -->
-    
+
 <div id="modal-confirmar" role="dialog" aria-modal="true" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-[90] flex items-center justify-center hidden p-4">
   <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-2xl w-full max-w-2xl">
     <div class="px-5 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800">
