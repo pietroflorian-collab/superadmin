@@ -87,8 +87,10 @@ function mostrarOverlay(mostrar) {
 let initHecho = false;
 
 onAuthStateChanged(auth, async (user) => {
+  const retorno = encodeURIComponent('gestionar.html?id=' + getIdCliente());
+
   if (!user) {
-    window.location.href = 'login.html';
+    window.location.href = 'login.html?return=' + retorno;
     return;
   }
 
@@ -97,12 +99,12 @@ onAuthStateChanged(auth, async (user) => {
     const snap = await getDoc(doc(db, 'admins', user.uid));
     if (!snap.exists()) {
       await signOut(auth);
-      window.location.href = 'login.html';
+      window.location.href = 'login.html?return=' + retorno;
       return;
     }
   } catch (e) {
     console.error('Error al verificar admin:', e);
-    window.location.href = 'login.html';
+    window.location.href = 'login.html?return=' + retorno;
     return;
   }
 
