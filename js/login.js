@@ -52,7 +52,8 @@ async function verificarAdmin(user) {
 // Si ya hay sesión válida, redirige
 onAuthStateChanged(auth, async (user) => {
   if (user && (await verificarAdmin(user))) {
-    window.location.href = 'superadmin.html';
+    const retorno = new URLSearchParams(location.search).get('return');
+window.location.href = retorno ? decodeURIComponent(retorno) : 'superadmin.html';
   }
 });
 
