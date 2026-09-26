@@ -252,10 +252,9 @@ async function publicarEnGitHub(request, env) {
       return jsonResponse({ ok: false, error: `GitHub GET ${getRes.status}: ${err}` }, 200, env, request);
     }
 
-    menuActual.tema = {
-      colorPrimario: apariencia.colorPrimario || "#18181b",
-      tipografia: apariencia.tipografia || "Inter",
-      radioBordes: apariencia.radioBordes || "8",
+        menuActual.tema = {
+      ...(menuActual.tema || {}),
+      ...apariencia,
     };
 
     const nuevoContenido = b64EncodeUnicode(JSON.stringify(menuActual, null, 2));

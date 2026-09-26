@@ -23,11 +23,39 @@ let direccionesGestionar = [];
 let editandoRedes = false;
 let editandoDirecciones = false;
 
+const cap = (s) => s[0].toUpperCase() + s.slice(1);
+
+// Lee todos los valores de apariencia desde el DOM
+function leerAparienciaDelDOM() {
+  const apariencia = {
+    colorPrimario: document.getElementById('drawer-color-primario')?.value,
+    radioBordes: document.getElementById('drawer-radio-bordes')?.value
+  };
+
+  const zonas = new Set();
+  document.querySelectorAll('[data-zona]').forEach(el => zonas.add(el.dataset.zona));
+
+  zonas.forEach(zona => {
+    const fKey = 'fuente' + cap(zona);
+    const sKey = 'tamaño' + cap(zona);
+
+    const fuenteInput = document.querySelector(`.fuente-select[data-zona="${zona}"]`);
+    if (fuenteInput && fuenteInput.value) apariencia[fKey] = fuenteInput.value;
+
+    const sizeInput = document.querySelector(`.tamaño-input[data-zona="${zona}"]`);
+    if (sizeInput && sizeInput.value) {
+      const n = parseInt(sizeInput.value, 10);
+      if (!isNaN(n) && n >= 8 && n <= 120) apariencia[sKey] = n;
+    }
+  });
+
+  return apariencia;
+}
+
 // ---------- Cargar datos del cliente en el DOM ----------
 export function cargarDatosCliente(c) {
   if (!c) return;
 
-  // Datos básicos
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set('gd-nombre-cliente', c.nombreCliente || '—');
   set('gd-nombre-comercial', c.nombreComercial || '—');
@@ -72,7 +100,7 @@ export function cargarDatosCliente(c) {
   const inpVenc = document.getElementById('gd-input-vencimiento');
   if (inpVenc) inpVenc.value = c.fechaVencimiento || '';
 
-  // Apariencia
+  // Apariencia — colores y formas
   const ap = c.apariencia || {};
   const colorInput = document.getElementById('drawer-color-primario');
   if (colorInput) {
@@ -80,14 +108,33 @@ export function cargarDatosCliente(c) {
     const vcp = document.getElementById('valor-color-primario');
     if (vcp) vcp.textContent = colorInput.value.toUpperCase();
   }
-  const tipoSelect = document.getElementById('drawer-tipografia');
-  if (tipoSelect) tipoSelect.value = ap.tipografia || 'Inter';
   const radioInput = document.getElementById('drawer-radio-bordes');
   if (radioInput) {
     radioInput.value = ap.radioBordes ?? '8';
     const vrb = document.getElementById('valor-radio-bordes');
     if (vrb) vrb.textContent = radioInput.value + 'px';
   }
+
+  // Apariencia — tipografía por zonas (27 fuentes + 27 tamaños)
+  const zonas = new Set();
+  document.querySelectorAll('[data-zona]').forEach(el => zonas.add(el.dataset.zona));
+
+  zonas.forEach(zona => {
+    const fKey = 'fuente' + cap(zona);
+    const sKey = 'tamaño' + cap(zona);
+
+    const fuenteInput = document.querySelector(`.fuente-select[data-zona="${zona}"]`);
+    if (fuenteInput) fuenteInput.value = ap[fKey] || '';
+
+    const sizeInput = document.querySelector(`.tamaño-input[data-zona="${zona}"]`);
+    if (sizeInput) sizeInput.value = ap[sKey] ?? '';
+
+    // Actualizar preview
+    const preview = document.querySelector(`.preview-tipografia[data-zona="${zona}"]`);
+    if (preview && ap[fKey]) {
+      preview.style.fontFamily = `'${ap[fKey]}', sans-serif`;
+    }
+  });
 
   refrescarIconos();
 }
@@ -100,19 +147,28 @@ export async function guardarConfiguracion() {
   const orig = btn.textContent;
   btn.textContent = 'Guardando...'; btn.disabled = true;
 
-  const nueva = {
-    colorPrimario: document.getElementById('drawer-color-primario').value,
-    tipografia: document.getElementById('drawer-tipografia').value,
-    radioBordes: document.getElementById('drawer-radio-bordes').value
-  };
+  const nueva = leerAparienciaDelDOM();
 
   try {
     await updateDoc(doc(db, "clientes_agencia", c.id), { apariencia: nueva });
     const s = await getDoc(doc(db, "clientes_agencia", c.id));
     if (s.exists()) setState({ clienteSeleccionado: { id: c.id, ...s.data() } });
-    toast('Apariencia actualizada.', 'exito');
+       toast('Apariencia actualizada.', 'exito');
+    // Limpiar indicador (estilo inline para que funcione con Tailwind CDN)
+    const btnAfter = document.getElementById('btn-guardar-apariencia');
+    if (btnAfter) {
+      btnAfter.textContent = 'Guardar Apariencia';
+      btnAfter.style.backgroundColor = '';
+      btnAfter.style.color = '';
+      btnAfter.style.fontWeight = '';
+    }
   } catch (e) { console.error(e); toast('Error al guardar.', 'error'); }
   finally { btn.textContent = orig; btn.disabled = false; }
+}
+
+export function limpiarCambiosApariencia() {
+  const btn = document.getElementById('btn-guardar-apariencia');
+  if (btn) btn.classList.remove('ring-2', 'ring-amber-400', 'dark:ring-amber-500');
 }
 
 // ---------- Guardar: Redes ----------
@@ -270,11 +326,8 @@ export async function publicarEnGitHub() {
     if (!ghData.token) throw new Error('Falta el token de GitHub');
     if (!c.githubRepo) throw new Error('El cliente no tiene repo GitHub asignado');
 
-    const apariencia = {
-      colorPrimario: document.getElementById('drawer-color-primario').value,
-      tipografia: document.getElementById('drawer-tipografia').value,
-      radioBordes: document.getElementById('drawer-radio-bordes').value
-    };
+    // Enviar apariencia completa (colores + tipografía completa)
+    const apariencia = leerAparienciaDelDOM();
 
     const idToken = await auth.currentUser.getIdToken();
     const res = await fetch(`${WORKER_URL}/publicar`, {
