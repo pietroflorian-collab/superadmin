@@ -1,5 +1,5 @@
 // ==========================================
-// MÓDULO: GESTIONAR — Drawer derecho
+// MÓDULO: GESTIONAR — Lógica de secciones
 // ==========================================
 import { db, auth } from '../config/firebase.js';
 import { doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
@@ -16,106 +16,80 @@ import {
 import { cargarClientes } from './clientes.js';
 import { WORKER_URL } from '../config/constantes.js';
 import { toast, confirmar } from '../ui/notificaciones.js';
-import { activarFocusTrap } from '../ui/focus-trap.js';
 
-// ---------- Estado local del módulo ----------
+// ---------- Estado local ----------
 let redesGestionar = [];
 let direccionesGestionar = [];
 let editandoRedes = false;
 let editandoDirecciones = false;
-let drawerTrapDesactivar = null;
 
-// ---------- Abrir ----------
-export async function abrirPanelCliente(id) {
-  const drawer = document.getElementById('client-drawer');
-  const backdrop = document.getElementById('backdrop');
+// ---------- Cargar datos del cliente en el DOM ----------
+export function cargarDatosCliente(c) {
+  if (!c) return;
 
-  try {
-    const docRef = doc(db, "clientes_agencia", id);
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) return;
+  // Datos básicos
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('gd-nombre-cliente', c.nombreCliente || '—');
+  set('gd-nombre-comercial', c.nombreComercial || '—');
+  set('gd-documento', c.numeroDocumento ? `${c.tipoDocumento || ''} ${c.numeroDocumento}` : '—');
+  set('gd-telefono', c.telefono || '—');
+  set('gd-correo', c.correoOperativo || '—');
+  set('gd-github', c.githubRepo || '—');
 
-    setState({ clienteSeleccionado: { id, ...docSnap.data() } });
-    const c = getState().clienteSeleccionado;
-
-    const nombre = c.nombreComercial || c.nombreCliente || 'Sin nombre';
-    document.getElementById('drawer-nombre-cliente').textContent = nombre;
-    document.getElementById('drawer-avatar').textContent = nombre.substring(0, 2).toUpperCase();
-
-    document.getElementById('gd-nombre-cliente').textContent = c.nombreCliente || '—';
-    document.getElementById('gd-nombre-comercial').textContent = c.nombreComercial || '—';
-    document.getElementById('gd-documento').textContent = c.numeroDocumento
-      ? `${c.tipoDocumento || ''} ${c.numeroDocumento}` : '—';
-    document.getElementById('gd-telefono').textContent = c.telefono || '—';
-    document.getElementById('gd-correo').textContent = c.correoOperativo || '—';
-    document.getElementById('gd-github').textContent = c.githubRepo || '—';
-
-    // Redes — modo lectura
-    editandoRedes = false;
-    redesGestionar = Array.isArray(c.redes) ? [...c.redes] : [];
-    renderRedesGestionar(document.getElementById('gd-redes'), redesGestionar);
-    document.getElementById('gd-redes-acciones').classList.add('hidden');
-    document.getElementById('gd-redes-acciones').classList.remove('flex');
-    document.getElementById('btn-toggle-redes').textContent = 'Editar';
-
-    // Direcciones — modo lectura
-    editandoDirecciones = false;
-    direccionesGestionar = Array.isArray(c.direcciones) ? [...c.direcciones] : [];
-    renderDireccionesGestionar(document.getElementById('gd-direcciones'), direccionesGestionar);
-    document.getElementById('gd-direcciones-acciones').classList.add('hidden');
-    document.getElementById('gd-direcciones-acciones').classList.remove('flex');
-    document.getElementById('btn-toggle-direcciones').textContent = 'Editar';
-
-    // Fechas
-    document.getElementById('gd-fecha-creacion').textContent = formatearFechaHora(c.fechaCreacion);
-    document.getElementById('gd-fecha-produccion').textContent = formatearFecha(c.fechaProduccion);
-
-    const tieneProd = !!c.fechaProduccion;
-    document.getElementById('gd-fecha-produccion-edit').classList.toggle('hidden', tieneProd);
-    document.getElementById('gd-fecha-produccion-bloqueada').classList.toggle('hidden', !tieneProd);
-    document.getElementById('gd-input-produccion').value = c.fechaProduccion || '';
-
-    document.getElementById('gd-fecha-vencimiento').textContent = formatearFecha(c.fechaVencimiento);
-    const prorroga = c.fechaVencimiento ? sumarDias(c.fechaVencimiento, DIAS_PRORROGA) : null;
-    document.getElementById('gd-prorroga').textContent = prorroga ? formatearFecha(prorroga) : '—';
-    document.getElementById('gd-input-vencimiento').value = c.fechaVencimiento || '';
-
-        // Apariencia
-    const ap = c.apariencia || {};
-    const colorInput = document.getElementById('drawer-color-primario');
-    colorInput.value = ap.colorPrimario || '#18181b';
-    document.getElementById('valor-color-primario').textContent = colorInput.value.toUpperCase();
-    document.getElementById('drawer-tipografia').value = ap.tipografia || 'Inter';
-    const radioInput = document.getElementById('drawer-radio-bordes');
-    radioInput.value = ap.radioBordes ?? '8';
-    document.getElementById('valor-radio-bordes').textContent = radioInput.value + 'px';
-
-        drawer.classList.remove('translate-x-full');
-    backdrop.classList.remove('hidden');
-    refrescarIconos();
-
-    // Focus trap del drawer
-    if (drawerTrapDesactivar) drawerTrapDesactivar();
-    drawerTrapDesactivar = activarFocusTrap(drawer);
-  } catch (error) {
-    console.error("Error al abrir panel:", error);
-  }
-}
-
-export function cerrarPanel() {
-  const drawer = document.getElementById('client-drawer');
-  const backdrop = document.getElementById('backdrop');
-
-  drawer.classList.add('translate-x-full');
-  backdrop.classList.add('hidden');
-  setState({ clienteSeleccionado: null });
+  // Redes — modo lectura
   editandoRedes = false;
+  redesGestionar = Array.isArray(c.redes) ? [...c.redes] : [];
+  const gdRedes = document.getElementById('gd-redes');
+  if (gdRedes) renderRedesGestionar(gdRedes, redesGestionar);
+  const redesAcc = document.getElementById('gd-redes-acciones');
+  if (redesAcc) { redesAcc.classList.add('hidden'); redesAcc.classList.remove('flex'); }
+  const btnRedes = document.getElementById('btn-toggle-redes');
+  if (btnRedes) btnRedes.textContent = 'Editar';
+
+  // Direcciones — modo lectura
   editandoDirecciones = false;
+  direccionesGestionar = Array.isArray(c.direcciones) ? [...c.direcciones] : [];
+  const gdDir = document.getElementById('gd-direcciones');
+  if (gdDir) renderDireccionesGestionar(gdDir, direccionesGestionar);
+  const dirAcc = document.getElementById('gd-direcciones-acciones');
+  if (dirAcc) { dirAcc.classList.add('hidden'); dirAcc.classList.remove('flex'); }
+  const btnDir = document.getElementById('btn-toggle-direcciones');
+  if (btnDir) btnDir.textContent = 'Editar';
 
-  // Desactivar focus trap
-  if (drawerTrapDesactivar) { drawerTrapDesactivar(); drawerTrapDesactivar = null; }
+  // Fechas
+  set('gd-fecha-creacion', formatearFechaHora(c.fechaCreacion));
+  set('gd-fecha-produccion', formatearFecha(c.fechaProduccion));
 
-  // Limpieza de bóveda la hace master.js al cerrar
+  const tieneProd = !!c.fechaProduccion;
+  document.getElementById('gd-fecha-produccion-edit')?.classList.toggle('hidden', tieneProd);
+  document.getElementById('gd-fecha-produccion-bloqueada')?.classList.toggle('hidden', !tieneProd);
+  const inpProd = document.getElementById('gd-input-produccion');
+  if (inpProd) inpProd.value = c.fechaProduccion || '';
+
+  set('gd-fecha-vencimiento', formatearFecha(c.fechaVencimiento));
+  const prorroga = c.fechaVencimiento ? sumarDias(c.fechaVencimiento, DIAS_PRORROGA) : null;
+  set('gd-prorroga', prorroga ? formatearFecha(prorroga) : '—');
+  const inpVenc = document.getElementById('gd-input-vencimiento');
+  if (inpVenc) inpVenc.value = c.fechaVencimiento || '';
+
+  // Apariencia
+  const ap = c.apariencia || {};
+  const colorInput = document.getElementById('drawer-color-primario');
+  if (colorInput) {
+    colorInput.value = ap.colorPrimario || '#18181b';
+    const vcp = document.getElementById('valor-color-primario');
+    if (vcp) vcp.textContent = colorInput.value.toUpperCase();
+  }
+  const tipoSelect = document.getElementById('drawer-tipografia');
+  if (tipoSelect) tipoSelect.value = ap.tipografia || 'Inter';
+  const radioInput = document.getElementById('drawer-radio-bordes');
+  if (radioInput) {
+    radioInput.value = ap.radioBordes ?? '8';
+    const vrb = document.getElementById('valor-radio-bordes');
+    if (vrb) vrb.textContent = radioInput.value + 'px';
+  }
+
+  refrescarIconos();
 }
 
 // ---------- Guardar: Apariencia ----------
@@ -136,7 +110,7 @@ export async function guardarConfiguracion() {
     await updateDoc(doc(db, "clientes_agencia", c.id), { apariencia: nueva });
     const s = await getDoc(doc(db, "clientes_agencia", c.id));
     if (s.exists()) setState({ clienteSeleccionado: { id: c.id, ...s.data() } });
-     toast('Apariencia actualizada.', 'exito');
+    toast('Apariencia actualizada.', 'exito');
   } catch (e) { console.error(e); toast('Error al guardar.', 'error'); }
   finally { btn.textContent = orig; btn.disabled = false; }
 }
@@ -150,7 +124,6 @@ export async function guardarRedes() {
     const meta = obtenerRedMeta(r.tipo, REDES_DISPONIBLES);
     if (!meta.regex.test(r.valor.trim())) {
       toast(`Formato inválido en ${meta.label}: ${meta.placeholder}`, 'aviso'); return;
-      return;
     }
   }
   try {
@@ -206,7 +179,6 @@ export async function guardarFechaProduccion() {
   if (!c) return;
   if (c.fechaProduccion) {
     toast('La fecha de producción ya está fijada y no puede modificarse.', 'aviso'); return;
-    return;
   }
   const fp = document.getElementById('gd-input-produccion').value;
   if (!fp) { toast('Selecciona una fecha de producción.', 'aviso'); return; }
@@ -260,7 +232,7 @@ export function toggleEditarDirecciones() {
   refrescarIconos();
 }
 
-// ---------- Añadir/Quitar redes (modo edición en drawer) ----------
+// ---------- Añadir/Quitar redes ----------
 export function addRedGestionar() {
   redesGestionar.push({ tipo: 'instagram', valor: '' });
   renderRedEditor(document.getElementById('gd-redes'), redesGestionar, (r) => { redesGestionar = r; }, 'gd');
@@ -293,9 +265,7 @@ export async function publicarEnGitHub() {
 
   try {
     const githubSnap = await getDoc(doc(db, 'clientes_agencia', c.id, 'secretos', 'github'));
-    if (!githubSnap.exists()) {
-      throw new Error('No hay credenciales de GitHub guardadas');
-    }
+    if (!githubSnap.exists()) throw new Error('No hay credenciales de GitHub guardadas');
     const ghData = githubSnap.data();
     if (!ghData.token) throw new Error('Falta el token de GitHub');
     if (!c.githubRepo) throw new Error('El cliente no tiene repo GitHub asignado');
@@ -306,7 +276,7 @@ export async function publicarEnGitHub() {
       radioBordes: document.getElementById('drawer-radio-bordes').value
     };
 
-        const idToken = await auth.currentUser.getIdToken();
+    const idToken = await auth.currentUser.getIdToken();
     const res = await fetch(`${WORKER_URL}/publicar`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
@@ -321,10 +291,10 @@ export async function publicarEnGitHub() {
     const data = await res.json();
 
     if (data.ok) {
-    toast(`✓ ${data.mensaje}\nCommit: ${data.commit?.substring(0, 7) || '—'}`, 'exito');
-  } else {
-    toast(`✗ Error: ${data.error}`, 'error');
-}
+      toast(`✓ ${data.mensaje}\nCommit: ${data.commit?.substring(0, 7) || '—'}`, 'exito');
+    } else {
+      toast(`✗ Error: ${data.error}`, 'error');
+    }
   } catch (e) {
     console.error(e);
     toast(`Error: ${e.message}`, 'error');

@@ -1,26 +1,24 @@
 // ==========================================
 // SUPERADMIN WORKER — Proxy seguro con Bearer ID Token
-//   - Valida Firebase (evita CORS)
-//   - Valida Cloudflare (evita CORS)
-//   - Publica apariencia en GitHub
-// Auth: Firebase ID Token en Authorization: Bearer <token>
-// Verificación: JWKS local (sin llamadas extra por request)
 // ==========================================
 
 // ---------- CORS ----------
-function corsHeaders(env) {
+function corsHeaders(env, request) {
+  const origin = request?.headers.get("Origin") || "";
+  const allowed = (env.ALLOWED_ORIGIN || "").split(",").map((o) => o.trim());
+  const allowOrigin = allowed.includes(origin) ? origin : (allowed[0] || "*");
   return {
-    "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN || "*",
+    "Access-Control-Allow-Origin": allowOrigin,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Max-Age": "86400",
   };
 }
 
-function jsonResponse(data, status = 200, env) {
+function jsonResponse(data, status = 200, env, request) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { "Content-Type": "application/json", ...corsHeaders(env) },
+    headers: { "Content-Type": "application/json", ...corsHeaders(env, request) },
   });
 }
 
@@ -42,7 +40,7 @@ function b64DecodeUnicode(b64) {
 // ==========================================
 // VERIFICACIÓN DE ID TOKEN (JWKS)
 // ==========================================
-let jwksCache = null;      // { keys, expiresAt }
+let jwksCache = null;
 
 function base64UrlToUint8Array(b64url) {
   const b64 = b64url.replace(/-/g, "+").replace(/_/g, "/")
@@ -68,7 +66,6 @@ async function getJwks() {
   if (!res.ok) throw new Error(`JWKS fetch falló: ${res.status}`);
   const data = await res.json();
 
-  // cache-control de Google: max-age suele ser 21600s (6h). Guardamos 1h por seguridad.
   jwksCache = { keys: data.keys, expiresAt: now + 60 * 60 * 1000 };
   return jwksCache;
 }
@@ -93,7 +90,6 @@ async function verificarIdToken(idToken, env) {
 
     if (header.alg !== "RS256") return { ok: false, error: "Algoritmo no soportado" };
 
-    // Validar claims
     const projectId = env.FIREBASE_PROJECT_ID;
     if (payload.aud !== projectId) return { ok: false, error: "aud inválido" };
     if (payload.iss !== `https://securetoken.google.com/${projectId}`)
@@ -102,7 +98,6 @@ async function verificarIdToken(idToken, env) {
       return { ok: false, error: "Token expirado" };
     if (payload.sub !== env.ADMIN_UID) return { ok: false, error: "UID no autorizado" };
 
-    // Verificar firma
     const { keys } = await getJwks();
     const jwk = keys.find((k) => k.kid === header.kid);
     if (!jwk) return { ok: false, error: "kid no encontrado" };
@@ -143,7 +138,7 @@ async function validarFirebase(request, env) {
   const { projectId, apiKey } = body;
 
   if (!projectId || !apiKey) {
-    return jsonResponse({ ok: false, error: "Falta projectId o apiKey" }, 400, env);
+    return jsonResponse({ ok: false, error: "Falta projectId o apiKey" }, 400, env, request);
   }
 
   try {
@@ -152,16 +147,16 @@ async function validarFirebase(request, env) {
     const data = await res.json();
 
     if (data.projectId) {
-      return jsonResponse({ ok: true, mensaje: `API Key válida · ${data.projectId}` }, 200, env);
+      return jsonResponse({ ok: true, mensaje: `API Key válida · ${data.projectId}` }, 200, env, request);
     }
 
     if (data.error) {
-      return jsonResponse({ ok: false, error: data.error.message || "API Key inválida" }, 200, env);
+      return jsonResponse({ ok: false, error: data.error.message || "API Key inválida" }, 200, env, request);
     }
 
-    return jsonResponse({ ok: false, error: "Respuesta inesperada de Google" }, 200, env);
+    return jsonResponse({ ok: false, error: "Respuesta inesperada de Google" }, 200, env, request);
   } catch (e) {
-    return jsonResponse({ ok: false, error: e.message }, 500, env);
+    return jsonResponse({ ok: false, error: e.message }, 500, env, request);
   }
 }
 
@@ -173,7 +168,7 @@ async function validarCloudflare(request, env) {
   const { apiToken, zoneId } = body;
 
   if (!apiToken) {
-    return jsonResponse({ ok: false, error: "Falta apiToken" }, 400, env);
+    return jsonResponse({ ok: false, error: "Falta apiToken" }, 400, env, request);
   }
 
   try {
@@ -186,7 +181,7 @@ async function validarCloudflare(request, env) {
     const data = await res.json();
 
     if (!data.success || data.result?.status !== "active") {
-      return jsonResponse({ ok: false, error: "Token inválido o inactivo" }, 200, env);
+      return jsonResponse({ ok: false, error: "Token inválido o inactivo" }, 200, env, request);
     }
 
     if (zoneId) {
@@ -198,17 +193,17 @@ async function validarCloudflare(request, env) {
         return jsonResponse({
           ok: true,
           mensaje: `Token activo, pero zoneId "${zoneId}" inaccesible`,
-        }, 200, env);
+        }, 200, env, request);
       }
       return jsonResponse({
         ok: true,
         mensaje: `Token activo · zona: ${zData.result.name}`,
-      }, 200, env);
+      }, 200, env, request);
     }
 
-    return jsonResponse({ ok: true, mensaje: "Token activo" }, 200, env);
+    return jsonResponse({ ok: true, mensaje: "Token activo" }, 200, env, request);
   } catch (e) {
-    return jsonResponse({ ok: false, error: e.message }, 500, env);
+    return jsonResponse({ ok: false, error: e.message }, 500, env, request);
   }
 }
 
@@ -220,12 +215,12 @@ async function publicarEnGitHub(request, env) {
   const { repo, branch, path, token, apariencia } = body;
 
   if (!repo || !token) {
-    return jsonResponse({ ok: false, error: "Falta repo o token" }, 400, env);
+    return jsonResponse({ ok: false, error: "Falta repo o token" }, 400, env, request);
   }
 
   const [owner, repoName] = repo.split("/");
   if (!owner || !repoName) {
-    return jsonResponse({ ok: false, error: "Formato de repo inválido. Usa owner/repo" }, 400, env);
+    return jsonResponse({ ok: false, error: "Formato de repo inválido. Usa owner/repo" }, 400, env, request);
   }
 
   const ghHeaders = {
@@ -254,7 +249,7 @@ async function publicarEnGitHub(request, env) {
       }
     } else if (getRes.status !== 404) {
       const err = await getRes.text();
-      return jsonResponse({ ok: false, error: `GitHub GET ${getRes.status}: ${err}` }, 200, env);
+      return jsonResponse({ ok: false, error: `GitHub GET ${getRes.status}: ${err}` }, 200, env, request);
     }
 
     menuActual.tema = {
@@ -280,7 +275,7 @@ async function publicarEnGitHub(request, env) {
 
     if (!putRes.ok) {
       const err = await putRes.text();
-      return jsonResponse({ ok: false, error: `GitHub PUT ${putRes.status}: ${err}` }, 200, env);
+      return jsonResponse({ ok: false, error: `GitHub PUT ${putRes.status}: ${err}` }, 200, env, request);
     }
 
     const putData = await putRes.json();
@@ -289,9 +284,9 @@ async function publicarEnGitHub(request, env) {
       mensaje: "Publicado correctamente",
       commit: putData.commit?.sha || null,
       url: putData.commit?.html_url || null,
-    }, 200, env);
+    }, 200, env, request);
   } catch (e) {
-    return jsonResponse({ ok: false, error: e.message }, 500, env);
+    return jsonResponse({ ok: false, error: e.message }, 500, env, request);
   }
 }
 
@@ -301,30 +296,29 @@ async function publicarEnGitHub(request, env) {
 export default {
   async fetch(request, env) {
     if (request.method === "OPTIONS") {
-      return new Response(null, { headers: corsHeaders(env) });
+      return new Response(null, { headers: corsHeaders(env, request) });
     }
 
     const url = new URL(request.url);
     const path = url.pathname;
 
     if (path === "/health") {
-      return jsonResponse({ status: "ok", service: "superadmin-worker" }, 200, env);
+      return jsonResponse({ status: "ok", service: "superadmin-worker" }, 200, env, request);
     }
 
     if (request.method !== "POST") {
-      return jsonResponse({ ok: false, error: "Método no permitido" }, 405, env);
+      return jsonResponse({ ok: false, error: "Método no permitido" }, 405, env, request);
     }
 
-    // Verificar ID Token de Firebase
     const auth = await verificarAuth(request, env);
     if (!auth.ok) {
-      return jsonResponse({ ok: false, error: `No autorizado: ${auth.error}` }, 401, env);
+      return jsonResponse({ ok: false, error: `No autorizado: ${auth.error}` }, 401, env, request);
     }
 
     if (path === "/validar/firebase") return validarFirebase(request, env);
     if (path === "/validar/cloudflare") return validarCloudflare(request, env);
     if (path === "/publicar") return publicarEnGitHub(request, env);
 
-    return jsonResponse({ ok: false, error: "Ruta no encontrada" }, 404, env);
+    return jsonResponse({ ok: false, error: "Ruta no encontrada" }, 404, env, request);
   },
 };

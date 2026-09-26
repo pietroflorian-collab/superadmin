@@ -132,9 +132,9 @@ function renderTablaClientes(lista) {
           ${prorroga ? `<div class="text-[10px] text-amber-600 dark:text-amber-400">Prórroga: ${esc(prorroga.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' }))}</div>` : ''}
         </td>
         <td class="px-6 py-4 text-right">
-          <button data-action="abrir-panel-cliente" data-cliente-id="${esc(c.id)}" class="px-3 py-1.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800">
-            Gestionar
-          </button>
+          <button data-action="ver-cliente" data-cliente-id="${esc(c.id)}" class="px-3 py-1.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800">
+  Gestionar
+</button>
         </td>
       </tr>
     `;
