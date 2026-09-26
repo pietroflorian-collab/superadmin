@@ -96,22 +96,109 @@
             <span class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono">Variables CSS</span>
           </div>
 
-          <!-- COLORES Y FORMAS -->
+                              <!-- COLORES -->
           <div>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="space-y-1.5">
+            <div class="flex items-center gap-2 mb-3">
+              <i data-lucide="palette" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" aria-hidden="true"></i>
+              <h5 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Colores</h5>
+              <span class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono">10 controles</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+
+              <div class="space-y-1">
                 <label for="drawer-color-primario" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Color Primario</label>
-                <div class="flex items-center gap-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md p-1.5">
-                  <input id="drawer-color-primario" type="color" value="#18181b" class="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 p-0 cursor-pointer bg-transparent" data-live="color-primario" />
-                  <span id="valor-color-primario" class="text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300 uppercase">#18181B</span>
+                <div class="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md p-1.5">
+                  <input id="drawer-color-primario" type="color" value="#AD2020" class="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 p-0 cursor-pointer bg-transparent" data-live="color-primario" />
+                  <input type="text" id="texto-color-primario" value="#AD2020" maxlength="7" class="flex-1 min-w-0 bg-transparent text-[10px] font-mono font-medium text-zinc-700 dark:text-zinc-300 uppercase focus:outline-none" data-color-input="color-primario" />
                 </div>
               </div>
-              <div class="space-y-1.5">
-                <label for="drawer-radio-bordes" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Bordes Redondeados</label>
-                <div class="flex items-center gap-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md p-1.5">
-                  <input id="drawer-radio-bordes" type="range" min="0" max="24" step="2" value="8" class="flex-1 accent-zinc-900 dark:accent-zinc-100 cursor-pointer" data-live="radio-bordes" />
-                  <span id="valor-radio-bordes" class="text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">8px</span>
+
+              <div class="space-y-1">
+                <label for="drawer-color-fondo" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Color de Fondo</label>
+                <div class="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md p-1.5">
+                  <input id="drawer-color-fondo" type="color" value="#000000" class="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 p-0 cursor-pointer bg-transparent" data-live="color-fondo" />
+                  <input type="text" id="texto-color-fondo" value="#000000" maxlength="7" class="flex-1 min-w-0 bg-transparent text-[10px] font-mono font-medium text-zinc-700 dark:text-zinc-300 uppercase focus:outline-none" data-color-input="color-fondo" />
                 </div>
+              </div>
+
+              <div class="space-y-1">
+                <label for="drawer-color-texto" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Color de Texto</label>
+                <div class="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md p-1.5">
+                  <input id="drawer-color-texto" type="color" value="#e2e2e2" class="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 p-0 cursor-pointer bg-transparent" data-live="color-texto" />
+                  <input type="text" id="texto-color-texto" value="#E2E2E2" maxlength="7" class="flex-1 min-w-0 bg-transparent text-[10px] font-mono font-medium text-zinc-700 dark:text-zinc-300 uppercase focus:outline-none" data-color-input="color-texto" />
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <label for="drawer-color-texto-suave" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Texto Suave</label>
+                <div class="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md p-1.5">
+                  <input id="drawer-color-texto-suave" type="color" value="#e3beba" class="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 p-0 cursor-pointer bg-transparent" data-live="color-texto-suave" />
+                  <input type="text" id="texto-color-texto-suave" value="#E3BEBA" maxlength="7" class="flex-1 min-w-0 bg-transparent text-[10px] font-mono font-medium text-zinc-700 dark:text-zinc-300 uppercase focus:outline-none" data-color-input="color-texto-suave" />
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <label for="drawer-color-tarjetas" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Color de Tarjetas</label>
+                <div class="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md p-1.5">
+                  <input id="drawer-color-tarjetas" type="color" value="#0a0a0a" class="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 p-0 cursor-pointer bg-transparent" data-live="color-tarjetas" />
+                  <input type="text" id="texto-color-tarjetas" value="#0A0A0A" maxlength="7" class="flex-1 min-w-0 bg-transparent text-[10px] font-mono font-medium text-zinc-700 dark:text-zinc-300 uppercase focus:outline-none" data-color-input="color-tarjetas" />
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <label for="drawer-color-carrito" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Color del Carrito</label>
+                <div class="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md p-1.5">
+                  <input id="drawer-color-carrito" type="color" value="#1a1a1a" class="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 p-0 cursor-pointer bg-transparent" data-live="color-carrito" />
+                  <input type="text" id="texto-color-carrito" value="#1A1A1A" maxlength="7" class="flex-1 min-w-0 bg-transparent text-[10px] font-mono font-medium text-zinc-700 dark:text-zinc-300 uppercase focus:outline-none" data-color-input="color-carrito" />
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <label for="drawer-color-bordes" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Color de Bordes</label>
+                <div class="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md p-1.5">
+                  <input id="drawer-color-bordes" type="color" value="#5b403e" class="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 p-0 cursor-pointer bg-transparent" data-live="color-bordes" />
+                  <input type="text" id="texto-color-bordes" value="#5B403E" maxlength="7" class="flex-1 min-w-0 bg-transparent text-[10px] font-mono font-medium text-zinc-700 dark:text-zinc-300 uppercase focus:outline-none" data-color-input="color-bordes" />
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <label for="drawer-color-acento" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Color de Acento</label>
+                <div class="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md p-1.5">
+                  <input id="drawer-color-acento" type="color" value="#ACC677" class="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 p-0 cursor-pointer bg-transparent" data-live="color-acento" />
+                  <input type="text" id="texto-color-acento" value="#ACC677" maxlength="7" class="flex-1 min-w-0 bg-transparent text-[10px] font-mono font-medium text-zinc-700 dark:text-zinc-300 uppercase focus:outline-none" data-color-input="color-acento" />
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <label for="drawer-color-subtitulo" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Color de Subtítulo</label>
+                <div class="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md p-1.5">
+                  <input id="drawer-color-subtitulo" type="color" value="#ffb3b1" class="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 p-0 cursor-pointer bg-transparent" data-live="color-subtitulo" />
+                  <input type="text" id="texto-color-subtitulo" value="#FFB3B1" maxlength="7" class="flex-1 min-w-0 bg-transparent text-[10px] font-mono font-medium text-zinc-700 dark:text-zinc-300 uppercase focus:outline-none" data-color-input="color-subtitulo" />
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <label for="drawer-color-hover" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Color Hover</label>
+                <div class="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md p-1.5">
+                  <input id="drawer-color-hover" type="color" value="#393939" class="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 p-0 cursor-pointer bg-transparent" data-live="color-hover" />
+                  <input type="text" id="texto-color-hover" value="#393939" maxlength="7" class="flex-1 min-w-0 bg-transparent text-[10px] font-mono font-medium text-zinc-700 dark:text-zinc-300 uppercase focus:outline-none" data-color-input="color-hover" />
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- FORMAS -->
+          <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800">
+            <div class="flex items-center gap-2 mb-3">
+              <i data-lucide="square" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" aria-hidden="true"></i>
+              <h5 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Formas</h5>
+            </div>
+            <div class="space-y-1">
+              <label for="drawer-radio-bordes" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Bordes Redondeados</label>
+              <div class="flex items-center gap-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md p-1.5">
+                <input id="drawer-radio-bordes" type="range" min="0" max="24" step="2" value="8" class="flex-1 accent-zinc-900 dark:accent-zinc-100 cursor-pointer" data-live="radio-bordes" />
+                <span id="valor-radio-bordes" class="text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">8px</span>
               </div>
             </div>
           </div>
