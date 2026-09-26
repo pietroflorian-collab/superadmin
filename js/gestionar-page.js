@@ -280,11 +280,15 @@ document.addEventListener('click', (event) => {
 // ==========================================
 document.addEventListener('input', (event) => {
   const live = event.target.dataset.live;
-  if (live === 'color-primario') {
-    const s = document.getElementById('valor-color-primario');
-    if (s) s.textContent = event.target.value.toUpperCase();
+
+  // Color picker → actualizar texto
+  const coloresLive = ['color-primario', 'color-fondo', 'color-texto', 'color-texto-suave', 'color-tarjetas', 'color-carrito', 'color-bordes', 'color-acento', 'color-subtitulo', 'color-hover'];
+  if (coloresLive.includes(live)) {
+    const textoInput = document.getElementById('texto-' + live);
+    if (textoInput) textoInput.value = event.target.value.toUpperCase();
     marcarCambiosSinGuardar();
   }
+
   if (live === 'radio-bordes') {
     const s = document.getElementById('valor-radio-bordes');
     if (s) s.textContent = event.target.value + 'px';
@@ -296,6 +300,40 @@ document.addEventListener('input', (event) => {
     const fuente = document.querySelector(`.fuente-select[data-zona="${zona}"]`)?.value || '';
     actualizarPreviewZona(zona, fuente);
     marcarCambiosSinGuardar();
+  }
+});
+
+// Validar color al salir del campo o presionar Enter
+function aplicarTextoColor(input) {
+  let val = input.value.trim().toUpperCase();
+  if (!val) return;
+  if (!val.startsWith('#')) val = '#' + val;
+
+  if (/^#[0-9A-F]{3}$/.test(val)) {
+    val = '#' + val[1] + val[1] + val[2] + val[2] + val[3] + val[3];
+  }
+
+  const key = input.dataset.colorInput;
+  const picker = document.getElementById('drawer-' + key);
+
+  if (/^#[0-9A-F]{6}$/.test(val)) {
+    if (picker) picker.value = val;
+    input.value = val;
+    marcarCambiosSinGuardar();
+  } else {
+    input.value = picker ? picker.value.toUpperCase() : '';
+  }
+}
+
+document.addEventListener('blur', (event) => {
+  if (event.target.dataset.colorInput) aplicarTextoColor(event.target);
+}, true);
+
+document.addEventListener('keydown', (event) => {
+  if (event.target.dataset.colorInput && event.key === 'Enter') {
+    event.preventDefault();
+    aplicarTextoColor(event.target);
+    event.target.blur();
   }
 });
 

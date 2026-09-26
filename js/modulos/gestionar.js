@@ -27,10 +27,27 @@ const cap = (s) => s[0].toUpperCase() + s.slice(1);
 
 // Lee todos los valores de apariencia desde el DOM
 function leerAparienciaDelDOM() {
-  const apariencia = {
-    colorPrimario: document.getElementById('drawer-color-primario')?.value,
-    radioBordes: document.getElementById('drawer-radio-bordes')?.value
+  const leerColor = (id) => {
+    const v = document.getElementById(id)?.value;
+    return v && /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(v) ? v : undefined;
   };
+
+  const apariencia = {
+    colorPrimario:   leerColor('drawer-color-primario'),
+    colorFondo:      leerColor('drawer-color-fondo'),
+    colorTexto:      leerColor('drawer-color-texto'),
+    colorTextoSuave: leerColor('drawer-color-texto-suave'),
+    colorTarjetas:   leerColor('drawer-color-tarjetas'),
+    colorCarrito:    leerColor('drawer-color-carrito'),
+    colorBordes:     leerColor('drawer-color-bordes'),
+    colorAcento:     leerColor('drawer-color-acento'),
+    colorSubtitulo:  leerColor('drawer-color-subtitulo'),
+    colorHover:      leerColor('drawer-color-hover'),
+    radioBordes:     document.getElementById('drawer-radio-bordes')?.value
+  };
+
+  // Quitar undefined
+  Object.keys(apariencia).forEach(k => apariencia[k] === undefined && delete apariencia[k]);
 
   const zonas = new Set();
   document.querySelectorAll('[data-zona]').forEach(el => zonas.add(el.dataset.zona));
@@ -100,14 +117,42 @@ export function cargarDatosCliente(c) {
   const inpVenc = document.getElementById('gd-input-vencimiento');
   if (inpVenc) inpVenc.value = c.fechaVencimiento || '';
 
-  // Apariencia — colores y formas
+   // Apariencia — colores y formas
   const ap = c.apariencia || {};
-  const colorInput = document.getElementById('drawer-color-primario');
-  if (colorInput) {
-    colorInput.value = ap.colorPrimario || '#18181b';
-    const vcp = document.getElementById('valor-color-primario');
-    if (vcp) vcp.textContent = colorInput.value.toUpperCase();
-  }
+
+  const colorDefault = {
+    'color-primario':   '#AD2020',
+    'color-fondo':      '#000000',
+    'color-texto':      '#e2e2e2',
+    'color-texto-suave':'#e3beba',
+    'color-tarjetas':   '#0a0a0a',
+    'color-carrito':    '#1a1a1a',
+    'color-bordes':     '#5b403e',
+    'color-acento':     '#ACC677',
+    'color-subtitulo':  '#ffb3b1',
+    'color-hover':      '#393939'
+  };
+
+  const coloresFirestore = {
+    'color-primario':   ap.colorPrimario,
+    'color-fondo':      ap.colorFondo,
+    'color-texto':      ap.colorTexto,
+    'color-texto-suave':ap.colorTextoSuave,
+    'color-tarjetas':   ap.colorTarjetas,
+    'color-carrito':    ap.colorCarrito,
+    'color-bordes':     ap.colorBordes,
+    'color-acento':     ap.colorAcento,
+    'color-subtitulo':  ap.colorSubtitulo,
+    'color-hover':      ap.colorHover
+  };
+
+    Object.entries(coloresFirestore).forEach(([key, valor]) => {
+    const picker = document.getElementById('drawer-' + key);
+    const texto = document.getElementById('texto-' + key);
+    if (picker) picker.value = valor || colorDefault[key];
+    if (texto) texto.value = (valor || colorDefault[key]).toUpperCase();
+  });
+
   const radioInput = document.getElementById('drawer-radio-bordes');
   if (radioInput) {
     radioInput.value = ap.radioBordes ?? '8';
