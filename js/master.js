@@ -18,20 +18,6 @@ import {
   addRedNuevo, rmRedNuevo, addDireccionNuevo, rmDireccionNuevo
 } from './modulos/nuevo-cliente.js';
 import {
-  abrirPanelCliente, cerrarPanel,
-  guardarConfiguracion, guardarRedes, guardarDirecciones, guardarFechas,
-  guardarFechaProduccion,
-  toggleEditarRedes, toggleEditarDirecciones,
-  addRedGestionar, rmRedGestionar,
-  addDireccionGestionar, rmDireccionGestionar, publicarEnGitHub,
-  } from './modulos/gestionar.js';
-import { getState, setState } from './core/state.js';
-import {
-  cambiarTabBoveda, cargarCredenciales, guardarCredenciales,
-  probarConexion, toggleVisibilidadToken,
-  inicializarBoveda, limpiarBoveda
-} from './modulos/boveda.js';
-import {
   abrirGestionPagos, cerrarGestionPagos,
   gpBuscarCliente, seleccionarCliente,
   toggleCliente, validarConfirmacion,
@@ -43,20 +29,11 @@ import { iniciarVigilancia } from './core/sesion.js';
 import { initPerfil, solicitarCambioPassword, toggleDarkMode } from './modulos/perfil.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-// ==========================================s
+// ==========================================
 // DOM
 // ==========================================
 const backdrop = document.getElementById('backdrop');
 const drawerNuevo = document.getElementById('drawer-nuevo-cliente');
-const drawer = document.getElementById('client-drawer');
-
-// ==========================================
-// WRAPPER: abrir panel + inicializar bóveda
-// ==========================================
-async function abrirPanelClienteConBoveda(id) {
-  await abrirPanelCliente(id);
-  inicializarBoveda();
-}
 
 // ==========================================
 // DELEGACIÓN
@@ -70,29 +47,10 @@ const ACCIONES = {
   'nc-rm-red': (el) => rmRedNuevo(el),
   'nc-rm-dir': (el) => rmDireccionNuevo(el),
 
-  // Gestionar
-  'abrir-panel-cliente': (el) => abrirPanelClienteConBoveda(el.dataset.clienteId),
-  'cerrar-panel': () => { limpiarBoveda(); cerrarPanel(); },
-  'guardar-apariencia': () => guardarConfiguracion(),
-  'guardar-redes': () => guardarRedes(),
-  'guardar-direcciones': () => guardarDirecciones(),
-  'guardar-fechas': () => guardarFechas(),
-  'guardar-fecha-produccion': () => guardarFechaProduccion(),
-  'toggle-redes': () => toggleEditarRedes(),
-  'toggle-direcciones': () => toggleEditarDirecciones(),
-  'add-red-gestionar': () => addRedGestionar(),
-  'add-direccion-gestionar': () => addDireccionGestionar(),
-  'gd-rm-red': (el) => rmRedGestionar(el),
-  'gd-rm-dir': (el) => rmDireccionGestionar(el),
-  'publicar-github': () => publicarEnGitHub(),
-  
-  // Bóveda
-  'boveda-tab': (el) => cambiarTabBoveda(el.dataset.provider),
-  'guardar-credenciales': () => guardarCredenciales(),
-  'probar-conexion': () => probarConexion(),
-  'toggle-token': (el) => toggleVisibilidadToken(el.dataset.target),
+  // Ver cliente → redirige a la página nueva
+  'ver-cliente': (el) => { window.location.href = 'gestionar.html?id=' + el.dataset.clienteId; },
 
-    // Gestión de Pagos
+  // Gestión de Pagos
   'abrir-gestion-pagos': () => abrirGestionPagos(),
   'cerrar-gestion-pagos': () => cerrarGestionPagos(),
   'gp-seleccionar': (el) => seleccionarCliente(el.dataset.clienteId),
@@ -100,14 +58,15 @@ const ACCIONES = {
   'gp-toggle-servicio': () => toggleServicio(),
   'gp-confirmar-retiro': () => confirmarRetiro(),
   'gp-cancelar-retiro': () => cancelarRetiro(),
+
+  // Perfil
   'cambiar-password': () => solicitarCambioPassword(),
-    'toggle-dark': () => toggleDarkMode(),
+  'toggle-dark': () => toggleDarkMode(),
   'cerrar-sesion': async () => {
     await signOut(auth);
     window.location.href = 'login.html';
   },
 };
-  
 
 document.addEventListener('click', (event) => {
   const trigger = event.target.closest('[data-action]');
@@ -130,25 +89,16 @@ document.addEventListener('change', (e) => {
     const opciones = tipo === 'juridica' ? JUR : NAT;
     sel.innerHTML = opciones.map((t) => `<option value="${t}">${t}</option>`).join('');
   }
-    if (e.target.id === 'filtro-estado-cliente')  setFiltroEstadoCliente(e.target.value);
+  if (e.target.id === 'filtro-estado-cliente')  setFiltroEstadoCliente(e.target.value);
   if (e.target.id === 'filtro-estado-servicio') setFiltroEstadoServicio(e.target.value);
   if (e.target.id === 'filtro-vencimiento')     setFiltroVencimiento(e.target.value);
 });
 
 // ==========================================
-// PREVIEW EN VIVO
+// FILTROS — BUSCADOR
 // ==========================================
 document.addEventListener('input', (event) => {
-  const live = event.target.dataset.live;
-  if (live === 'color-primario') {
-    const s = document.getElementById('valor-color-primario');
-    if (s) s.textContent = event.target.value.toUpperCase();
-  }
-  if (live === 'radio-bordes') {
-    const s = document.getElementById('valor-radio-bordes');
-    if (s) s.textContent = event.target.value + 'px';
-  }
-    if (event.target.id === 'filtro-busqueda') setFiltroBusqueda(event.target.value);
+  if (event.target.id === 'filtro-busqueda') setFiltroBusqueda(event.target.value);
 });
 
 // ==========================================
@@ -159,7 +109,6 @@ document.addEventListener('keydown', (event) => {
   const modal = document.getElementById('modal-gestion-pagos');
   if (modal && !modal.classList.contains('hidden')) { cerrarGestionPagos(); return; }
   if (!drawerNuevo.classList.contains('-translate-x-full')) { cerrarNuevoCliente(); return; }
-  if (!drawer.classList.contains('translate-x-full')) cerrarPanel();
 });
 
 // ==========================================
@@ -168,12 +117,11 @@ document.addEventListener('keydown', (event) => {
 if (backdrop) {
   backdrop.addEventListener('click', () => {
     cerrarNuevoCliente();
-    cerrarPanel();
   });
 }
 
 // ==========================================
-// FORM
+// FORM NUEVO CLIENTE
 // ==========================================
 document.getElementById('form-nuevo-cliente').addEventListener('submit', registrarNuevoCliente);
 
@@ -188,7 +136,6 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // Verificar que el UID está registrado en admins/{uid}
   try {
     const snap = await getDoc(doc(db, 'admins', user.uid));
     if (!snap.exists()) {
@@ -202,11 +149,9 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // Autorizado → quitar overlay de arranque
   const overlay = document.getElementById('boot-overlay');
   if (overlay) overlay.remove();
 
-  // Arranca el panel (solo una vez)
   if (!initHecho) {
     initHecho = true;
     refrescarIconos();

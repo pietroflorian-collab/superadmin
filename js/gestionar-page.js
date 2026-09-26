@@ -4,6 +4,19 @@
 import { db, auth } from './config/firebase.js';
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { setState } from './core/state.js';
+import {
+  guardarConfiguracion, publicarEnGitHub,
+  guardarRedes, guardarDirecciones, guardarFechas, guardarFechaProduccion,
+  toggleEditarRedes, toggleEditarDirecciones,
+  addRedGestionar, rmRedGestionar,
+  addDireccionGestionar, rmDireccionGestionar,
+  cargarDatosCliente
+} from './modulos/gestionar.js';
+import {
+  cambiarTabBoveda, guardarCredenciales, probarConexion,
+  toggleVisibilidadToken, inicializarBoveda
+} from './modulos/boveda.js';
 
 // ---------- Estado local ----------
 let clienteActual = null;
@@ -13,24 +26,22 @@ if (localStorage.getItem('superadmin.darkMode') === '1') {
   document.documentElement.classList.add('dark');
 }
 
-// ---------- Helper: obtener id de la URL ----------
+// ---------- Helpers ----------
 function getIdCliente() {
   return new URLSearchParams(location.search).get('id');
 }
 
-// ---------- Helper: redirigir a superadmin ----------
 function volverAlPanel() {
   window.location.href = 'superadmin.html';
 }
 
-// ---------- Cargar cliente ----------
 async function cargarCliente(id) {
   const snap = await getDoc(doc(db, 'clientes_agencia', id));
   if (!snap.exists()) return null;
   return { id, ...snap.data() };
 }
 
-// ---------- Render básico del header ----------
+// ---------- Render del header ----------
 function renderHeader(c) {
   const nombre = c.nombreComercial || c.nombreCliente || 'Sin nombre';
   const iniciales = nombre.split(' ').slice(0, 2).map((p) => p[0]).join('').toUpperCase();
@@ -49,7 +60,7 @@ function renderHeader(c) {
   elEC.innerHTML = `<span class="w-2 h-2 rounded-full ${ec === 'Activo' ? 'bg-emerald-500' : 'bg-zinc-400'}"></span>${ec}`;
 }
 
-// ---------- Manejo de tabs ----------
+// ---------- Tabs ----------
 function activarTab(nombre) {
   document.querySelectorAll('.tab-btn').forEach((btn) => {
     const activo = btn.dataset.tab === nombre;
@@ -73,10 +84,55 @@ function inicializarTabs() {
   document.querySelectorAll('.tab-btn').forEach((btn) => {
     btn.addEventListener('click', () => activarTab(btn.dataset.tab));
   });
-  activarTab('apariencia');   // Tab por defecto
+  activarTab('apariencia');
 }
 
-// ---------- Guard de sesión + carga ----------
+// ---------- Delegación de clicks ----------
+const ACCIONES_PAGINA = {
+  // Apariencia
+  'guardar-apariencia': () => guardarConfiguracion(),
+  'publicar-github': () => publicarEnGitHub(),
+  // Bóveda
+  'boveda-tab': (el) => cambiarTabBoveda(el.dataset.provider),
+  'guardar-credenciales': () => guardarCredenciales(),
+  'probar-conexion': () => probarConexion(),
+  'toggle-token': (el) => toggleVisibilidadToken(el.dataset.target),
+  // Redes
+  'guardar-redes': () => guardarRedes(),
+  'toggle-redes': () => toggleEditarRedes(),
+  'add-red-gestionar': () => addRedGestionar(),
+  'gd-rm-red': (el) => rmRedGestionar(el),
+  // Direcciones
+  'guardar-direcciones': () => guardarDirecciones(),
+  'toggle-direcciones': () => toggleEditarDirecciones(),
+  'add-direccion-gestionar': () => addDireccionGestionar(),
+  'gd-rm-dir': (el) => rmDireccionGestionar(el),
+  // Fechas
+  'guardar-fechas': () => guardarFechas(),
+  'guardar-fecha-produccion': () => guardarFechaProduccion(),
+};
+
+document.addEventListener('click', (event) => {
+  const trigger = event.target.closest('[data-action]');
+  if (!trigger) return;
+  const handler = ACCIONES_PAGINA[trigger.dataset.action];
+  if (handler) { event.preventDefault(); handler(trigger); }
+});
+
+// ---------- Preview en vivo ----------
+document.addEventListener('input', (event) => {
+  const live = event.target.dataset.live;
+  if (live === 'color-primario') {
+    const s = document.getElementById('valor-color-primario');
+    if (s) s.textContent = event.target.value.toUpperCase();
+  }
+  if (live === 'radio-bordes') {
+    const s = document.getElementById('valor-radio-bordes');
+    if (s) s.textContent = event.target.value + 'px';
+  }
+});
+
+// ---------- Guard + carga ----------
 function mostrarOverlay(mostrar) {
   const overlay = document.getElementById('boot-overlay');
   if (!overlay) return;
@@ -94,7 +150,6 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // Verificar que el UID esté en admins/{uid}
   try {
     const snap = await getDoc(doc(db, 'admins', user.uid));
     if (!snap.exists()) {
@@ -108,28 +163,22 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // Una sola vez
   if (initHecho) return;
   initHecho = true;
 
-  // Leer ?id=
   const id = getIdCliente();
-  if (!id) {
-    volverAlPanel();
-    return;
-  }
+  if (!id) { volverAlPanel(); return; }
 
-  // Cargar cliente
   try {
     const c = await cargarCliente(id);
-    if (!c) {
-      console.warn('Cliente no encontrado:', id);
-      volverAlPanel();
-      return;
-    }
+    if (!c) { volverAlPanel(); return; }
     clienteActual = c;
+
+    setState({ clienteSeleccionado: c });
     renderHeader(c);
     inicializarTabs();
+    cargarDatosCliente(c);          // llena todos los campos del DOM
+    inicializarBoveda();            // carga credenciales del cliente
     mostrarOverlay(false);
     if (window.lucide) window.lucide.createIcons();
   } catch (e) {
