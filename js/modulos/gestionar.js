@@ -79,7 +79,7 @@ export function cargarDatosCliente(c) {
   set('gd-documento', c.numeroDocumento ? `${c.tipoDocumento || ''} ${c.numeroDocumento}` : '—');
   set('gd-telefono', c.telefono || '—');
   set('gd-correo', c.correoOperativo || '—');
-  set('gd-github', c.githubRepo || '—');
+    set('gd-github', c.repoPublico || c.githubRepo || '—');
 
   // Redes — modo lectura
   editandoRedes = false;
@@ -368,8 +368,9 @@ export async function publicarEnGitHub() {
     const githubSnap = await getDoc(doc(db, 'clientes_agencia', c.id, 'secretos', 'github'));
     if (!githubSnap.exists()) throw new Error('No hay credenciales de GitHub guardadas');
     const ghData = githubSnap.data();
-    if (!ghData.token) throw new Error('Falta el token de GitHub');
-    if (!c.githubRepo) throw new Error('El cliente no tiene repo GitHub asignado');
+       if (!ghData.token) throw new Error('Falta el token de GitHub');
+    const repoPublico = c.repoPublico || c.githubRepo; // fallback legacy
+    if (!repoPublico) throw new Error('El cliente no tiene repo público asignado');
 
     // Enviar apariencia completa (colores + tipografía completa)
     const apariencia = leerAparienciaDelDOM();
@@ -378,8 +379,8 @@ export async function publicarEnGitHub() {
     const res = await fetch(`${WORKER_URL}/publicar`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
-      body: JSON.stringify({
-        repo: c.githubRepo,
+       body: JSON.stringify({
+        repo: repoPublico,
         branch: ghData.branch || 'main',
         path: ghData.pathMenuJson || 'data/menu.json',
         token: ghData.token,
