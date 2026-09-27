@@ -37,9 +37,11 @@ export async function cargarCredenciales() {
   const status = document.getElementById('boveda-status');
   if (status) status.textContent = 'Cargando...';
 
-  // Repo top-level (no depende de secretos/github)
-  const repoInput = document.getElementById('boveda-github-repo');
-  if (repoInput) repoInput.value = c.githubRepo || '';
+   // Repos top-level
+  const repoPrivadoInput = document.getElementById('boveda-github-repo-privado');
+  if (repoPrivadoInput) repoPrivadoInput.value = c.repoPrivado || '';
+  const repoPublicoInput = document.getElementById('boveda-github-repo-publico');
+  if (repoPublicoInput) repoPublicoInput.value = c.repoPublico || c.githubRepo || ''; // fallback legacy
 
   try {
     const provs = ['google', 'github', 'firebase', 'cloudflare'];    
@@ -104,10 +106,15 @@ export async function guardarCredenciales() {
         actualizadoEn: ts
       };
     
-    } else if (proveedorActivo === 'github') {
-  const repo = document.getElementById('boveda-github-repo').value.trim();
-  if (repo && !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
-    throw new Error('Repo inválido. Formato: owner/repo');
+        } else if (proveedorActivo === 'github') {
+  const repoPrivado = document.getElementById('boveda-github-repo-privado').value.trim();
+  const repoPublico = document.getElementById('boveda-github-repo-publico').value.trim();
+  const regexRepo = /^[\w.-]+\/[\w.-]+$/;
+  if (repoPrivado && !regexRepo.test(repoPrivado)) {
+    throw new Error('Repo privado inválido. Formato: owner/repo');
+  }
+  if (repoPublico && !regexRepo.test(repoPublico)) {
+    throw new Error('Repo público inválido. Formato: owner/repo');
   }
   docRef = doc(db, 'clientes_agencia', c.id, 'secretos', 'github');
   payload = {
@@ -139,13 +146,14 @@ export async function guardarCredenciales() {
     await setDoc(docRef, payload, { merge: true });
      
 
-    // Persistir githubRepo top-level si estamos en GitHub
+    // Persistir repos top-level si estamos en GitHub
 if (proveedorActivo === 'github') {
-  const repo = document.getElementById('boveda-github-repo').value.trim();
-  await updateDoc(doc(db, 'clientes_agencia', c.id), { githubRepo: repo });
-  setState({ clienteSeleccionado: { ...c, githubRepo: repo } });
+  const repoPrivado = document.getElementById('boveda-github-repo-privado').value.trim();
+  const repoPublico = document.getElementById('boveda-github-repo-publico').value.trim();
+  await updateDoc(doc(db, 'clientes_agencia', c.id), { repoPrivado, repoPublico });
+  setState({ clienteSeleccionado: { ...c, repoPrivado, repoPublico } });
   const gdGh = document.getElementById('gd-github');
-  if (gdGh) gdGh.textContent = repo || '—';
+  if (gdGh) gdGh.textContent = repoPublico || '—';
 }
 
     const st = document.getElementById('boveda-status');

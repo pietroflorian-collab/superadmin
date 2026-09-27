@@ -276,11 +276,18 @@
 
           <form onsubmit="return false">
             <div id="boveda-panel-github" class="boveda-panel space-y-3 hidden">
+                          <div class="grid grid-cols-2 gap-3">
               <div class="space-y-1">
-                <label for="boveda-github-repo" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Repositorio (owner/repo)</label>
-                <input id="boveda-github-repo" type="text" autocomplete="nope" placeholder="usuario/repo" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
-                <p class="text-[10px] text-zinc-400 dark:text-zinc-500">Se guarda en Datos del Cliente → Repo GitHub</p>
+                <label for="boveda-github-repo-privado" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Repositorio Privado (código)</label>
+                <input id="boveda-github-repo-privado" type="text" autocomplete="nope" placeholder="usuario/repo-codigo" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+                <p class="text-[10px] text-zinc-400 dark:text-zinc-500">Informativo — no se toca desde el panel</p>
               </div>
+              <div class="space-y-1">
+                <label for="boveda-github-repo-publico" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Repositorio Público (menu.json)</label>
+                <input id="boveda-github-repo-publico" type="text" autocomplete="nope" placeholder="usuario/repo-publico" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-1.5 text-xs font-mono text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+                <p class="text-[10px] text-zinc-400 dark:text-zinc-500">Acá se publica la apariencia</p>
+              </div>
+            </div>
               <div class="space-y-1">
                 <label for="boveda-github-token" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Personal Access Token</label>
                 <div class="flex gap-2">
