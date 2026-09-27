@@ -6,6 +6,7 @@ import {
   doc, updateDoc, getDoc, getDocs, collection, setDoc
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { refrescarIconos } from './core/helpers.js';
+import { setState } from './core/state.js';
 import {
   cargarClientes,
   setFiltroBusqueda,
@@ -40,18 +41,13 @@ const drawerNuevo = document.getElementById('drawer-nuevo-cliente');
 // DELEGACIÓN
 // ==========================================
 const ACCIONES = {
-  // Nuevo Cliente
   'abrir-nuevo-cliente': () => abrirNuevoCliente(),
   'cerrar-nuevo-cliente': () => cerrarNuevoCliente(),
   'add-red': () => addRedNuevo(),
   'add-direccion': () => addDireccionNuevo(),
   'nc-rm-red': (el) => rmRedNuevo(el),
   'nc-rm-dir': (el) => rmDireccionNuevo(el),
-
-  // Ver cliente → redirige a la página nueva
   'ver-cliente': (el) => { window.location.href = 'gestionar.html?id=' + el.dataset.clienteId; },
-
-  // Gestión de Pagos
   'abrir-gestion-pagos': () => abrirGestionPagos(),
   'cerrar-gestion-pagos': () => cerrarGestionPagos(),
   'gp-seleccionar': (el) => seleccionarCliente(el.dataset.clienteId),
@@ -59,8 +55,6 @@ const ACCIONES = {
   'gp-toggle-servicio': () => toggleServicio(),
   'gp-confirmar-retiro': () => confirmarRetiro(),
   'gp-cancelar-retiro': () => cancelarRetiro(),
-
-  // Perfil
   'cambiar-password': () => solicitarCambioPassword(),
   'abrir-backup-modal': () => abrirModalBackup(),
   'cerrar-backup': () => cerrarModalBackup(),
@@ -130,8 +124,30 @@ if (backdrop) {
 document.getElementById('form-nuevo-cliente').addEventListener('submit', registrarNuevoCliente);
 
 // ==========================================
+// APLICAR PERMISOS AL DOM SEGÚN ROL
+// ==========================================
+function aplicarPermisos(rol) {
+  const esAdmin = rol === 'admin';
+  const esVentas = rol === 'ventas';
+  const esProduccion = rol === 'produccion';
+
+  // Nuevo Cliente: admin + ventas (ocultar en produccion)
+  const btnNuevo = document.querySelector('[data-action="abrir-nuevo-cliente"]');
+  if (btnNuevo) btnNuevo.style.display = esProduccion ? 'none' : '';
+
+  // Gestión de Pagos: admin + ventas (ocultar en produccion)
+  const btnPagos = document.querySelector('[data-action="abrir-gestion-pagos"]');
+  if (btnPagos) btnPagos.style.display = esProduccion ? 'none' : '';
+
+  // Backup: solo admin
+  const btnBackup = document.getElementById('btn-backup');
+  if (btnBackup) btnBackup.style.display = esAdmin ? '' : 'none';
+}
+
+// ==========================================
 // GUARD DE SESIÓN
 // ==========================================
+const ROLES_VALIDOS = ['admin', 'ventas', 'produccion'];
 let initHecho = false;
 
 onAuthStateChanged(auth, async (user) => {
@@ -140,18 +156,28 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
+  let rol;
   try {
-    const snap = await getDoc(doc(db, 'admins', user.uid));
+    const snap = await getDoc(doc(db, 'usuarios', user.uid));
     if (!snap.exists()) {
       await signOut(auth);
       window.location.href = 'login.html';
       return;
     }
+    rol = snap.data().rol;
+    if (!ROLES_VALIDOS.includes(rol)) {
+      await signOut(auth);
+      window.location.href = 'login.html';
+      return;
+    }
   } catch (e) {
-    console.error('Error al verificar admin:', e);
+    console.error('Error al verificar rol:', e);
     window.location.href = 'login.html';
     return;
   }
+
+  setState({ rolActual: rol });
+  aplicarPermisos(rol);
 
   const overlay = document.getElementById('boot-overlay');
   if (overlay) overlay.remove();

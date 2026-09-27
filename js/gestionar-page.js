@@ -18,27 +18,13 @@ import {
   toggleVisibilidadToken, inicializarBoveda
 } from './modulos/boveda.js';
 
-// ==========================================
-// FUENTES DISPONIBLES
-// ==========================================
+const ROLES_VALIDOS = ['admin', 'ventas', 'produccion'];
+
 const FUENTES_DISPONIBLES = [
-  'Inter',
-  'Playfair Display',
-  'Archivo',
-  'Fraunces',
-  'Space Grotesk',
-  'Lato',
-  'Raleway',
-  'Playwrite Belgique',
-  'Playwrite Cuba',
-  'Edu QLD Hand',
-  'Caveat',
-  'Parisienne'
+  'Inter','Playfair Display','Archivo','Fraunces','Space Grotesk','Lato',
+  'Raleway','Playwrite Belgique','Playwrite Cuba','Edu QLD Hand','Caveat','Parisienne'
 ];
 
-// ==========================================
-// ZONAS DE TIPOGRAFÍA
-// ==========================================
 const ZONAS_TIPOGRAFIA = {
   marca: [
     { key: 'navNegocio', label: 'Nombre del negocio', sub: 'Nav superior', font: 'Anybody', size: 46, preview: 'SUKIDESU SUSHI' },
@@ -80,13 +66,10 @@ const ZONAS_TIPOGRAFIA = {
 const TODAS_LAS_ZONAS = Object.values(ZONAS_TIPOGRAFIA).flat();
 const cap = (s) => s[0].toUpperCase() + s.slice(1);
 
-// ==========================================
-// ESTADO LOCAL
-// ==========================================
 let clienteActual = null;
 let cambiosSinGuardar = false;
+let rolActual = null;
 
-// Tema (dark mode)
 if (localStorage.getItem('superadmin.darkMode') === '1') {
   document.documentElement.classList.add('dark');
 }
@@ -111,11 +94,9 @@ async function cargarCliente(id) {
 function renderHeader(c) {
   const nombre = c.nombreComercial || c.nombreCliente || 'Sin nombre';
   const iniciales = nombre.split(' ').slice(0, 2).map((p) => p[0]).join('').toUpperCase();
-
   document.getElementById('cliente-nombre').textContent = nombre;
   document.getElementById('cliente-sub').textContent = c.nombreCliente || 'Panel de Gestión';
   document.getElementById('cliente-avatar').textContent = iniciales || '--';
-
   const ec = c.estadoCliente === 'Retirado' ? 'Retirado' : 'Activo';
   const elEC = document.getElementById('cliente-estado');
   elEC.className = `inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${
@@ -124,6 +105,29 @@ function renderHeader(c) {
       : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700'
   }`;
   elEC.innerHTML = `<span class="w-2 h-2 rounded-full ${ec === 'Activo' ? 'bg-emerald-500' : 'bg-zinc-400'}"></span>${ec}`;
+}
+
+// ==========================================
+// PERMISOS SEGÚN ROL
+// ==========================================
+function aplicarPermisos(rol) {
+  const esAdmin = rol === 'admin';
+  const esVentas = rol === 'ventas';
+  const esProduccion = rol === 'produccion';
+
+  const tabsPermitidos = {
+    apariencia:  esAdmin || esProduccion,
+    boveda:      esAdmin || esProduccion,
+    datos:       esAdmin || esVentas,
+    redes:       esAdmin || esVentas,
+    direcciones: esAdmin || esVentas,
+    fechas:      esAdmin || esProduccion
+  };
+
+  Object.entries(tabsPermitidos).forEach(([tab, permitido]) => {
+    const btn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+    if (btn) btn.style.display = permitido ? '' : 'none';
+  });
 }
 
 // ==========================================
@@ -140,11 +144,9 @@ function activarTab(nombre) {
     btn.classList.toggle('text-zinc-500', !activo);
     btn.classList.toggle('dark:text-zinc-400', !activo);
   });
-
   document.querySelectorAll('.tab-content').forEach((sec) => {
     sec.classList.toggle('hidden', sec.dataset.tabContent !== nombre);
   });
-
   if (window.lucide) window.lucide.createIcons();
 }
 
@@ -152,7 +154,10 @@ function inicializarTabs() {
   document.querySelectorAll('.tab-btn').forEach((btn) => {
     btn.addEventListener('click', () => activarTab(btn.dataset.tab));
   });
-  activarTab('apariencia');
+  // Activar el primer tab visible
+  const primerVisible = Array.from(document.querySelectorAll('.tab-btn'))
+    .find(btn => btn.style.display !== 'none');
+  if (primerVisible) activarTab(primerVisible.dataset.tab);
 }
 
 // ==========================================
@@ -181,9 +186,7 @@ function construirFilaTipografia(zona) {
 function construirTipografia() {
   Object.entries(ZONAS_TIPOGRAFIA).forEach(([subtitulo, zonas]) => {
     const contenedor = document.querySelector(`.subtab-content[data-subtab-content="${subtitulo}"]`);
-    if (contenedor) {
-      contenedor.innerHTML = zonas.map(z => construirFilaTipografia(z)).join('');
-    }
+    if (contenedor) contenedor.innerHTML = zonas.map(z => construirFilaTipografia(z)).join('');
   });
 }
 
@@ -207,7 +210,6 @@ function activarSubTab(nombre) {
     btn.classList.toggle('text-zinc-500', !activo);
     btn.classList.toggle('dark:text-zinc-400', !activo);
   });
-
   document.querySelectorAll('.subtab-content').forEach((sec) => {
     sec.classList.toggle('hidden', sec.dataset.subtabContent !== nombre);
   });
@@ -280,21 +282,17 @@ document.addEventListener('click', (event) => {
 // ==========================================
 document.addEventListener('input', (event) => {
   const live = event.target.dataset.live;
-
-  // Color picker → actualizar texto
   const coloresLive = ['color-primario', 'color-fondo', 'color-texto', 'color-texto-suave', 'color-tarjetas', 'color-carrito', 'color-bordes', 'color-acento', 'color-subtitulo', 'color-hover'];
   if (coloresLive.includes(live)) {
     const textoInput = document.getElementById('texto-' + live);
     if (textoInput) textoInput.value = event.target.value.toUpperCase();
     marcarCambiosSinGuardar();
   }
-
   if (live === 'radio-bordes') {
     const s = document.getElementById('valor-radio-bordes');
     if (s) s.textContent = event.target.value + 'px';
     marcarCambiosSinGuardar();
   }
-
   const zona = event.target.dataset.zona;
   if (zona && (event.target.classList.contains('tamaño-input') || event.target.classList.contains('fuente-select'))) {
     const fuente = document.querySelector(`.fuente-select[data-zona="${zona}"]`)?.value || '';
@@ -303,19 +301,15 @@ document.addEventListener('input', (event) => {
   }
 });
 
-// Validar color al salir del campo o presionar Enter
 function aplicarTextoColor(input) {
   let val = input.value.trim().toUpperCase();
   if (!val) return;
   if (!val.startsWith('#')) val = '#' + val;
-
   if (/^#[0-9A-F]{3}$/.test(val)) {
     val = '#' + val[1] + val[1] + val[2] + val[2] + val[3] + val[3];
   }
-
   const key = input.dataset.colorInput;
   const picker = document.getElementById('drawer-' + key);
-
   if (/^#[0-9A-F]{6}$/.test(val)) {
     if (picker) picker.value = val;
     input.value = val;
@@ -366,14 +360,20 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   try {
-    const snap = await getDoc(doc(db, 'admins', user.uid));
+    const snap = await getDoc(doc(db, 'usuarios', user.uid));
     if (!snap.exists()) {
       await signOut(auth);
       window.location.href = 'login.html?return=' + retorno;
       return;
     }
+    rolActual = snap.data().rol;
+    if (!ROLES_VALIDOS.includes(rolActual)) {
+      await signOut(auth);
+      window.location.href = 'login.html?return=' + retorno;
+      return;
+    }
   } catch (e) {
-    console.error('Error al verificar admin:', e);
+    console.error('Error al verificar rol:', e);
     window.location.href = 'login.html?return=' + retorno;
     return;
   }
@@ -389,12 +389,11 @@ onAuthStateChanged(auth, async (user) => {
     if (!c) { volverAlPanel(); return; }
     clienteActual = c;
 
-    // Construir tipografía ANTES de cargar datos
+    setState({ clienteSeleccionado: c, rolActual });
     construirTipografia();
     inicializarSubTabs();
-
-    setState({ clienteSeleccionado: c });
     renderHeader(c);
+    aplicarPermisos(rolActual);
     inicializarTabs();
     cargarDatosCliente(c);
     inicializarBoveda();

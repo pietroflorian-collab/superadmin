@@ -13,6 +13,7 @@ import {
 import { cargarClientes } from './clientes.js';
 import { toast } from '../ui/notificaciones.js';
 import { activarFocusTrap } from '../ui/focus-trap.js';
+import { getState } from '../core/state.js';
 
 // ---------- Estado local del módulo (no va al store global) ----------
 let redesNuevoCliente = [];
@@ -130,7 +131,6 @@ export async function registrarNuevoCliente(event) {
   const btn = document.getElementById('btn-registrar-cliente');
   const textoOrig = btn.textContent;
 
-  // ---- Validaciones (todas con toast) ----
   const numDoc = document.getElementById('nc-num-doc').value.trim();
   const nombre = document.getElementById('nc-nombre-cliente').value.trim();
   const nombreComercial = document.getElementById('nc-nombre-comercial').value.trim();
@@ -162,6 +162,9 @@ export async function registrarNuevoCliente(event) {
   const tipoPersona = document.querySelector('input[name="tipoPersona"]:checked').value;
   const slug = nombreComercial.toLowerCase().replace(/[^a-z0-9]/g, '-').substring(0, 30);
 
+  // Detectar rol para armar payload correcto
+  const rolActual = getState().rolActual || 'admin';
+
   const nuevoCliente = {
     tipoPersona,
     tipoDocumento: document.getElementById('nc-tipo-doc').value,
@@ -174,12 +177,16 @@ export async function registrarNuevoCliente(event) {
     direcciones: direccionesNuevoCliente.filter((d) => d.direccion && d.direccion.trim()),
     redes: redesLimp.map((r) => ({ tipo: r.tipo, valor: r.valor.trim() })),
     fechaCreacion: new Date(),
-    fechaProduccion: null,
-    fechaVencimiento: null,
     estadoCliente: 'Activo',
-    estadoServicio: 'Activo',
-    apariencia: { colorPrimario: '#18181b', tipografia: 'Inter', radioBordes: '8' }
+    estadoServicio: 'Activo'
   };
+
+  // Admin agrega apariencia y fechas default; ventas no las incluye
+  if (rolActual === 'admin') {
+    nuevoCliente.apariencia = { colorPrimario: '#18181b', tipografia: 'Inter', radioBordes: '8' };
+    nuevoCliente.fechaProduccion = null;
+    nuevoCliente.fechaVencimiento = null;
+  }
 
   try {
     await addDoc(collection(db, "clientes_agencia"), nuevoCliente);
@@ -194,3 +201,4 @@ export async function registrarNuevoCliente(event) {
     btn.textContent = textoOrig;
   }
 }
+
