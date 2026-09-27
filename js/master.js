@@ -27,6 +27,7 @@ import {
 import { auth } from './config/firebase.js';
 import { iniciarVigilancia } from './core/sesion.js';
 import { initPerfil, solicitarCambioPassword, toggleDarkMode } from './modulos/perfil.js';
+import { abrirModalBackup, cerrarModalBackup, ejecutarBackup } from './modulos/backup.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 // ==========================================
@@ -61,6 +62,9 @@ const ACCIONES = {
 
   // Perfil
   'cambiar-password': () => solicitarCambioPassword(),
+  'abrir-backup-modal': () => abrirModalBackup(),
+  'cerrar-backup': () => cerrarModalBackup(),
+  'ejecutar-backup': () => ejecutarBackup(),
   'toggle-dark': () => toggleDarkMode(),
   'cerrar-sesion': async () => {
     await signOut(auth);

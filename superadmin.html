@@ -70,6 +70,12 @@
             <span>Gestión de Pagos</span>
           </div>
         </button>
+               <button id="btn-backup" data-action="abrir-backup-modal" class="w-full flex items-center justify-between px-2.5 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-md transition-colors">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="download" class="w-4 h-4" aria-hidden="true"></i>
+            <span>Backup Datos</span>
+          </div>
+        </button>
       </nav>
     </div>
 
@@ -397,7 +403,51 @@
   </div>
 </div>
 
-   <!-- TOASTS -->
+  <!-- MODAL: BACKUP -->
+  <div id="modal-backup" role="dialog" aria-modal="true" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-[95] flex items-center justify-center hidden p-4">
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-2xl w-full max-w-md">
+      <div class="px-5 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 rounded-t-lg flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <i data-lucide="download" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" aria-hidden="true"></i>
+          <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Backup de Datos</h3>
+        </div>
+        <button data-action="cerrar-backup" aria-label="Cerrar" class="text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+          <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4">
+        <div class="space-y-2">
+          <label class="block text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Alcance del backup</label>
+          <div class="space-y-1.5">
+            <label class="flex items-center gap-2 p-2.5 border border-zinc-200 dark:border-zinc-700 rounded-md cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800 has-[:checked]:border-zinc-900 dark:has-[:checked]:border-zinc-100 has-[:checked]:bg-zinc-50 dark:has-[:checked]:bg-zinc-800">
+              <input type="radio" name="backup-alcance" value="todos" checked class="accent-zinc-900 dark:accent-zinc-100">
+              <span class="text-xs font-medium text-zinc-900 dark:text-zinc-100">Todo (clientes + admins + usuarios)</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 border border-zinc-200 dark:border-zinc-700 rounded-md cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800 has-[:checked]:border-zinc-900 dark:has-[:checked]:border-zinc-100 has-[:checked]:bg-zinc-50 dark:has-[:checked]:bg-zinc-800">
+              <input type="radio" name="backup-alcance" value="cliente" class="accent-zinc-900 dark:accent-zinc-100">
+              <span class="text-xs font-medium text-zinc-900 dark:text-zinc-100">Un cliente específico</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="backup-cliente-selector" class="space-y-1 hidden">
+          <label for="backup-cliente-id" class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Cliente</label>
+          <select id="backup-cliente-id" class="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500"></select>
+        </div>
+      </div>
+
+      <div class="px-5 py-3.5 bg-zinc-50 dark:bg-zinc-800 border-t border-zinc-200 dark:border-zinc-800 flex justify-end gap-2">
+        <button data-action="cerrar-backup" class="px-3.5 py-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-md">Cancelar</button>
+        <button data-action="ejecutar-backup" id="btn-ejecutar-backup" class="px-3.5 py-1.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 shadow-sm flex items-center gap-1.5">
+          <i data-lucide="download" class="w-3.5 h-3.5" aria-hidden="true"></i>
+          <span>Descargar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+    <!-- TOASTS -->
   <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
     <script type="module" src="js/master.js"></script>
