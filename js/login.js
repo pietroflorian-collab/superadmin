@@ -10,7 +10,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-// Aplicar tema guardado (mismo key que el panel)
+const ROLES_VALIDOS = ['admin', 'ventas', 'produccion'];
+
 if (localStorage.getItem('superadmin.darkMode') === '1') {
   document.documentElement.classList.add('dark');
 }
@@ -33,27 +34,24 @@ function mostrarStatus(msg, tipo = 'info') {
   status.textContent = msg;
 }
 
-// Verifica que el UID esté en la colección admins/{uid}
-async function verificarAdmin(user) {
-     try {
-    const snap = await getDoc(doc(db, 'admins', user.uid));
-    if (!snap.exists()) {
-      mostrarStatus('✗ Esta cuenta no tiene permisos de administrador.', 'error');
-      return false;
-    }
-    return true;
+// Obtiene el rol del usuario desde usuarios/{uid}
+async function obtenerRol(user) {
+  try {
+    const snap = await getDoc(doc(db, 'usuarios', user.uid));
+    if (!snap.exists()) return null;
+    const rol = snap.data().rol;
+    return ROLES_VALIDOS.includes(rol) ? rol : null;
   } catch (e) {
-    console.error('Error al verificar admin:', e);
-    mostrarStatus('✗ No se pudo verificar permisos.', 'error');
-    return false;
+    console.error('Error al verificar rol:', e);
+    return null;
   }
 }
 
 // Si ya hay sesión válida, redirige
 onAuthStateChanged(auth, async (user) => {
-  if (user && (await verificarAdmin(user))) {
+  if (user && (await obtenerRol(user))) {
     const retorno = new URLSearchParams(location.search).get('return');
-window.location.href = retorno ? decodeURIComponent(retorno) : 'superadmin.html';
+    window.location.href = retorno ? decodeURIComponent(retorno) : 'superadmin.html';
   }
 });
 
@@ -76,12 +74,12 @@ form.addEventListener('submit', async (e) => {
 
   try {
     const cred = await signInWithEmailAndPassword(auth, email, pass);
-    if (!(await verificarAdmin(cred.user))) {
+    if (!(await obtenerRol(cred.user))) {
       await auth.signOut();
+      mostrarStatus('✗ Esta cuenta no tiene permisos.', 'error');
       return;
     }
     mostrarStatus('✓ Acceso concedido', 'exito');
-    // onAuthStateChanged redirige
   } catch (err) {
     console.error(err);
     const mensajes = {
@@ -104,8 +102,9 @@ btnGoogle.addEventListener('click', async () => {
   try {
     const provider = new GoogleAuthProvider();
     const cred = await signInWithPopup(auth, provider);
-    if (!(await verificarAdmin(cred.user))) {
+    if (!(await obtenerRol(cred.user))) {
       await auth.signOut();
+      mostrarStatus('✗ Esta cuenta no tiene permisos.', 'error');
       return;
     }
     mostrarStatus('✓ Acceso concedido', 'exito');
