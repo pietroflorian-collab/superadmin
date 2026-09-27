@@ -41,7 +41,7 @@ export async function cargarCredenciales() {
   const repoPrivadoInput = document.getElementById('boveda-github-repo-privado');
   if (repoPrivadoInput) repoPrivadoInput.value = c.repoPrivado || '';
   const repoPublicoInput = document.getElementById('boveda-github-repo-publico');
-  if (repoPublicoInput) repoPublicoInput.value = c.repoPublico || c.githubRepo || ''; // fallback legacy
+  if (repoPublicoInput) repoPublicoInput.value = c.repoPublico || '';
 
   try {
     const provs = ['google', 'github', 'firebase', 'cloudflare'];    
@@ -199,7 +199,7 @@ export async function probarConexion() {
       if (!r1.ok) throw new Error(`Token inválido (${r1.status})`);
       const user = await r1.json();
 
-      const repo = c?.githubRepo || '';
+      const repo = c?.repoPublico || '';
       if (repo) {
         const r2 = await fetch(`https://api.github.com/repos/${repo}`, {
           headers: { Authorization: `Bearer ${token}` }

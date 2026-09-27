@@ -79,7 +79,7 @@ export function cargarDatosCliente(c) {
   set('gd-documento', c.numeroDocumento ? `${c.tipoDocumento || ''} ${c.numeroDocumento}` : '—');
   set('gd-telefono', c.telefono || '—');
   set('gd-correo', c.correoOperativo || '—');
-    set('gd-github', c.repoPublico || c.githubRepo || '—');
+     set('gd-github', c.repoPublico || '—');
 
   // Redes — modo lectura
   editandoRedes = false;
@@ -369,7 +369,7 @@ export async function publicarEnGitHub() {
     if (!githubSnap.exists()) throw new Error('No hay credenciales de GitHub guardadas');
     const ghData = githubSnap.data();
        if (!ghData.token) throw new Error('Falta el token de GitHub');
-    const repoPublico = c.repoPublico || c.githubRepo; // fallback legacy
+    const repoPublico = c.repoPublico;
     if (!repoPublico) throw new Error('El cliente no tiene repo público asignado');
 
     // Enviar apariencia completa (colores + tipografía completa)
