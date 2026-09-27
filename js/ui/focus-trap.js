@@ -1,5 +1,5 @@
 // ==========================================
-// UI: FOCUS TRAP — Pila de traps (último gana)
+// UI: FOCUS TRAP — Pila de traps (último gana) + focus return
 // ==========================================
 
 const SELECTOR_FOCUSABLE = [
@@ -11,15 +11,19 @@ const SELECTOR_FOCUSABLE = [
   '[tabindex]:not([tabindex="-1"])'
 ].join(',');
 
-const stack = [];   // pila de traps activos
+const stack = [];
 
 export function activarFocusTrap(contenedor, autoFocus = true) {
   if (!contenedor) return () => {};
 
-  const entrada = { contenedor, activo: false };
+  // Capturamos el elemento con foco antes de abrir el modal/drawer
+  // (normalmente es el botón que disparó la apertura)
+  const elementoRetorno = document.activeElement;
+
+  const entrada = { contenedor, activo: false, elementoRetorno };
 
   entrada.handler = (e) => {
-    if (!entrada.activo) return;                         // solo el trap topmost actúa
+    if (!entrada.activo) return;
     if (e.key !== 'Tab') return;
     if (contenedor.classList.contains('hidden')) return;
 
@@ -51,10 +55,8 @@ export function activarFocusTrap(contenedor, autoFocus = true) {
   document.addEventListener('keydown', entrada.handler, true);
   stack.push(entrada);
 
-  // Solo el último entra en juego
   stack.forEach((t, i) => { t.activo = (i === stack.length - 1); });
 
-  // Auto-focus al primer focusable
   if (autoFocus) {
     setTimeout(() => {
       const focusables = Array.from(contenedor.querySelectorAll(SELECTOR_FOCUSABLE))
@@ -69,7 +71,17 @@ export function activarFocusTrap(contenedor, autoFocus = true) {
     document.removeEventListener('keydown', entrada.handler, true);
     const idx = stack.indexOf(entrada);
     if (idx >= 0) stack.splice(idx, 1);
-    // Reactivar el que queda arriba
     if (stack.length > 0) stack[stack.length - 1].activo = true;
+
+    // Restaurar foco al elemento que abrió el modal/drawer (si sigue en el DOM)
+    const retorno = entrada.elementoRetorno;
+    if (
+      retorno &&
+      retorno !== document.body &&
+      document.contains(retorno) &&
+      typeof retorno.focus === 'function'
+    ) {
+      setTimeout(() => retorno.focus(), 50);
+    }
   };
 }
