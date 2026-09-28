@@ -11,7 +11,8 @@ import {
   toggleEditarRedes, toggleEditarDirecciones,
   addRedGestionar, rmRedGestionar,
   addDireccionGestionar, rmDireccionGestionar,
-  cargarDatosCliente
+  cargarDatosCliente,
+  toggleEditarDatos, cancelarEditarDatos, guardarDatosCliente
 } from './modulos/gestionar.js';
 import {
   cambiarTabBoveda, guardarCredenciales, probarConexion,
@@ -268,6 +269,9 @@ const ACCIONES_PAGINA = {
   'gd-rm-dir': (el) => rmDireccionGestionar(el),
   'guardar-fechas': () => guardarFechas(),
   'guardar-fecha-produccion': () => guardarFechaProduccion(),
+  'toggle-editar-datos': () => toggleEditarDatos(),
+  'cancelar-editar-datos': () => cancelarEditarDatos(),
+  'guardar-datos-cliente': () => guardarDatosCliente(),
 };
 
 document.addEventListener('click', (event) => {
@@ -395,8 +399,11 @@ onAuthStateChanged(auth, async (user) => {
     renderHeader(c);
     aplicarPermisos(rolActual);
     inicializarTabs();
-    cargarDatosCliente(c);
-    inicializarBoveda();
+        cargarDatosCliente(c);
+    // Bóveda solo para admin y produccion
+    if (rolActual === 'admin' || rolActual === 'produccion') {
+      inicializarBoveda();
+    }
     mostrarOverlay(false);
     if (window.lucide) window.lucide.createIcons();
     limpiarCambios();
