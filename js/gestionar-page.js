@@ -129,6 +129,12 @@ function aplicarPermisos(rol) {
     const btn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
     if (btn) btn.style.display = permitido ? '' : 'none';
   });
+
+  // Producción: no puede editar vencimiento (solo fecha de producción)
+  if (esProduccion) {
+    document.getElementById('gd-vencimiento-edit')?.classList.add('hidden');
+    document.getElementById('gd-guardar-fechas-wrap')?.classList.add('hidden');
+  }
 }
 
 // ==========================================
