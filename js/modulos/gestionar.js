@@ -73,13 +73,32 @@ function leerAparienciaDelDOM() {
 export function cargarDatosCliente(c) {
   if (!c) return;
 
-  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set('gd-nombre-cliente', c.nombreCliente || '—');
   set('gd-nombre-comercial', c.nombreComercial || '—');
   set('gd-documento', c.numeroDocumento ? `${c.tipoDocumento || ''} ${c.numeroDocumento}` : '—');
   set('gd-telefono', c.telefono || '—');
   set('gd-correo', c.correoOperativo || '—');
-     set('gd-github', c.repoPublico || '—');
+
+  // Datos para edición
+  const inputNombre = document.getElementById('gd-input-nombre-cliente');
+  if (inputNombre) inputNombre.value = c.nombreCliente || '';
+  const inputComercial = document.getElementById('gd-input-nombre-comercial');
+  if (inputComercial) inputComercial.value = c.nombreComercial || '';
+  const inputTipoDoc = document.getElementById('gd-input-tipo-doc');
+  if (inputTipoDoc) inputTipoDoc.value = c.tipoDocumento || 'CC';
+  const inputNumDoc = document.getElementById('gd-input-num-doc');
+  if (inputNumDoc) inputNumDoc.value = c.numeroDocumento || '';
+  const inputTel = document.getElementById('gd-input-telefono');
+  if (inputTel) inputTel.value = c.telefono || '';
+  const inputCorreo = document.getElementById('gd-input-correo');
+  if (inputCorreo) inputCorreo.value = c.correoOperativo || '';
+
+  // Resetear a modo lectura
+  document.getElementById('gd-datos-lectura')?.classList.remove('hidden');
+  document.getElementById('gd-datos-edicion')?.classList.add('hidden');
+  const btnToggleDatos = document.getElementById('btn-toggle-editar-datos');
+  if (btnToggleDatos) btnToggleDatos.textContent = 'Editar';
 
   // Redes — modo lectura
   editandoRedes = false;
@@ -401,5 +420,111 @@ export async function publicarEnGitHub() {
     btn.innerHTML = orig;
     btn.disabled = false;
     if (typeof window.lucide !== 'undefined') window.lucide.createIcons();
+  }
+}
+
+// ---------- Toggle edición: Datos ----------
+export function toggleEditarDatos() {
+  const c = getState().clienteSeleccionado;
+  if (!c) return;
+
+  const lectura = document.getElementById('gd-datos-lectura');
+  const edicion = document.getElementById('gd-datos-edicion');
+  const btn = document.getElementById('btn-toggle-editar-datos');
+
+  const editando = edicion.classList.contains('hidden');
+  lectura.classList.toggle('hidden', editando);
+  edicion.classList.toggle('hidden', !editando);
+  btn.textContent = editando ? 'Cancelar' : 'Editar';
+  refrescarIconos();
+}
+
+// ---------- Cancelar edición: Datos ----------
+export function cancelarEditarDatos() {
+  const c = getState().clienteSeleccionado;
+  if (!c) return;
+
+  // Restaurar valores originales
+  const inputNombre = document.getElementById('gd-input-nombre-cliente');
+  if (inputNombre) inputNombre.value = c.nombreCliente || '';
+  const inputComercial = document.getElementById('gd-input-nombre-comercial');
+  if (inputComercial) inputComercial.value = c.nombreComercial || '';
+  const inputTipoDoc = document.getElementById('gd-input-tipo-doc');
+  if (inputTipoDoc) inputTipoDoc.value = c.tipoDocumento || 'CC';
+  const inputNumDoc = document.getElementById('gd-input-num-doc');
+  if (inputNumDoc) inputNumDoc.value = c.numeroDocumento || '';
+  const inputTel = document.getElementById('gd-input-telefono');
+  if (inputTel) inputTel.value = c.telefono || '';
+  const inputCorreo = document.getElementById('gd-input-correo');
+  if (inputCorreo) inputCorreo.value = c.correoOperativo || '';
+
+  document.getElementById('gd-datos-lectura')?.classList.remove('hidden');
+  document.getElementById('gd-datos-edicion')?.classList.add('hidden');
+  const btn = document.getElementById('btn-toggle-editar-datos');
+  if (btn) btn.textContent = 'Editar';
+}
+
+// ---------- Guardar: Datos del cliente ----------
+export async function guardarDatosCliente() {
+  const c = getState().clienteSeleccionado;
+  if (!c) return;
+
+  const btn = document.getElementById('btn-guardar-datos');
+  const orig = btn.textContent;
+  btn.textContent = 'Guardando...';
+  btn.disabled = true;
+
+  const nombre = document.getElementById('gd-input-nombre-cliente').value.trim();
+  const comercial = document.getElementById('gd-input-nombre-comercial').value.trim();
+  const tipoDoc = document.getElementById('gd-input-tipo-doc').value;
+  const numDoc = document.getElementById('gd-input-num-doc').value.trim();
+  const tel = document.getElementById('gd-input-telefono').value.trim();
+  const correo = document.getElementById('gd-input-correo').value.trim();
+
+  if (!nombre) { toast('El nombre es obligatorio.', 'aviso'); btn.textContent = orig; btn.disabled = false; return; }
+  if (!comercial) { toast('El nombre comercial es obligatorio.', 'aviso'); btn.textContent = orig; btn.disabled = false; return; }
+  if (!numDoc) { toast('El número de documento es obligatorio.', 'aviso'); btn.textContent = orig; btn.disabled = false; return; }
+  if (tel && !/^\+[1-9]\d{7,14}$/.test(tel)) {
+    toast('Teléfono inválido. Formato: +573001234567', 'aviso'); btn.textContent = orig; btn.disabled = false; return;
+  }
+  if (correo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
+    toast('Correo inválido.', 'aviso'); btn.textContent = orig; btn.disabled = false; return;
+  }
+
+  try {
+    await updateDoc(doc(db, 'clientes_agencia', c.id), {
+      nombreCliente: nombre,
+      nombreComercial: comercial,
+      tipoDocumento: tipoDoc,
+      numeroDocumento: numDoc,
+      telefono: tel,
+      correoOperativo: correo
+    });
+
+    const s = await getDoc(doc(db, 'clientes_agencia', c.id));
+    if (s.exists()) setState({ clienteSeleccionado: { id: c.id, ...s.data() } });
+
+    // Refrescar vista lectura
+    const cActual = getState().clienteSeleccionado;
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    set('gd-nombre-cliente', cActual.nombreCliente || '—');
+    set('gd-nombre-comercial', cActual.nombreComercial || '—');
+    set('gd-documento', cActual.numeroDocumento ? `${cActual.tipoDocumento || ''} ${cActual.numeroDocumento}` : '—');
+    set('gd-telefono', cActual.telefono || '—');
+    set('gd-correo', cActual.correoOperativo || '—');
+
+    // Volver a modo lectura
+    document.getElementById('gd-datos-lectura')?.classList.remove('hidden');
+    document.getElementById('gd-datos-edicion')?.classList.add('hidden');
+    const btnToggle = document.getElementById('btn-toggle-editar-datos');
+    if (btnToggle) btnToggle.textContent = 'Editar';
+
+    toast('Datos del cliente actualizados.', 'exito');
+  } catch (e) {
+    console.error(e);
+    toast('Error al guardar los datos.', 'error');
+  } finally {
+    btn.textContent = orig;
+    btn.disabled = false;
   }
 }
