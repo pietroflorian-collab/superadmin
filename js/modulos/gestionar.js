@@ -79,6 +79,16 @@ export function cargarDatosCliente(c) {
   set('gd-documento', c.numeroDocumento ? `${c.tipoDocumento || ''} ${c.numeroDocumento}` : '—');
   set('gd-telefono', c.telefono || '—');
   set('gd-correo', c.correoOperativo || '—');
+  const comercialNombre = document.getElementById('gd-comercial-nombre');
+  if (comercialNombre) comercialNombre.textContent = c.creadoPorNombre || '—';
+  const comercialDoc = document.getElementById('gd-comercial-doc');
+  if (comercialDoc) {
+    if (c.creadoPorTipoDoc && c.creadoPorNumDoc) {
+      comercialDoc.textContent = `${c.creadoPorTipoDoc} ${c.creadoPorNumDoc}`;
+    } else {
+      comercialDoc.textContent = '';
+    }
+  }
 
   // Datos para edición
   const inputNombre = document.getElementById('gd-input-nombre-cliente');
@@ -512,6 +522,16 @@ export async function guardarDatosCliente() {
     set('gd-documento', cActual.numeroDocumento ? `${cActual.tipoDocumento || ''} ${cActual.numeroDocumento}` : '—');
     set('gd-telefono', cActual.telefono || '—');
     set('gd-correo', cActual.correoOperativo || '—');
+        const comercialNombre2 = document.getElementById('gd-comercial-nombre');
+    if (comercialNombre2) comercialNombre2.textContent = cActual.creadoPorNombre || '—';
+    const comercialDoc2 = document.getElementById('gd-comercial-doc');
+    if (comercialDoc2) {
+      if (cActual.creadoPorTipoDoc && cActual.creadoPorNumDoc) {
+        comercialDoc2.textContent = `${cActual.creadoPorTipoDoc} ${cActual.creadoPorNumDoc}`;
+      } else {
+        comercialDoc2.textContent = '';
+      }
+    }
 
     // Volver a modo lectura
     document.getElementById('gd-datos-lectura')?.classList.remove('hidden');

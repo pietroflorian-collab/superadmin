@@ -369,6 +369,7 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
+    let datosUsuario;
   try {
     const snap = await getDoc(doc(db, 'usuarios', user.uid));
     if (!snap.exists()) {
@@ -376,12 +377,22 @@ onAuthStateChanged(auth, async (user) => {
       window.location.href = 'login.html?return=' + retorno;
       return;
     }
-    rolActual = snap.data().rol;
+    const data = snap.data();
+    rolActual = data.rol;
     if (!ROLES_VALIDOS.includes(rolActual)) {
       await signOut(auth);
       window.location.href = 'login.html?return=' + retorno;
       return;
     }
+    datosUsuario = {
+      uid: user.uid,
+      email: user.email,
+      nombre: data.nombre || '',
+      apellido: data.apellido || '',
+      tipoDocumento: data.tipoDocumento || '',
+      numeroDocumento: data.numeroDocumento || '',
+      rol: rolActual
+    };
   } catch (e) {
     console.error('Error al verificar rol:', e);
     window.location.href = 'login.html?return=' + retorno;
@@ -399,7 +410,7 @@ onAuthStateChanged(auth, async (user) => {
     if (!c) { volverAlPanel(); return; }
     clienteActual = c;
 
-    setState({ clienteSeleccionado: c, rolActual });
+        setState({ clienteSeleccionado: c, rolActual, usuarioActual: datosUsuario });
     construirTipografia();
     inicializarSubTabs();
     renderHeader(c);
