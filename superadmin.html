@@ -55,26 +55,32 @@
         </div>
       </div>
       <nav class="p-3 space-y-0.5">
-        <div class="px-2.5 py-1.5 text-[10px] font-medium tracking-wider text-zinc-400 dark:text-zinc-500 uppercase">Plataforma</div>
-        <a href="#" class="flex items-center justify-between px-2.5 py-2 text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-md">
-          <div class="flex items-center gap-2.5">
-            <i data-lucide="utensils" class="w-4 h-4 text-zinc-900 dark:text-zinc-100" aria-hidden="true"></i>
-            <span>Clientes &amp; Menús</span>
-          </div>
-        </a>
-        <button data-action="abrir-gestion-pagos" class="w-full flex items-center justify-between px-2.5 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-md transition-colors">
-          <div class="flex items-center gap-2.5">
-            <i data-lucide="credit-card" class="w-4 h-4" aria-hidden="true"></i>
-            <span>Gestión de Pagos</span>
-          </div>
-        </button>
-               <button id="btn-backup" data-action="abrir-backup-modal" class="w-full flex items-center justify-between px-2.5 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-md transition-colors">
-          <div class="flex items-center gap-2.5">
-            <i data-lucide="download" class="w-4 h-4" aria-hidden="true"></i>
-            <span>Backup Datos</span>
-          </div>
-        </button>
-      </nav>
+  <div class="px-2.5 py-1.5 text-[10px] font-medium tracking-wider text-zinc-400 dark:text-zinc-500 uppercase">Plataforma</div>
+  <a href="#" class="flex items-center justify-between px-2.5 py-2 text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-md">
+    <div class="flex items-center gap-2.5">
+      <i data-lucide="utensils" class="w-4 h-4 text-zinc-900 dark:text-zinc-100" aria-hidden="true"></i>
+      <span>Clientes &amp; Menús</span>
+    </div>
+  </a>
+  <button data-action="abrir-gestion-pagos" class="w-full flex items-center justify-between px-2.5 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-md transition-colors">
+    <div class="flex items-center gap-2.5">
+      <i data-lucide="credit-card" class="w-4 h-4" aria-hidden="true"></i>
+      <span>Gestión de Pagos</span>
+    </div>
+  </button>
+  <button id="btn-backup" data-action="abrir-backup-modal" class="w-full flex items-center justify-between px-2.5 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-md transition-colors">
+    <div class="flex items-center gap-2.5">
+      <i data-lucide="download" class="w-4 h-4" aria-hidden="true"></i>
+      <span>Backup Datos</span>
+    </div>
+  </button>
+  <button id="btn-usuarios" data-action="abrir-usuarios" class="w-full flex items-center justify-between px-2.5 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-md transition-colors">
+    <div class="flex items-center gap-2.5">
+      <i data-lucide="users" class="w-4 h-4" aria-hidden="true"></i>
+      <span>Usuarios</span>
+    </div>
+  </button>
+</nav>
     </div>
 
     <div class="p-3 border-t border-zinc-200 dark:border-zinc-800 space-y-2">
@@ -447,6 +453,82 @@
 
     <!-- TOASTS -->
   <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- BACKDROP: USUARIOS -->
+<div id="backdrop-usuarios" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-40 hidden"></div>
+
+<!-- DRAWER: USUARIOS -->
+<aside
+  id="drawer-usuarios"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="usuarios-titulo"
+  class="fixed inset-y-0 left-0 w-full sm:w-[85%] md:w-[70%] lg:w-[52%] lg:min-w-[560px] lg:max-w-[760px] bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 shadow-2xl z-50 flex flex-col overflow-hidden transition-transform duration-300 ease-in-out transform -translate-x-full"
+>
+  <!-- Header -->
+  <div class="h-16 px-6 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between shrink-0 bg-white dark:bg-zinc-900">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center shrink-0">
+        <i data-lucide="users" class="w-4 h-4" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3 id="usuarios-titulo" class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Usuarios</h3>
+        <p class="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">Gestión de roles y accesos</p>
+      </div>
+    </div>
+    <button data-action="cerrar-usuarios" aria-label="Cerrar" class="w-8 h-8 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors">
+      <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="flex-1 overflow-y-auto px-6 py-5 space-y-4 bg-zinc-50 dark:bg-zinc-950">
+
+    <!-- Nota informativa -->
+    <div class="flex gap-2 p-3 rounded-md border border-amber-200 dark:border-amber-900 bg-amber-50/60 dark:bg-amber-950/20">
+      <i data-lucide="info" class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" aria-hidden="true"></i>
+      <p class="text-[11px] leading-relaxed text-amber-800 dark:text-amber-300">
+        Para <strong>agregar</strong> un usuario nuevo: creá la cuenta en Firebase&nbsp;Auth, copiá el UID y creá el doc en <code class="font-mono">usuarios/{uid}</code>. Automatizarlo requiere el Worker (pendiente S1).
+      </p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="flex flex-wrap items-center gap-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-3 shadow-sm">
+      <div class="flex-1 min-w-[180px] relative">
+        <i data-lucide="search" class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500" aria-hidden="true"></i>
+        <input id="usuarios-busqueda" type="text" placeholder="Buscar por nombre, email o documento…"
+               class="w-full pl-8 pr-3 py-1.5 text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+      </div>
+      <select id="usuarios-filtro-rol" class="text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-2 py-1.5 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+        <option value="todos">Rol: Todos</option>
+        <option value="admin">Admin</option>
+        <option value="ventas">Ventas</option>
+        <option value="produccion">Producción</option>
+        <option value="nulo">Revocados</option>
+      </select>
+    </div>
+
+    <!-- Tabla -->
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs min-w-[560px]">
+          <thead>
+            <tr class="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/50 text-zinc-500 dark:text-zinc-400 font-medium select-none">
+              <th class="px-6 py-3">Usuario</th>
+              <th class="px-6 py-3">Documento</th>
+              <th class="px-6 py-3">Rol</th>
+              <th class="px-6 py-3 text-right">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="usuarios-tbody" class="divide-y divide-zinc-100 dark:divide-zinc-800 text-zinc-700 dark:text-zinc-300">
+            <tr><td colspan="4" class="px-6 py-4 text-center text-zinc-500 dark:text-zinc-400">Abriendo…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</aside>
 
     <script type="module" src="js/master.js"></script>
 

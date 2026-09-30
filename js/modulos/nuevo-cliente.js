@@ -162,8 +162,13 @@ export async function registrarNuevoCliente(event) {
   const tipoPersona = document.querySelector('input[name="tipoPersona"]:checked').value;
   const slug = nombreComercial.toLowerCase().replace(/[^a-z0-9]/g, '-').substring(0, 30);
 
-  // Detectar rol para armar payload correcto
-  const rolActual = getState().rolActual || 'admin';
+    // Detectar rol y usuario actual
+  const state = getState();
+  const rolActual = state.rolActual || 'admin';
+  const usuario = state.usuarioActual || {};
+
+    // Datos del creador (denormalizados)
+  const nombreCreador = `${usuario.nombre || ''} ${usuario.apellido || ''}`.trim() || usuario.email || 'Desconocido';
 
   const nuevoCliente = {
     tipoPersona,
@@ -178,7 +183,11 @@ export async function registrarNuevoCliente(event) {
     redes: redesLimp.map((r) => ({ tipo: r.tipo, valor: r.valor.trim() })),
     fechaCreacion: new Date(),
     estadoCliente: 'Activo',
-    estadoServicio: 'Activo'
+    estadoServicio: 'Activo',
+    creadoPorUid: usuario.uid || 'desconocido',
+    creadoPorNombre: nombreCreador,
+    creadoPorTipoDoc: usuario.tipoDocumento || '',
+    creadoPorNumDoc: usuario.numeroDocumento || ''
   };
 
   // Admin agrega apariencia y fechas default; ventas no las incluye

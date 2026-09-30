@@ -25,6 +25,10 @@ import {
   confirmarRetiro, reactivarCliente, toggleServicio,
   cancelarRetiro, inicializarPagos
 } from './modulos/pagos.js';
+import {
+  abrirDrawerUsuarios, cerrarDrawerUsuarios,
+  revocarUsuario, initUsuarios
+} from './modulos/usuarios.js';
 import { auth } from './config/firebase.js';
 import { iniciarVigilancia } from './core/sesion.js';
 import { initPerfil, solicitarCambioPassword, toggleDarkMode } from './modulos/perfil.js';
@@ -36,6 +40,8 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 // ==========================================
 const backdrop = document.getElementById('backdrop');
 const drawerNuevo = document.getElementById('drawer-nuevo-cliente');
+const backdropUsuarios = document.getElementById('backdrop-usuarios');     // ← NUEVO
+const drawerUsuarios = document.getElementById('drawer-usuarios');         // ← NUEVO
 
 // ==========================================
 // DELEGACIÓN
@@ -64,6 +70,9 @@ const ACCIONES = {
     await signOut(auth);
     window.location.href = 'login.html';
   },
+  'abrir-usuarios':    () => abrirDrawerUsuarios(),
+  'cerrar-usuarios':   () => cerrarDrawerUsuarios(),
+  'usuarios-revocar':  (el) => revocarUsuario(el.dataset.uid),
 };
 
 document.addEventListener('click', (event) => {
@@ -104,6 +113,13 @@ document.addEventListener('input', (event) => {
 // ==========================================
 document.addEventListener('keydown', (event) => {
   if (event.key !== 'Escape') return;
+
+  // Usuarios — prioridad alta porque es lo último abierto    ← NUEVO
+  if (drawerUsuarios && !drawerUsuarios.classList.contains('-translate-x-full')) {
+    cerrarDrawerUsuarios();
+    return;
+  }
+
   const modal = document.getElementById('modal-gestion-pagos');
   if (modal && !modal.classList.contains('hidden')) { cerrarGestionPagos(); return; }
   if (!drawerNuevo.classList.contains('-translate-x-full')) { cerrarNuevoCliente(); return; }
@@ -115,6 +131,13 @@ document.addEventListener('keydown', (event) => {
 if (backdrop) {
   backdrop.addEventListener('click', () => {
     cerrarNuevoCliente();
+  });
+}
+
+// Backdrop del drawer Usuarios                                ← NUEVO
+if (backdropUsuarios) {
+  backdropUsuarios.addEventListener('click', () => {
+    cerrarDrawerUsuarios();
   });
 }
 
@@ -142,6 +165,10 @@ function aplicarPermisos(rol) {
   // Backup: solo admin
   const btnBackup = document.getElementById('btn-backup');
   if (btnBackup) btnBackup.style.display = esAdmin ? '' : 'none';
+
+  // Usuarios: solo admin                                    ← NUEVO
+  const btnUsuarios = document.getElementById('btn-usuarios');
+  if (btnUsuarios) btnUsuarios.style.display = esAdmin ? '' : 'none';
 }
 
 // ==========================================
@@ -157,6 +184,7 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   let rol;
+  let datosUsuario;
   try {
     const snap = await getDoc(doc(db, 'usuarios', user.uid));
     if (!snap.exists()) {
@@ -164,19 +192,29 @@ onAuthStateChanged(auth, async (user) => {
       window.location.href = 'login.html';
       return;
     }
-    rol = snap.data().rol;
+    const data = snap.data();
+    rol = data.rol;
     if (!ROLES_VALIDOS.includes(rol)) {
       await signOut(auth);
       window.location.href = 'login.html';
       return;
     }
+    datosUsuario = {
+      uid: user.uid,
+      email: user.email,
+      nombre: data.nombre || '',
+      apellido: data.apellido || '',
+      tipoDocumento: data.tipoDocumento || '',
+      numeroDocumento: data.numeroDocumento || '',
+      rol
+    };
   } catch (e) {
     console.error('Error al verificar rol:', e);
     window.location.href = 'login.html';
     return;
   }
 
-  setState({ rolActual: rol });
+  setState({ rolActual: rol, usuarioActual: datosUsuario });
   aplicarPermisos(rol);
 
   const overlay = document.getElementById('boot-overlay');
@@ -188,6 +226,7 @@ onAuthStateChanged(auth, async (user) => {
     cargarClientes();
     inicializarPagos();
     initPerfil();
+    initUsuarios();                                          // ← NUEVO
     window.addEventListener('load', refrescarIconos);
     iniciarVigilancia();
   }
