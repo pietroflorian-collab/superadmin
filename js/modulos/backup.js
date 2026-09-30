@@ -6,8 +6,18 @@ import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/fireba
 import { getState } from '../core/state.js';
 import { toast } from '../ui/notificaciones.js';
 
-const COLECCIONES_RAIZ = ['clientes_agencia', 'admins', 'usuarios'];
+// Colecciones raíz que SIEMPRE se intentan
+const COLECCIONES_RAIZ_BASE = ['clientes_agencia'];
+
+// Colecciones raíz solo para admin
+const COLECCIONES_RAIZ_ADMIN = ['usuarios'];
+
 const SUBCOLECCIONES_CLIENTE = ['secretos'];
+
+// ---------- Helper: ¿puede leer todo? ----------
+function esAdmin() {
+  return (getState().rolActual || '') === 'admin';
+}
 
 // ---------- Abrir modal ----------
 export async function abrirModalBackup() {
@@ -39,10 +49,8 @@ async function poblarSelectorClientes() {
   const select = document.getElementById('backup-cliente-id');
   if (!select) return;
 
-  // Primero intentar desde el state
   let clientes = getState().clientes || [];
 
-  // Si no hay en el state, traer de Firestore
   if (clientes.length === 0) {
     try {
       const snap = await getDocs(collection(db, 'clientes_agencia'));
@@ -90,27 +98,46 @@ export async function ejecutarBackup() {
 
     // ============ TODOS ============
     if (alcance === 'todos') {
-      for (const nombreCol of COLECCIONES_RAIZ) {
-        backup.colecciones[nombreCol] = {};
-        const snap = await getDocs(collection(db, nombreCol));
+      // Determinar qué colecciones raíz incluir según rol
+      const colecciones = [...COLECCIONES_RAIZ_BASE];
+      if (esAdmin()) {
+        colecciones.push(...COLECCIONES_RAIZ_ADMIN);
+      } else {
+        backup.metadata.aviso = 'Backup parcial: usuarios omitidos (solo admin).';
+      }
 
-        for (const docSnap of snap.docs) {
-          const docBackup = { ...docSnap.data() };
+      for (const nombreCol of colecciones) {
+        try {
+          backup.colecciones[nombreCol] = {};
+          const snap = await getDocs(collection(db, nombreCol));
 
-          if (nombreCol === 'clientes_agencia') {
-            docBackup._subcolecciones = {};
-            for (const subCol of SUBCOLECCIONES_CLIENTE) {
-              const subSnap = await getDocs(collection(db, nombreCol, docSnap.id, subCol));
-              if (!subSnap.empty) {
-                docBackup._subcolecciones[subCol] = {};
-                subSnap.forEach(subDoc => {
-                  docBackup._subcolecciones[subCol][subDoc.id] = subDoc.data();
-                });
+          for (const docSnap of snap.docs) {
+            const docBackup = { ...docSnap.data() };
+
+            if (nombreCol === 'clientes_agencia') {
+              docBackup._subcolecciones = {};
+              for (const subCol of SUBCOLECCIONES_CLIENTE) {
+                try {
+                  const subSnap = await getDocs(collection(db, nombreCol, docSnap.id, subCol));
+                  if (!subSnap.empty) {
+                    docBackup._subcolecciones[subCol] = {};
+                    subSnap.forEach(subDoc => {
+                      docBackup._subcolecciones[subCol][subDoc.id] = subDoc.data();
+                    });
+                  }
+                } catch (eSub) {
+                  // Si el rol no puede leer secretos, lo saltamos sin morir
+                  console.warn(`No se pudo leer subcolección ${subCol} de ${docSnap.id}:`, eSub?.code || eSub);
+                }
               }
             }
-          }
 
-          backup.colecciones[nombreCol][docSnap.id] = docBackup;
+            backup.colecciones[nombreCol][docSnap.id] = docBackup;
+          }
+        } catch (eCol) {
+          // Si una colección falla, la saltamos y seguimos
+          console.warn(`No se pudo leer la colección ${nombreCol}:`, eCol?.code || eCol);
+          backup.colecciones[nombreCol] = { _error: eCol?.code || String(eCol) };
         }
       }
     }
@@ -125,12 +152,16 @@ export async function ejecutarBackup() {
         docBackup._subcolecciones = {};
 
         for (const subCol of SUBCOLECCIONES_CLIENTE) {
-          const subSnap = await getDocs(collection(db, 'clientes_agencia', clienteId, subCol));
-          if (!subSnap.empty) {
-            docBackup._subcolecciones[subCol] = {};
-            subSnap.forEach(subDoc => {
-              docBackup._subcolecciones[subCol][subDoc.id] = subDoc.data();
-            });
+          try {
+            const subSnap = await getDocs(collection(db, 'clientes_agencia', clienteId, subCol));
+            if (!subSnap.empty) {
+              docBackup._subcolecciones[subCol] = {};
+              subSnap.forEach(subDoc => {
+                docBackup._subcolecciones[subCol][subDoc.id] = subDoc.data();
+              });
+            }
+          } catch (eSub) {
+            console.warn(`No se pudo leer subcolección ${subCol}:`, eSub?.code || eSub);
           }
         }
 
