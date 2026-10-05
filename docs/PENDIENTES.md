@@ -1,0 +1,87 @@
+# 📋 PENDIENTES — Panel Superadmin
+
+> Listado consolidado de pendientes vivos. Actualizar al cierre de cada sesión.
+> **Última actualización:** 4 oct 2026
+
+---
+
+## 🔴 Seguridad
+
+| # | Item | Contexto | Estado |
+|---|---|---|---|
+| S1 | **Worker con Firestore Admin SDK** | Permite crear usuarios desde el panel y soportar multi-admin sin hardcodear UIDs. Requiere plan Blaze de Firebase para Cloud Functions, o usar Firebase Admin SDK desde el Worker de Cloudflare. | Bloqueado hasta tener 2+ admins reales |
+| S2 | **Tokens en claro en Firestore** | Aceptado como riesgo. Los tokens viven en `clientes_agencia/{id}/secretos/*` protegidos por reglas. Solución futura: mover a Cloudflare secrets por cliente. | Aceptado |
+| S3 | **API key de Firebase en el código** | Pública por diseño. Evaluado, no es problema. | Cerrado |
+| S4 | **Limpiar historial de git** | El commit `c810347` todavía contiene `service-account.json` en el historial. La clave fue invalidada y el archivo removido de la rama actual, pero sigue en el historial. Solución: `git filter-repo` + `push --force`. | Pendiente (opcional, repo privado) |
+
+---
+
+## 🟡 Funcionalidad
+
+| # | Item | Contexto |
+|---|---|---|
+| F1 | **Sección "Usuarios"** | ✅ Cerrado — drawer con listado, cambio de rol inline, revocar, filtros. |
+| F2 | **Schema completo de `usuarios`** | ✅ Cerrado — docs con `nombre`, `apellido`, `tipoDocumento`, `numeroDocumento`, `email`, `rol`. |
+| F3 | **Guardar `creadoPorTipoDoc` y `creadoPorNumDoc`** | ✅ Cerrado y verificado en backup. |
+| F4 | **Mostrar Comercial con nombre + apellido + tipo + nº doc** | ✅ Cerrado — formato nombre arriba, "PPT 1746765" abajo en gris. |
+| F5 | **Fix `backup.js` para ventas/producción** | ✅ Cerrado — cada colección con try/catch, `usuarios` solo para admin. |
+
+---
+
+## 🟡 Cosmético / UX
+
+| # | Item | Contexto |
+|---|---|---|
+| U1 | **Animaciones de transición (7D)** | Transiciones entre vistas, apertura de modales, etc. Pendiente desde sesión 22-sep. |
+| U2 | **FOUC del tema del menú** | Flash del tema al cargar el menú público. Descartado conscientemente. |
+
+---
+
+## ⚪ Producto grande (roadmap)
+
+| # | Item | Contexto |
+|---|---|---|
+| P1 | **4 sistemas visuales nuevos** | Bold, Editorial, Minimal, 5º. Cada uno es un proyecto separado (HTML + CSS + JS). Se clonan desde un template base. |
+| P2 | **Panel multi-sistema** | Al crear un cliente, elegir sistema visual. Campo opcional, editable después. |
+| P3 | **IA de onboarding** | Analizar Instagram/URL del cliente → extraer paleta + tipografía → pre-rellenar el Motor de Apariencia. |
+| P4 | **Usuario de ventas y producción reales** | Actualmente hay usuarios de prueba. Falta crear los definitivos con sus datos completos. |
+
+---
+
+## 🟡 Documentación
+
+| # | Item | Contexto |
+|---|---|---|
+| D1 | **`PENDIENTES.md`** | ✅ Este archivo. |
+| D2 | **README del `menu-configurable`** | Cómo duplicar el template para un cliente nuevo. |
+| D3 | **Proceso de alta de usuarios** | Documentar cómo crear un usuario nuevo mientras S1 no esté (Firebase Auth + Firestore manual). |
+
+---
+
+## 🟡 Limpieza técnica
+
+| # | Item | Contexto |
+|---|---|---|
+| L1 | **`admin-claim-tool/`** | ✅ Borrado del repo y del disco. Era tool de un solo uso. |
+| L2 | **`backup.js`** | ✅ Verificado y arreglado. |
+| L3 | **`focus-trap.js`** | ✅ Verificado — sigue siendo necesario en 3 lugares. |
+| L4 | **`admins/{uid}`** | ✅ Doc eliminado en Firestore. Colección obsoleta. |
+
+---
+
+## 📊 Métricas
+
+- **Pendientes vivos:** 9 (2 seguridad, 0 funcionales, 2 UX, 4 producto, 1 documentación)
+- **Bugs activos:** 0
+- **Deuda técnica:** historial de git (S4), documentación del template (D2), alta de usuarios (D3)
+
+---
+
+## 🎯 Orden sugerido de próximas sesiones
+
+1. **Sesión 1:** D2 + D3 (documentación del template y alta de usuarios).
+2. **Sesión 2:** S1 (Worker con Firestore Admin SDK) — desbloquea S3, D3 y P4.
+3. **Sesión 3:** U1 (animaciones de transición).
+4. **Sesión 4:** P1 + P2 (primer sistema visual + panel multi-sistema).
+5. **Sesión 5:** P3 (IA de onboarding).
+6. **Cuando haya tiempo:** S4 (limpiar historial).
