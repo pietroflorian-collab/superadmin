@@ -53,8 +53,8 @@
 | # | Item | Contexto |
 |---|---|---|
 | D1 | **`PENDIENTES.md`** | ✅ Este archivo. |
-| D2 | **README del `menu-configurable`** | Cómo duplicar el template para un cliente nuevo. |
-| D3 | **Proceso de alta de usuarios** | Documentar cómo crear un usuario nuevo mientras S1 no esté (Firebase Auth + Firestore manual). |
+| D2 | **README del `menu-configurable`** | ✅ Cerrado — en `docs/MENU-CONFIGURABLE.md` (con algunos pasos por completar). |
+| D3 | **Proceso de alta de usuarios** | ✅ Cerrado — en `docs/ALTA-USUARIOS.md`. |
 
 ---
 
@@ -71,7 +71,7 @@
 
 ## 📊 Métricas
 
-- **Pendientes vivos:** 9 (2 seguridad, 0 funcionales, 2 UX, 4 producto, 1 documentación)
+- **Pendientes vivos:** 7 (2 seguridad, 0 funcionales, 2 UX, 4 producto, 0 documentación)
 - **Bugs activos:** 0
 - **Deuda técnica:** historial de git (S4), documentación del template (D2), alta de usuarios (D3)
 
@@ -79,9 +79,8 @@
 
 ## 🎯 Orden sugerido de próximas sesiones
 
-1. **Sesión 1:** D2 + D3 (documentación del template y alta de usuarios).
-2. **Sesión 2:** S1 (Worker con Firestore Admin SDK) — desbloquea S3, D3 y P4.
-3. **Sesión 3:** U1 (animaciones de transición).
-4. **Sesión 4:** P1 + P2 (primer sistema visual + panel multi-sistema).
-5. **Sesión 5:** P3 (IA de onboarding).
-6. **Cuando haya tiempo:** S4 (limpiar historial).
+1. **Sesión 1:** S1 (Worker con Firestore Admin SDK) — desbloquea P4 y automatiza el alta de usuarios.
+2. **Sesión 2:** U1 (animaciones de transición).
+3. **Sesión 3:** P1 + P2 (primer sistema visual + panel multi-sistema).
+4. **Sesión 4:** P3 (IA de onboarding).
+5. **Cuando haya tiempo:** S4 (limpiar historial de git).
