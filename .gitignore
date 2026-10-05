@@ -2,3 +2,11 @@ node_modules/
 package-lock.json
 .vscode/
 _diff_*.txt
+
+# Credenciales y secretos — NUNCA commitear
+admin-claim-tool/
+**/service-account.json
+**/*.pem
+**/secrets.json
+**/.env
+**/.env.*
