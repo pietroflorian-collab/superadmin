@@ -10,3 +10,4 @@ admin-claim-tool/
 **/secrets.json
 **/.env
 **/.env.*
+**/.dev.vars
