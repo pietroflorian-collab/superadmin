@@ -1,7 +1,7 @@
 # 📋 PENDIENTES — Panel Superadmin
 
 > Listado consolidado de pendientes vivos. Actualizar al cierre de cada sesión.
-> **Última actualización:** 4 oct 2026
+> **Última actualización:** 6 oct 2026
 
 ---
 
@@ -35,7 +35,36 @@
 | U1 | **Animaciones de transición (7D)** | Transiciones entre vistas, apertura de modales, etc. Pendiente desde sesión 22-sep. |
 | U2 | **FOUC del tema del menú** | Flash del tema al cargar el menú público. Descartado conscientemente. |
 
+## 🟢 Circuito multi-cliente (COMPLETADO 6 oct 2026)
+
+Primera implementación funcional del flujo SaaS end-to-end para un cliente.
+
+| Pieza | Estado |
+|---|---|
+| Cuenta GitHub del cliente (`pietrofloriano23`) | ✅ |
+| Repo privado de código (`menu-test-private`) | ✅ |
+| Repo público de assets (`menu-test-assets`) | ✅ |
+| Cloudflare Pages para la web | ✅ |
+| Cloudflare Pages para los assets | ✅ |
+| Worker del superadmin deployado | ✅ |
+| Cliente de prueba registrado en el panel | ✅ |
+| CORS resuelto (Pages ≠ Workers) | ✅ |
+| Fix de Tailwind v4 (`--size-*` → `--fs-*`) | ✅ |
+| Cambios de apariencia en tiempo real | ✅ |
+
+**URLs del cliente de prueba:**
+- Web: `https://menu-test-code.pages.dev`
+- Assets: `https://menu-test-assets.pages.dev`
+- Worker: `https://superadmin-worker.pietro-florian.workers.dev`
+
+**Lo que quedó pendiente de este flujo:**
+- Deployar el superadmin a Cloudflare Pages (hoy se usa con Live Server).
+- Arreglar la imagen `bg-layout.png` (no existe; usar `fondo-ondas.png` o fondo liso).
+- Limpiar el `.dev.vars` del Worker (solo tiene placeholder).
+- Implementar los otros 3 sistemas visuales (Material, Ant, Cloudscape).
+
 ---
+
 
 ## ⚪ Producto grande (roadmap)
 
@@ -71,7 +100,8 @@
 
 ## 📊 Métricas
 
-- **Pendientes vivos:** 7 (2 seguridad, 0 funcionales, 2 UX, 4 producto, 0 documentación)
+- **Pendientes vivos:** 6 (1 seguridad, 0 funcionales, 2 UX, 4 producto, 0 documentación)
+- **Circuitos completados:** 1 (cliente de prueba end-to-end)
 - **Bugs activos:** 0
 - **Deuda técnica:** historial de git (S4), documentación del template (D2), alta de usuarios (D3)
 
