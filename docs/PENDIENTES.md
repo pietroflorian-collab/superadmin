@@ -48,6 +48,7 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 | Cloudflare Pages para los assets | ✅ |
 | Worker del superadmin deployado | ✅ |
 | Cliente de prueba registrado en el panel | ✅ |
+|**Worker: validación de rol real** | El Worker solo acepta el UID del admin hardcodeado. **El usuario de producción también debe poder publicar** (es su tarea principal). Ventas solo crea clientes. Solución: cambiar el Worker para que consulte `usuarios/{uid}` en Firestore y valide que el rol sea `admin` o `produccion`. | Pendiente |
 | CORS resuelto (Pages ≠ Workers) | ✅ |
 | Fix de Tailwind v4 (`--size-*` → `--fs-*`) | ✅ |
 | Cambios de apariencia en tiempo real | ✅ |
