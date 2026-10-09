@@ -247,7 +247,7 @@ async function validarCloudflare(request, env) {
 // ==========================================
 async function publicarEnGitHub(request, env) {
   const body = await request.json();
-  const { repo, branch, path, token, apariencia } = body;
+    const { repo, branch, path, token, apariencia, estado_servicio } = body;
 
   if (!repo || !token) {
     return jsonResponse({ ok: false, error: "Falta repo o token" }, 400, env, request);
@@ -287,10 +287,19 @@ async function publicarEnGitHub(request, env) {
       return jsonResponse({ ok: false, error: `GitHub GET ${getRes.status}: ${err}` }, 200, env, request);
     }
 
-    menuActual.tema = {
-      ...(menuActual.tema || {}),
-      ...apariencia,
-    };
+       if (apariencia && typeof apariencia === 'object') {
+      menuActual.tema = {
+        ...(menuActual.tema || {}),
+        ...apariencia,
+      };
+    }
+
+    if (estado_servicio) {
+      menuActual.config = {
+        ...(menuActual.config || {}),
+        estado_servicio: estado_servicio,
+      };
+    }
 
     const nuevoContenido = b64EncodeUnicode(JSON.stringify(menuActual, null, 2));
 
