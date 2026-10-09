@@ -96,7 +96,6 @@ async function verificarIdToken(idToken, env) {
       return { ok: false, error: "iss inválido" };
     if (!payload.exp || payload.exp * 1000 < Date.now())
       return { ok: false, error: "Token expirado" };
-    if (payload.sub !== env.ADMIN_UID) return { ok: false, error: "UID no autorizado" };
 
     const { keys } = await getJwks();
     const jwk = keys.find((k) => k.kid === header.kid);
@@ -115,7 +114,36 @@ async function verificarIdToken(idToken, env) {
 
     if (!valida) return { ok: false, error: "Firma inválida" };
 
-    return { ok: true, uid: payload.sub };
+    return { ok: true, uid: payload.sub, idToken };
+  } catch (e) {
+    return { ok: false, error: e.message };
+  }
+}
+
+// ==========================================
+// VERIFICACIÓN DE ROL (Firestore REST con token del usuario)
+// ==========================================
+async function verificarRol(uid, idToken, env) {
+  const projectId = env.FIREBASE_PROJECT_ID;
+  const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/usuarios/${uid}`;
+
+  try {
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${idToken}` },
+    });
+
+    if (!res.ok) {
+      return { ok: false, error: `No se pudo leer el perfil (${res.status})` };
+    }
+
+    const data = await res.json();
+    const rol = data?.fields?.rol?.stringValue;
+
+    if (rol !== "admin" && rol !== "produccion") {
+      return { ok: false, error: `Rol no autorizado: ${rol || "ninguno"}` };
+    }
+
+    return { ok: true, rol };
   } catch (e) {
     return { ok: false, error: e.message };
   }
@@ -127,7 +155,14 @@ async function verificarAuth(request, env) {
     return { ok: false, error: "Falta Authorization: Bearer" };
   }
   const idToken = auth.slice(7);
-  return verificarIdToken(idToken, env);
+
+  const authCheck = await verificarIdToken(idToken, env);
+  if (!authCheck.ok) return authCheck;
+
+  const rolCheck = await verificarRol(authCheck.uid, idToken, env);
+  if (!rolCheck.ok) return rolCheck;
+
+  return { ok: true, uid: authCheck.uid, rol: rolCheck.rol, idToken };
 }
 
 // ==========================================
@@ -252,7 +287,7 @@ async function publicarEnGitHub(request, env) {
       return jsonResponse({ ok: false, error: `GitHub GET ${getRes.status}: ${err}` }, 200, env, request);
     }
 
-        menuActual.tema = {
+    menuActual.tema = {
       ...(menuActual.tema || {}),
       ...apariencia,
     };
