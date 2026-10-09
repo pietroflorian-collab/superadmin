@@ -1,18 +1,74 @@
 // ==========================================
 // MÓDULO: GESTIÓN DE PAGOS (modal centrado)
 // ==========================================
-import { db } from '../config/firebase.js';
+import { db, auth } from '../config/firebase.js';
 import {
-  doc, updateDoc, getDocs, collection
+  doc, updateDoc, getDocs, collection, getDoc
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { getState, setState } from '../core/state.js';
 import { esc, refrescarIconos } from '../core/helpers.js';
 import { cargarClientes } from './clientes.js';
 import { toast, confirmar } from '../ui/notificaciones.js';
 import { activarFocusTrap } from '../ui/focus-trap.js';
+import { WORKER_URL } from '../config/constantes.js';
 
 // ---------- Estado local ----------
 let gpTrapDesactivar = null;
+
+// ---------- Publicar estado en GitHub (Kill Switch) ----------
+async function publicarEstadoServicio(cliente, nuevoEstado) {
+  if (!cliente) return;
+
+  try {
+    // 1. Credenciales GitHub
+    const ghSnap = await getDoc(doc(db, 'clientes_agencia', cliente.id, 'secretos', 'github'));
+    if (!ghSnap.exists()) {
+      console.warn('[KillSwitch] Sin credenciales GitHub — no se publicó.');
+      return;
+    }
+    const gh = ghSnap.data();
+    if (!gh.token) {
+      console.warn('[KillSwitch] Falta token GitHub — no se publicó.');
+      return;
+    }
+
+    const repoPublico = cliente.repoPublico;
+    if (!repoPublico) {
+      console.warn('[KillSwitch] Sin repo público — no se publicó.');
+      return;
+    }
+
+    // 2. Bearer token del usuario actual
+    const idToken = await auth.currentUser.getIdToken();
+
+    // 3. Llamar al Worker
+    const estadoNormalizado = String(nuevoEstado).toLowerCase() === 'suspendido' ? 'suspendido' : 'activo';
+
+    const res = await fetch(`${WORKER_URL}/publicar`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`
+      },
+      body: JSON.stringify({
+        repo: repoPublico,
+        branch: gh.branch || 'main',
+        path: gh.pathMenuJson || 'menu.json',
+        token: gh.token,
+        estado_servicio: estadoNormalizado
+      })
+    });
+
+    const data = await res.json();
+    if (data.ok) {
+      console.log(`[KillSwitch] ✅ Estado publicado: ${estadoNormalizado}`);
+    } else {
+      console.warn('[KillSwitch] No se pudo publicar:', data.error);
+    }
+  } catch (e) {
+    console.error('[KillSwitch] Error publicando estado:', e);
+  }
+}
 
 // ---------- Abrir ----------
 export async function abrirGestionPagos() {
@@ -28,7 +84,6 @@ export async function abrirGestionPagos() {
   gpResultados.classList.add('hidden');
   refrescarIconos();
 
-  // Focus trap del modal
   if (gpTrapDesactivar) gpTrapDesactivar();
   gpTrapDesactivar = activarFocusTrap(modal);
 
@@ -53,7 +108,6 @@ export function cerrarGestionPagos() {
   document.getElementById('gp-cliente-box').classList.add('hidden');
   document.getElementById('gp-confirmar-retiro').classList.add('hidden');
 
-  // Desactivar focus trap
   if (gpTrapDesactivar) { gpTrapDesactivar(); gpTrapDesactivar = null; }
 }
 
@@ -186,7 +240,10 @@ export async function confirmarRetiro() {
     document.getElementById('gp-confirmar-retiro').classList.add('hidden');
     refrescarUI();
     await cargarClientes();
-    toast('Cliente retirado correctamente.', 'exito')
+    toast('Cliente retirado correctamente.', 'exito');
+
+    // Kill Switch: publicar estado suspendido en GitHub
+    publicarEstadoServicio(c, 'Suspendido');
   } catch (e) {
     console.error(e);
     toast('No se pudo retirar el cliente.', 'error');
@@ -214,7 +271,10 @@ export async function reactivarCliente() {
     setState({ gpClienteSeleccionado: { ...c, estadoCliente: 'Activo', estadoServicio: 'Suspendido' } });
     refrescarUI();
     await cargarClientes();
-    toast('Cliente reactivado correctamente.', 'exito')
+    toast('Cliente reactivado correctamente.', 'exito');
+
+    // Kill Switch: reafirmar estado suspendido (el servicio sigue suspendido al reactivar)
+    publicarEstadoServicio(c, 'Suspendido');
   } catch (e) {
     console.error(e);
     toast('No se pudo reactivar el cliente.', 'error');
@@ -245,6 +305,9 @@ export async function toggleServicio() {
     refrescarUI();
     await cargarClientes();
     toast(nuevo === 'Suspendido' ? 'Servicio suspendido correctamente.' : 'Servicio reactivado correctamente.', 'exito');
+
+    // Kill Switch: publicar estado en GitHub
+    publicarEstadoServicio(c, nuevo);
   } catch (e) {
     console.error(e);
     toast('No se pudo actualizar el servicio.', 'error');
