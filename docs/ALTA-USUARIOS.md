@@ -1,7 +1,7 @@
 # Alta de usuarios — Proceso manual
 
 > Cómo crear un usuario nuevo en el sistema mientras el Worker con Admin SDK (S1) no esté listo.
-> **Última actualización:** 4 oct 2026
+> **Última actualización:** 8 oct 2026
 
 ---
 
@@ -22,9 +22,9 @@ Ambas están ligadas por el **UID** (el mismo ID). Si el doc no existe o el UID 
 
 | Rol | Qué puede hacer |
 |---|---|
-| `admin` | Todo. Crear/editar clientes, gestionar usuarios, ver pagos, backups. |
-| `ventas` | Crear clientes, editar datos comerciales, ver pagos. **No** puede cambiar roles ni ver la sección Usuarios. |
-| `produccion` | Editar apariencia, fechas de producción y repos. **No** puede crear clientes ni ver pagos. |
+| `admin` | Todo. Crear/editar clientes, gestionar usuarios, ver pagos, backups, publicar. |
+| `produccion` | Editar apariencia, fechas de producción y repos. **Puede publicar en GitHub** (S0 ya implementado). **No** puede crear clientes. |
+| `ventas` | Crear clientes, editar datos comerciales. **No** puede cambiar roles ni ver la sección Usuarios. **No** puede publicar en GitHub. |
 | `nulo` | Sin acceso. El usuario existe pero no puede entrar al panel. |
 
 ---
@@ -120,6 +120,19 @@ Revocar = cambiar el rol a **`nulo`**.
 
 ---
 
+## Validación de rol en el Worker (S0 — implementado)
+
+El Worker del superadmin ya **no tiene UIDs hardcodeados**. Cuando un usuario llama a `/publicar`:
+
+1. Verifica el ID Token del usuario.
+2. Consulta `usuarios/{uid}.rol` en Firestore usando **el mismo token del usuario**.
+3. Permite la acción solo si el rol es `admin` o `produccion`.
+4. Rechaza con "Rol no autorizado: {rol}" si es cualquier otro.
+
+**Consecuencia práctica:** si cambiás el rol de un usuario en Firestore, el Worker lo respeta automáticamente. No hay que redeployar nada.
+
+---
+
 ## Troubleshooting
 
 ### El usuario se loguea pero no entra al panel
@@ -141,6 +154,11 @@ Revocar = cambiar el rol a **`nulo`**.
 ### El dropdown de rol en la sección Usuarios está deshabilitado
 
 **Es correcto.** No podés cambiar tu propio rol. Necesitás que otro admin lo haga.
+
+### Producción intenta publicar y recibe "Rol no autorizado"
+
+- **Verificar el rol del usuario:** debe ser `admin` o `produccion` en `usuarios/{uid}.rol`.
+- Si el rol es correcto pero el error persiste, revisar la consola del navegador: puede ser un error de CORS del Worker (verificar que el dominio del panel esté en `ALLOWED_ORIGIN` del `wrangler.toml`).
 
 ---
 

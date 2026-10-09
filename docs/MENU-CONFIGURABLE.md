@@ -1,7 +1,7 @@
 # menu-configurable — Template de menú digital
 
 > Guía para crear el menú digital de un cliente nuevo.
-> **Última actualización:** 4 oct 2026
+> **Última actualización:** 8 oct 2026
 
 ---
 
@@ -15,12 +15,20 @@ El repo privado contiene el **código** del menú (HTML/CSS/JS). Los **datos** (
 
 ## Estructura de repos por cliente
 
-Cada cliente tiene **2 repositorios**:
+Cada cliente tiene **2 repositorios**, con la siguiente convención de nombres:
 
-| Repo | Visibilidad | Contenido | Quién escribe |
+| Repo | Visibilidad | Nombre | Contenido |
 |---|---|---|---|
-| `menu-{slug-cliente}` | 🔒 Privado | Código del menú (HTML/CSS/JS) | Solo el dev |
-| `menu_{slug-cliente}` | 🌐 Público | Imágenes + `menu.json` | El panel `superadmin` vía Worker |
+| Código | 🔒 Privado | `menu-{slug}-private` | HTML/CSS/JS del menú |
+| Assets | 🌐 Público | `menu-{slug}-assets` | Imágenes + `menu.json` |
+
+**Ejemplo** para un cliente "Sukidesu":
+- `menu-sukidesu-private` (privado)
+- `menu-sukidesu-assets` (público)
+
+**Ejemplo real** para el cliente de prueba "Menu Test":
+- `menu-test-private`
+- `menu-test-assets`
 
 ---
 
@@ -30,81 +38,118 @@ Cada cliente tiene **2 repositorios**:
 
 1. Ir al template `menu-configurable` en GitHub.
 2. Click en **"Use this template"** → **"Create a new repository"**.
-3. Nombre: `menu-{slug-cliente}` (ej: `menu-cosa-nostra`). Visibilidad: **Privado**.
-4. Crear un segundo repo vacío: nombre `menu_{slug-cliente}`. Visibilidad: **Público**.
+3. Nombre: `menu-{slug}-private`. Visibilidad: **Privado**.
+4. Crear un segundo repo **vacío**: nombre `menu-{slug}-assets`. Visibilidad: **Público**.
 
-### Paso 2 — Configurar el proyecto de Firebase
+### Paso 2 — Configurar el proyecto de Firebase del cliente
 
-Cada cliente tiene **su propio proyecto Firebase**:
+Cada cliente tiene **su propio proyecto Firebase** (aislado de la agencia):
 - Crear proyecto en [Firebase Console](https://console.firebase.google.com/).
 - Habilitar Firestore.
 - Habilitar Authentication (email/contraseña).
 - Crear usuario admin del cliente (si aplica).
 
-### Paso 3 — Deploy del código a Cloudflare Workers
+### Paso 3 — Deploy a Cloudflare Pages
 
-🔧 **Por completar.** Falta documentar:
-- Cómo se sube el código al Worker (`wrangler deploy`, dashboard, GitHub Actions…).
-- Cómo se asigna el subdominio (`{cliente}.sukidesumenu.workers.dev`).
-- Cómo se conecta el Worker al proyecto Firebase del cliente.
+**⚠️ Importante:** se usa **Cloudflare Pages** (NO Workers). Pages envía CORS automáticamente; Workers no.
 
-### Paso 4 — Cargar el `menu.json` inicial (semilla)
+Para cada uno de los 2 repos:
 
-La primera vez, el menú se carga con un **JSON semilla**.
+1. Cloudflare Dashboard → **Workers & Pages**.
+2. **Create application** → pestaña **Pages** → **Import an existing Git repository**.
+3. Seleccionar el repo.
+4. Configurar:
+   - **Project name:** igual al nombre del repo (ej: `menu-{slug}-private`).
+   - **Production branch:** `main`.
+   - **Framework preset:** `None`.
+   - **Build command:** (vacío).
+   - **Build output directory:** `/`.
+5. **Save and Deploy**.
 
-🔧 **Por completar:**
-- ¿Dónde vive el JSON semilla? (¿en el template? ¿en un gist? ¿se copia a mano?)
-- ¿Tiene estructura mínima o viene con platos de ejemplo?
+**Resultado:**
+- `menu-{slug}-private.pages.dev` → web que ve el comensal
+- `menu-{slug}-assets.pages.dev` → repo de assets
 
-### Paso 5 — Registrar el cliente en `superadmin`
+### Paso 4 — Crear el `menu.json` semilla en el repo de assets
 
-1. Abrir el panel `superadmin`.
-2. Click en **"Nuevo Cliente"**.
-3. Completar el formulario (nombre, documento, teléfono, correo).
-4. Guardar. El cliente queda con estado `Activo` / `Activo`.
+En el repo `menu-{slug}-assets`, crear un archivo `menu.json` en la **raíz** con:
 
-### Paso 6 — Cargar credenciales en la Bóveda
+```json
+{
+  "items": [],
+  "categories": [],
+  "config": {
+    "estado_servicio": "activo",
+    "promo_activa": "false"
+  },
+  "tema": {}
+}
 
-En `superadmin`, ficha del cliente → tab **Bóveda**:
 
-- **GitHub**: token, repo privado, repo público, branch, path del `menu.json`.
-- **Firebase**: project ID, API key, contraseña.
-- **Cloudflare**: account ID, API token, zone ID, contraseña.
-- **Google**: correo, contraseña.
+//También crear un index.html mínimo (para que Cloudflare detecte archivos estáticos al deployar).
 
-### Paso 7 — Configurar apariencia y publicar
+Paso 5 — Editar js/config.js en el repo privado
+En el repo menu-{slug}-private, editar js/config.js con los datos del cliente:
 
-1. Ficha del cliente → tab **Apariencia**.
-2. Elegir colores, tipografías, tamaños.
-3. **Guardar Apariencia** → guarda en Firestore.
-4. **Publicar en GitHub** → el Worker escribe el `menu.json` en el repo público con la apariencia elegida.
+cliente.* — nombre, eslogan, WhatsApp, correo, datos legales.
 
-### Paso 8 — Verificar
+firebase.* — credenciales del proyecto Firebase del cliente.
 
-Abrir la URL del cliente: `https://{cliente}.sukidesumenu.workers.dev/`.
+urls.produccion — https://menu-{slug}-private.pages.dev
+
+urls.recursosCdn — https://menu-{slug}-assets.pages.dev
+
+github.repoPath — {usuario-github}/{menu-{slug}-assets}
+
+ui.app_prefix — prefijo único por cliente (para localStorage).
+
+Paso 6 — Registrar el cliente en superadmin
+Abrir el panel superadmin.
+
+Click en "Nuevo Cliente".
+
+Completar el formulario (nombre, documento, teléfono, correo).
+
+Guardar.
+
+Paso 7 — Cargar credenciales en la Bóveda
+En superadmin, ficha del cliente → tab Bóveda:
+
+GitHub: token (con scope repo), repo privado, repo público, branch (main), path del menu.json (menu.json).
+
+Firebase: project ID, API key, contraseña.
+
+Cloudflare: account ID, API token, zone ID, contraseña.
+
+Google: correo, contraseña.
+
+Paso 8 — Configurar apariencia y publicar
+Ficha del cliente → tab Apariencia.
+
+Elegir colores, tipografías, tamaños.
+
+Guardar Apariencia → guarda en Firestore.
+
+Publicar en GitHub → el Worker escribe el menu.json en el repo público con la apariencia elegida.
+
+Paso 9 — Verificar
+Abrir la URL del cliente: https://menu-{slug}-private.pages.dev.
 Debe cargar el menú con los colores y tipografías configurados.
 
----
+¿Qué archivos se editan a mano?
+Solo js/config.js. Todo lo demás (apariencia, colores, tipografía) se configura desde el panel superadmin.
 
-## ¿Qué archivos se editan a mano?
+Nota sobre el config.js: es el único archivo que hay que tocar por cliente. Contiene AppConfig con datos del cliente + credenciales de Firebase + URLs + repos.
 
-🔧 **Por completar.** El objetivo del panel `superadmin` es **automatizar** esto lo más posible.
+Notas
+El proyecto usa Tailwind v4 con @theme y @layer utilities. En Tailwind v4, las variables --size-* colisionan con las utilidades nativas size-* (que generan width + height). Por eso las variables de tamaño de fuente se llaman --fs-*.
 
-Pendiente de definir:
-- ¿Qué archivos hay que tocar en el repo privado al crear un cliente? (¿`config.js`? ¿`wrangler.toml`? ¿`firebase.js`?)
-- ¿Cómo se inyecta el project ID de Firebase?
+Los cambios de apariencia se aplican al menu.json vía Worker y viajan al cliente en tiempo real (sin redeploy manual).
 
-**Nota:** este documento se va a actualizar a medida que el panel crezca.
+Ver también
+PENDIENTES.md — Listado consolidado de pendientes vivos.
 
----
+ALTA-USUARIOS.md — Cómo crear usuarios.
 
-## Notas
 
-- El primer setup del template lo hizo el autor del proyecto hace tiempo. Los pasos de Cloudflare y los archivos exactos a editar están pendientes de reconstruir.
-- Cuando el panel `superadmin` tenga el **Worker con Admin SDK** (pendiente S1), varios de estos pasos se van a poder hacer desde el panel.
 
----
-
-## Ver también
-
-- [`PENDIENTES.md`](./PENDIENTES.md) — Listado consolidado de pendientes vivos.
