@@ -69,7 +69,29 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 - Limpiar el `.dev.vars` del Worker (solo tiene placeholder).
 - Implementar los otros 3 sistemas visuales (Material, Ant, Cloudscape).
 
+## 🟡 Sistemas visuales (en progreso)
+
+**Objetivo:** Cada cliente tiene UN sistema visual asignado (`sistemaVisual` en Firestore). El panel debe mostrar SOLO los controles de ese sistema.
+
+**Sistemas actuales:**
+- `sukidesu` — Clásico Oscuro: 10 colores + 27 tipografías + 27 tamaños + radio
+- `shadcn` — Shadcn Elegante: 5 colores + 2 tipografías + radio
+
+**Fase 1 (COMPLETADA):**
+- ✅ Campo `sistemaVisual` agregado a los 2 clientes en Firestore
+- ✅ Archivo `js/config/sistemas-visuales.js` creado con los schemas
+
+**Fase 2 (pendiente):**
+- Refactor de `gestionar.js`: leer `sistemaVisual` al abrir la ficha del cliente
+- Renderizar SOLO los controles de ese schema
+- Guardar apariencia con los campos correctos del sistema
+- Bloquear a Sukidesu que se le apliquen los colores del Shadcn (y viceversa)
+
+**Fase 3 (pendiente):**
+- Probar con ambos clientes que el diseño no se rompe al cambiar colores
+
 ---
+
 
 ## ⚪ Producto grande (roadmap)
 
