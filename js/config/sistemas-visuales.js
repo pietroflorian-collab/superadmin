@@ -18,6 +18,27 @@ export const SISTEMAS_VISUALES = {
     descripcion: 'Menú claro y minimalista con acento dorado.',
     icon: 'sparkles',
     accent: '#B8934A'
+  },
+  material: {
+    key: 'material',
+    nombre: 'Material',
+    descripcion: 'Interfaz limpia estilo Google con acento púrpura y curvas suaves.',
+    icon: 'layers',
+    accent: '#6750A4'
+  },
+  editorial: {
+    key: 'editorial',
+    nombre: 'Editorial',
+    descripcion: 'Estilo revista impresa: serif marcado, alto contraste y curvas mínimas.',
+    icon: 'newspaper',
+    accent: '#B71C1C'
+  },
+  minimal: {
+    key: 'minimal',
+    nombre: 'Minimal',
+    descripcion: 'Blanco puro, tipografía única y jerarquía por espacio. Estilo Apple.',
+    icon: 'minus',
+    accent: '#0071E3'
   }
 };
 
