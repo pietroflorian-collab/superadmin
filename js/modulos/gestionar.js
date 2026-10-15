@@ -1,21 +1,20 @@
 // ==========================================
-// MÓDULO: GESTIONAR — Lógica de secciones
+// MÓDULO: GESTIONAR — Orquestador
 // ==========================================
 import { db, auth } from '../config/firebase.js';
 import { doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-import { DIAS_PRORROGA, REDES_DISPONIBLES } from '../config/constantes.js';
+import { DIAS_PRORROGA, REDES_DISPONIBLES, WORKER_URL } from '../config/constantes.js';
 import { getState, setState } from '../core/state.js';
 import {
-  esc, refrescarIconos, formatearFecha, formatearFechaHora,
+  formatearFecha, formatearFechaHora,
   sumarDias, obtenerRedMeta
 } from '../core/helpers.js';
 import {
   renderRedesGestionar, renderRedEditor,
   renderDireccionesGestionar, renderDireccionEditor
 } from '../ui/render.js';
-import { cargarClientes } from './clientes.js';
-import { WORKER_URL } from '../config/constantes.js';
 import { toast, confirmar } from '../ui/notificaciones.js';
+import { listaSistemas, obtenerMeta, cargarModuloSistema } from '../config/sistemas-visuales.js';
 
 // ---------- Estado local ----------
 let redesGestionar = [];
@@ -23,57 +22,155 @@ let direccionesGestionar = [];
 let editandoRedes = false;
 let editandoDirecciones = false;
 
-const cap = (s) => s[0].toUpperCase() + s.slice(1);
+// Módulo del sistema visual actualmente cargado (sukidesu, shadcn, etc.)
+let moduloSistemaActual = null;
 
-// Lee todos los valores de apariencia desde el DOM
-function leerAparienciaDelDOM() {
-  const leerColor = (id) => {
-    const v = document.getElementById(id)?.value;
-    return v && /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(v) ? v : undefined;
-  };
+// Callbacks que inyecta gestionar-page.js para sincronizar su estado
+let onCambioApariencia = () => {};
+let onGuardadoExitoso = () => {};
 
-  const apariencia = {
-    colorPrimario:   leerColor('drawer-color-primario'),
-    colorFondo:      leerColor('drawer-color-fondo'),
-    colorTexto:      leerColor('drawer-color-texto'),
-    colorTextoSuave: leerColor('drawer-color-texto-suave'),
-    colorTarjetas:   leerColor('drawer-color-tarjetas'),
-    colorCarrito:    leerColor('drawer-color-carrito'),
-    colorBordes:     leerColor('drawer-color-bordes'),
-    colorAcento:     leerColor('drawer-color-acento'),
-    colorSubtitulo:  leerColor('drawer-color-subtitulo'),
-    colorHover:      leerColor('drawer-color-hover'),
-    radioBordes:     document.getElementById('drawer-radio-bordes')?.value
-  };
-
-  // Quitar undefined
-  Object.keys(apariencia).forEach(k => apariencia[k] === undefined && delete apariencia[k]);
-
-  const zonas = new Set();
-  document.querySelectorAll('[data-zona]').forEach(el => zonas.add(el.dataset.zona));
-
-  zonas.forEach(zona => {
-    const fKey = 'fuente' + cap(zona);
-    const sKey = 'tamaño' + cap(zona);
-
-    const fuenteInput = document.querySelector(`.fuente-select[data-zona="${zona}"]`);
-    if (fuenteInput && fuenteInput.value) apariencia[fKey] = fuenteInput.value;
-
-    const sizeInput = document.querySelector(`.tamaño-input[data-zona="${zona}"]`);
-    if (sizeInput && sizeInput.value) {
-      const n = parseInt(sizeInput.value, 10);
-      if (!isNaN(n) && n >= 8 && n <= 120) apariencia[sKey] = n;
-    }
-  });
-
-  return apariencia;
+export function setOnCambioApariencia(cb) {
+  onCambioApariencia = typeof cb === 'function' ? cb : () => {};
+}
+export function setOnGuardadoExitoso(cb) {
+  onGuardadoExitoso = typeof cb === 'function' ? cb : () => {};
 }
 
-// ---------- Cargar datos del cliente en el DOM ----------
-export function cargarDatosCliente(c) {
+const cap = (s) => s[0].toUpperCase() + s.slice(1);
+
+// ==========================================
+// APARIENCIA — selector y panel
+// ==========================================
+
+function renderSelectorSistemas() {
+  const grid = document.getElementById('apariencia-selector-grid');
+  if (!grid) return;
+  const sistemas = listaSistemas();
+  grid.innerHTML = sistemas.map((s) => `
+    <div class="border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors space-y-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-md flex items-center justify-center shrink-0"
+             style="background:${s.accent}1A; color:${s.accent};">
+          <i data-lucide="${s.icon}" class="w-4 h-4" aria-hidden="true"></i>
+        </div>
+        <div class="min-w-0">
+          <h5 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">${s.nombre}</h5>
+          <p class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono">${s.key}</p>
+        </div>
+      </div>
+      <p class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">${s.descripcion}</p>
+      <button type="button" data-action="seleccionar-sistema" data-key="${s.key}"
+              class="w-full px-3 py-1.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-[11px] font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors">
+        Seleccionar
+      </button>
+    </div>
+  `).join('');
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function mostrarSelectorSistemas() {
+  const selector = document.getElementById('apariencia-selector');
+  const panel = document.getElementById('apariencia-panel');
+  if (!selector || !panel) return;
+  panel.classList.add('hidden');
+  selector.classList.remove('hidden');
+  moduloSistemaActual = null;
+  renderSelectorSistemas();
+}
+
+async function renderPanelApariencia(sistemaKey, apariencia) {
+  const selector = document.getElementById('apariencia-selector');
+  const panel = document.getElementById('apariencia-panel');
+  const contenedor = document.getElementById('apariencia-contenedor');
+  const nombre = document.getElementById('apariencia-sistema-nombre');
+  if (!panel || !contenedor) return;
+
+  selector?.classList.add('hidden');
+  panel.classList.remove('hidden');
+
+  const metaSys = obtenerMeta(sistemaKey);
+  if (nombre) nombre.textContent = metaSys ? `${metaSys.nombre} · ${sistemaKey}` : sistemaKey;
+
+  try {
+    moduloSistemaActual = await cargarModuloSistema(sistemaKey);
+    moduloSistemaActual.render(contenedor, apariencia || {}, {
+      onCambio: () => onCambioApariencia()
+    });
+  } catch (e) {
+    console.error('Error cargando módulo de sistema:', e);
+    moduloSistemaActual = null;
+    contenedor.innerHTML = `
+      <div class="p-4 rounded-md border border-red-200 dark:border-red-900 bg-red-50/50 dark:bg-red-950/20">
+        <p class="text-xs text-red-700 dark:text-red-400">
+          No se pudo cargar el sistema <code class="font-mono">${sistemaKey}</code>.
+          Revisá que exista <code class="font-mono">js/modulos/sistemas/${sistemaKey}.js</code>.
+        </p>
+      </div>`;
+  }
+}
+
+// ==========================================
+// APARIENCIA — acciones públicas
+// ==========================================
+
+export async function seleccionarSistema(key) {
+  const c = getState().clienteSeleccionado;
+  if (!c) return;
+  const meta = obtenerMeta(key);
+  if (!meta) { toast('Sistema desconocido.', 'error'); return; }
+
+  const teniaSistema = !!c.sistemaVisual;
+  const cambiando = teniaSistema && c.sistemaVisual !== key;
+
+  const ok = await confirmar({
+    titulo: cambiando ? 'Cambiar sistema visual' : 'Asignar sistema visual',
+    mensaje: cambiando
+      ? `Vas a cambiar de "${c.sistemaVisual}" a "${meta.nombre}".\n\nSe borrará la apariencia actual (colores, tipografías, etc.). Esta acción no se puede deshacer.`
+      : `Vas a asignar "${meta.nombre}" a este cliente.\n\nUna vez asignado, no se puede cambiar sin perder la apariencia configurada.`,
+    confirmarTexto: cambiando ? 'Cambiar y borrar' : 'Asignar'
+  });
+  if (!ok) return;
+
+  try {
+    await updateDoc(doc(db, 'clientes_agencia', c.id), {
+      sistemaVisual: key,
+      apariencia: {}
+    });
+    const s = await getDoc(doc(db, 'clientes_agencia', c.id));
+    if (s.exists()) {
+      const actualizado = { id: c.id, ...s.data() };
+      setState({ clienteSeleccionado: actualizado });
+      await renderPanelApariencia(key, {});
+      onGuardadoExitoso();
+      toast(`Sistema "${meta.nombre}" asignado.`, 'exito');
+    }
+  } catch (e) {
+    console.error(e);
+    toast('Error al asignar el sistema.', 'error');
+  }
+}
+
+export async function cambiarSistemaVisual() {
+  const c = getState().clienteSeleccionado;
+  if (!c || !c.sistemaVisual) return;
+
+  const ok = await confirmar({
+    titulo: 'Cambiar sistema visual',
+    mensaje: `Vas a volver al selector de sistemas visuales.\n\nSi elegís otro sistema, la apariencia actual se perderá. Si elegís el mismo, no pasa nada.`,
+    confirmarTexto: 'Abrir selector'
+  });
+  if (!ok) return;
+
+  mostrarSelectorSistemas();
+}
+
+// ==========================================
+// Cargar datos del cliente en el DOM
+// ==========================================
+export async function cargarDatosCliente(c) {
   if (!c) return;
 
-    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set('gd-nombre-cliente', c.nombreCliente || '—');
   set('gd-nombre-comercial', c.nombreComercial || '—');
   set('gd-documento', c.numeroDocumento ? `${c.tipoDocumento || ''} ${c.numeroDocumento}` : '—');
@@ -83,11 +180,9 @@ export function cargarDatosCliente(c) {
   if (comercialNombre) comercialNombre.textContent = c.creadoPorNombre || '—';
   const comercialDoc = document.getElementById('gd-comercial-doc');
   if (comercialDoc) {
-    if (c.creadoPorTipoDoc && c.creadoPorNumDoc) {
-      comercialDoc.textContent = `${c.creadoPorTipoDoc} ${c.creadoPorNumDoc}`;
-    } else {
-      comercialDoc.textContent = '';
-    }
+    comercialDoc.textContent = (c.creadoPorTipoDoc && c.creadoPorNumDoc)
+      ? `${c.creadoPorTipoDoc} ${c.creadoPorNumDoc}`
+      : '';
   }
 
   // Datos para edición
@@ -146,98 +241,51 @@ export function cargarDatosCliente(c) {
   const inpVenc = document.getElementById('gd-input-vencimiento');
   if (inpVenc) inpVenc.value = c.fechaVencimiento || '';
 
-   // Apariencia — colores y formas
-  const ap = c.apariencia || {};
-
-  const colorDefault = {
-    'color-primario':   '#AD2020',
-    'color-fondo':      '#000000',
-    'color-texto':      '#e2e2e2',
-    'color-texto-suave':'#e3beba',
-    'color-tarjetas':   '#0a0a0a',
-    'color-carrito':    '#1a1a1a',
-    'color-bordes':     '#5b403e',
-    'color-acento':     '#ACC677',
-    'color-subtitulo':  '#ffb3b1',
-    'color-hover':      '#393939'
-  };
-
-  const coloresFirestore = {
-    'color-primario':   ap.colorPrimario,
-    'color-fondo':      ap.colorFondo,
-    'color-texto':      ap.colorTexto,
-    'color-texto-suave':ap.colorTextoSuave,
-    'color-tarjetas':   ap.colorTarjetas,
-    'color-carrito':    ap.colorCarrito,
-    'color-bordes':     ap.colorBordes,
-    'color-acento':     ap.colorAcento,
-    'color-subtitulo':  ap.colorSubtitulo,
-    'color-hover':      ap.colorHover
-  };
-
-    Object.entries(coloresFirestore).forEach(([key, valor]) => {
-    const picker = document.getElementById('drawer-' + key);
-    const texto = document.getElementById('texto-' + key);
-    if (picker) picker.value = valor || colorDefault[key];
-    if (texto) texto.value = (valor || colorDefault[key]).toUpperCase();
-  });
-
-  const radioInput = document.getElementById('drawer-radio-bordes');
-  if (radioInput) {
-    radioInput.value = ap.radioBordes ?? '8';
-    const vrb = document.getElementById('valor-radio-bordes');
-    if (vrb) vrb.textContent = radioInput.value + 'px';
+  // ---------- APARIENCIA: delegada al sistema visual ----------
+  if (!c.sistemaVisual) {
+    mostrarSelectorSistemas();
+  } else {
+    await renderPanelApariencia(c.sistemaVisual, c.apariencia || {});
   }
 
-  // Apariencia — tipografía por zonas (27 fuentes + 27 tamaños)
-  const zonas = new Set();
-  document.querySelectorAll('[data-zona]').forEach(el => zonas.add(el.dataset.zona));
-
-  zonas.forEach(zona => {
-    const fKey = 'fuente' + cap(zona);
-    const sKey = 'tamaño' + cap(zona);
-
-    const fuenteInput = document.querySelector(`.fuente-select[data-zona="${zona}"]`);
-    if (fuenteInput) fuenteInput.value = ap[fKey] || '';
-
-    const sizeInput = document.querySelector(`.tamaño-input[data-zona="${zona}"]`);
-    if (sizeInput) sizeInput.value = ap[sKey] ?? '';
-
-    // Actualizar preview
-    const preview = document.querySelector(`.preview-tipografia[data-zona="${zona}"]`);
-    if (preview && ap[fKey]) {
-      preview.style.fontFamily = `'${ap[fKey]}', sans-serif`;
-    }
-  });
-
-  refrescarIconos();
+  if (window.lucide) window.lucide.createIcons();
 }
 
-// ---------- Guardar: Apariencia ----------
+// ==========================================
+// Guardar: Apariencia
+// ==========================================
 export async function guardarConfiguracion() {
   const c = getState().clienteSeleccionado;
   if (!c) return;
-  const btn = document.getElementById('btn-guardar-apariencia');
-  const orig = btn.textContent;
-  btn.textContent = 'Guardando...'; btn.disabled = true;
+  if (!moduloSistemaActual) {
+    toast('No hay sistema visual activo.', 'aviso');
+    return;
+  }
 
-  const nueva = leerAparienciaDelDOM();
+  const contenedor = document.getElementById('apariencia-contenedor');
+  if (!contenedor) return;
+
+  const btn = document.getElementById('btn-guardar-apariencia');
+  const orig = btn?.textContent ?? 'Guardar Apariencia';
+  if (btn) { btn.textContent = 'Guardando...'; btn.disabled = true; }
+
+  const nueva = moduloSistemaActual.leer(contenedor);
 
   try {
-    await updateDoc(doc(db, "clientes_agencia", c.id), { apariencia: nueva });
-    const s = await getDoc(doc(db, "clientes_agencia", c.id));
+    await updateDoc(doc(db, 'clientes_agencia', c.id), { apariencia: nueva });
+    const s = await getDoc(doc(db, 'clientes_agencia', c.id));
     if (s.exists()) setState({ clienteSeleccionado: { id: c.id, ...s.data() } });
-       toast('Apariencia actualizada.', 'exito');
-    // Limpiar indicador (estilo inline para que funcione con Tailwind CDN)
-    const btnAfter = document.getElementById('btn-guardar-apariencia');
-    if (btnAfter) {
-      btnAfter.textContent = 'Guardar Apariencia';
-      btnAfter.style.backgroundColor = '';
-      btnAfter.style.color = '';
-      btnAfter.style.fontWeight = '';
+    toast('Apariencia actualizada.', 'exito');
+    onGuardadoExitoso();
+  } catch (e) {
+    console.error(e);
+    toast('Error al guardar.', 'error');
+  } finally {
+    if (btn) {
+      btn.textContent = 'Guardar Apariencia';
+      btn.disabled = false;
     }
-  } catch (e) { console.error(e); toast('Error al guardar.', 'error'); }
-  finally { btn.textContent = orig; btn.disabled = false; }
+  }
 }
 
 export function limpiarCambiosApariencia() {
@@ -245,7 +293,9 @@ export function limpiarCambiosApariencia() {
   if (btn) btn.classList.remove('ring-2', 'ring-amber-400', 'dark:ring-amber-500');
 }
 
-// ---------- Guardar: Redes ----------
+// ==========================================
+// Guardar: Redes
+// ==========================================
 export async function guardarRedes() {
   const c = getState().clienteSeleccionado;
   if (!c) return;
@@ -257,7 +307,7 @@ export async function guardarRedes() {
     }
   }
   try {
-    await updateDoc(doc(db, "clientes_agencia", c.id), {
+    await updateDoc(doc(db, 'clientes_agencia', c.id), {
       redes: redesLimp.map((r) => ({ tipo: r.tipo, valor: r.valor.trim() }))
     });
     setState({ clienteSeleccionado: { ...c, redes: redesLimp } });
@@ -270,13 +320,15 @@ export async function guardarRedes() {
   } catch (e) { console.error(e); toast('Error al guardar redes.', 'error'); }
 }
 
-// ---------- Guardar: Direcciones ----------
+// ==========================================
+// Guardar: Direcciones
+// ==========================================
 export async function guardarDirecciones() {
   const c = getState().clienteSeleccionado;
   if (!c) return;
   const limpias = direccionesGestionar.filter((d) => d.direccion && d.direccion.trim());
   try {
-    await updateDoc(doc(db, "clientes_agencia", c.id), { direcciones: limpias });
+    await updateDoc(doc(db, 'clientes_agencia', c.id), { direcciones: limpias });
     setState({ clienteSeleccionado: { ...c, direcciones: limpias } });
     toast('Direcciones guardadas.', 'exito');
     editandoDirecciones = false;
@@ -287,14 +339,16 @@ export async function guardarDirecciones() {
   } catch (e) { console.error(e); toast('Error al guardar direcciones.', 'error'); }
 }
 
-// ---------- Guardar: Fechas ----------
+// ==========================================
+// Guardar: Fechas
+// ==========================================
 export async function guardarFechas() {
   const c = getState().clienteSeleccionado;
   if (!c) return;
   const fv = document.getElementById('gd-input-vencimiento').value;
   if (!fv) { toast('Selecciona una fecha de vencimiento.', 'aviso'); return; }
   try {
-    await updateDoc(doc(db, "clientes_agencia", c.id), { fechaVencimiento: fv });
+    await updateDoc(doc(db, 'clientes_agencia', c.id), { fechaVencimiento: fv });
     setState({ clienteSeleccionado: { ...c, fechaVencimiento: fv } });
     document.getElementById('gd-fecha-vencimiento').textContent = formatearFecha(fv);
     const pr = sumarDias(fv, DIAS_PRORROGA);
@@ -303,7 +357,9 @@ export async function guardarFechas() {
   } catch (e) { console.error(e); toast('Error al guardar.', 'error'); }
 }
 
-// ---------- Guardar: Fecha Producción ----------
+// ==========================================
+// Guardar: Fecha Producción
+// ==========================================
 export async function guardarFechaProduccion() {
   const c = getState().clienteSeleccionado;
   if (!c) return;
@@ -313,16 +369,18 @@ export async function guardarFechaProduccion() {
   const fp = document.getElementById('gd-input-produccion').value;
   if (!fp) { toast('Selecciona una fecha de producción.', 'aviso'); return; }
   try {
-    await updateDoc(doc(db, "clientes_agencia", c.id), { fechaProduccion: fp });
+    await updateDoc(doc(db, 'clientes_agencia', c.id), { fechaProduccion: fp });
     setState({ clienteSeleccionado: { ...c, fechaProduccion: fp } });
     document.getElementById('gd-fecha-produccion').textContent = formatearFecha(fp);
     document.getElementById('gd-fecha-produccion-edit').classList.add('hidden');
     document.getElementById('gd-fecha-produccion-bloqueada').classList.remove('hidden');
     toast('Fecha de producción fijada.', 'exito');
-  } catch (e) { console.error(e); toast('Error al guardar.', 'error');}
+  } catch (e) { console.error(e); toast('Error al guardar.', 'error'); }
 }
 
-// ---------- Toggle edición: Redes ----------
+// ==========================================
+// Toggle edición: Redes
+// ==========================================
 export function toggleEditarRedes() {
   const c = getState().clienteSeleccionado;
   if (!c) return;
@@ -339,10 +397,12 @@ export function toggleEditarRedes() {
   document.getElementById('gd-redes-acciones').classList.toggle('hidden', !editandoRedes);
   document.getElementById('gd-redes-acciones').classList.toggle('flex', editandoRedes);
   document.getElementById('btn-toggle-redes').textContent = editandoRedes ? 'Cancelar' : 'Editar';
-  refrescarIconos();
+  if (window.lucide) window.lucide.createIcons();
 }
 
-// ---------- Toggle edición: Direcciones ----------
+// ==========================================
+// Toggle edición: Direcciones
+// ==========================================
 export function toggleEditarDirecciones() {
   const c = getState().clienteSeleccionado;
   if (!c) return;
@@ -359,15 +419,16 @@ export function toggleEditarDirecciones() {
   document.getElementById('gd-direcciones-acciones').classList.toggle('hidden', !editandoDirecciones);
   document.getElementById('gd-direcciones-acciones').classList.toggle('flex', editandoDirecciones);
   document.getElementById('btn-toggle-direcciones').textContent = editandoDirecciones ? 'Cancelar' : 'Editar';
-  refrescarIconos();
+  if (window.lucide) window.lucide.createIcons();
 }
 
-// ---------- Añadir/Quitar redes ----------
+// ==========================================
+// Añadir/Quitar redes
+// ==========================================
 export function addRedGestionar() {
   redesGestionar.push({ tipo: 'instagram', valor: '' });
   renderRedEditor(document.getElementById('gd-redes'), redesGestionar, (r) => { redesGestionar = r; }, 'gd');
 }
-
 export function rmRedGestionar(el) {
   redesGestionar.splice(+el.dataset.idx, 1);
   renderRedEditor(document.getElementById('gd-redes'), redesGestionar, (r) => { redesGestionar = r; }, 'gd');
@@ -377,16 +438,21 @@ export function addDireccionGestionar() {
   direccionesGestionar.push({ tipo: 'establecimiento', nombre: '', direccion: '', referencia: '' });
   renderDireccionEditor(document.getElementById('gd-direcciones'), direccionesGestionar, (d) => { direccionesGestionar = d; }, 'gd');
 }
-
 export function rmDireccionGestionar(el) {
   direccionesGestionar.splice(+el.dataset.idx, 1);
   renderDireccionEditor(document.getElementById('gd-direcciones'), direccionesGestionar, (d) => { direccionesGestionar = d; }, 'gd');
 }
 
-// ---------- Publicar en GitHub ----------
+// ==========================================
+// Publicar en GitHub
+// ==========================================
 export async function publicarEnGitHub() {
   const c = getState().clienteSeleccionado;
   if (!c) return;
+  if (!moduloSistemaActual) {
+    toast('No hay sistema visual activo.', 'aviso');
+    return;
+  }
 
   const btn = document.getElementById('btn-publicar-github');
   const orig = btn.innerHTML;
@@ -397,18 +463,18 @@ export async function publicarEnGitHub() {
     const githubSnap = await getDoc(doc(db, 'clientes_agencia', c.id, 'secretos', 'github'));
     if (!githubSnap.exists()) throw new Error('No hay credenciales de GitHub guardadas');
     const ghData = githubSnap.data();
-       if (!ghData.token) throw new Error('Falta el token de GitHub');
+    if (!ghData.token) throw new Error('Falta el token de GitHub');
     const repoPublico = c.repoPublico;
     if (!repoPublico) throw new Error('El cliente no tiene repo público asignado');
 
-    // Enviar apariencia completa (colores + tipografía completa)
-    const apariencia = leerAparienciaDelDOM();
+    const contenedor = document.getElementById('apariencia-contenedor');
+    const apariencia = moduloSistemaActual.leer(contenedor);
 
     const idToken = await auth.currentUser.getIdToken();
     const res = await fetch(`${WORKER_URL}/publicar`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
-       body: JSON.stringify({
+      body: JSON.stringify({
         repo: repoPublico,
         branch: ghData.branch || 'main',
         path: ghData.pathMenuJson || 'data/menu.json',
@@ -429,32 +495,29 @@ export async function publicarEnGitHub() {
   } finally {
     btn.innerHTML = orig;
     btn.disabled = false;
-    if (typeof window.lucide !== 'undefined') window.lucide.createIcons();
+    if (window.lucide) window.lucide.createIcons();
   }
 }
 
-// ---------- Toggle edición: Datos ----------
+// ==========================================
+// Toggle edición: Datos
+// ==========================================
 export function toggleEditarDatos() {
   const c = getState().clienteSeleccionado;
   if (!c) return;
-
   const lectura = document.getElementById('gd-datos-lectura');
   const edicion = document.getElementById('gd-datos-edicion');
   const btn = document.getElementById('btn-toggle-editar-datos');
-
   const editando = edicion.classList.contains('hidden');
   lectura.classList.toggle('hidden', editando);
   edicion.classList.toggle('hidden', !editando);
   btn.textContent = editando ? 'Cancelar' : 'Editar';
-  refrescarIconos();
+  if (window.lucide) window.lucide.createIcons();
 }
 
-// ---------- Cancelar edición: Datos ----------
 export function cancelarEditarDatos() {
   const c = getState().clienteSeleccionado;
   if (!c) return;
-
-  // Restaurar valores originales
   const inputNombre = document.getElementById('gd-input-nombre-cliente');
   if (inputNombre) inputNombre.value = c.nombreCliente || '';
   const inputComercial = document.getElementById('gd-input-nombre-comercial');
@@ -474,11 +537,12 @@ export function cancelarEditarDatos() {
   if (btn) btn.textContent = 'Editar';
 }
 
-// ---------- Guardar: Datos del cliente ----------
+// ==========================================
+// Guardar: Datos del cliente
+// ==========================================
 export async function guardarDatosCliente() {
   const c = getState().clienteSeleccionado;
   if (!c) return;
-
   const btn = document.getElementById('btn-guardar-datos');
   const orig = btn.textContent;
   btn.textContent = 'Guardando...';
@@ -514,7 +578,6 @@ export async function guardarDatosCliente() {
     const s = await getDoc(doc(db, 'clientes_agencia', c.id));
     if (s.exists()) setState({ clienteSeleccionado: { id: c.id, ...s.data() } });
 
-    // Refrescar vista lectura
     const cActual = getState().clienteSeleccionado;
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     set('gd-nombre-cliente', cActual.nombreCliente || '—');
@@ -522,18 +585,14 @@ export async function guardarDatosCliente() {
     set('gd-documento', cActual.numeroDocumento ? `${cActual.tipoDocumento || ''} ${cActual.numeroDocumento}` : '—');
     set('gd-telefono', cActual.telefono || '—');
     set('gd-correo', cActual.correoOperativo || '—');
-        const comercialNombre2 = document.getElementById('gd-comercial-nombre');
+    const comercialNombre2 = document.getElementById('gd-comercial-nombre');
     if (comercialNombre2) comercialNombre2.textContent = cActual.creadoPorNombre || '—';
     const comercialDoc2 = document.getElementById('gd-comercial-doc');
     if (comercialDoc2) {
-      if (cActual.creadoPorTipoDoc && cActual.creadoPorNumDoc) {
-        comercialDoc2.textContent = `${cActual.creadoPorTipoDoc} ${cActual.creadoPorNumDoc}`;
-      } else {
-        comercialDoc2.textContent = '';
-      }
+      comercialDoc2.textContent = (cActual.creadoPorTipoDoc && cActual.creadoPorNumDoc)
+        ? `${cActual.creadoPorTipoDoc} ${cActual.creadoPorNumDoc}` : '';
     }
 
-    // Volver a modo lectura
     document.getElementById('gd-datos-lectura')?.classList.remove('hidden');
     document.getElementById('gd-datos-edicion')?.classList.add('hidden');
     const btnToggle = document.getElementById('btn-toggle-editar-datos');
