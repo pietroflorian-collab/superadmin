@@ -37,6 +37,7 @@ export function aplicarFiltrosClientes() {
   const fEC = filtrosClientes.estadoCliente || 'todos';
   const fES = filtrosClientes.estadoServicio || 'todos';
   const fV  = filtrosClientes.vencimiento || 'todos';
+  const fSV = filtrosClientes.sistemaVisual || 'todos';
 
   const filtrados = clientes.filter((c) => {
     // 1) Búsqueda: nombre, nombre comercial, slug, correo
@@ -80,6 +81,14 @@ export function aplicarFiltrosClientes() {
       }
       if (cat !== fV) return false;
     }
+     // 5) Sistema visual
+    if (fSV !== 'todos') {
+    if (fSV === 'ninguno') {
+      if (c.sistemaVisual) return false;
+     } else {
+      if (c.sistemaVisual !== fSV) return false;
+  }
+}
 
     return true;
   });
@@ -161,5 +170,9 @@ export function setFiltroEstadoServicio(valor) {
 }
 export function setFiltroVencimiento(valor) {
   setState({ filtrosClientes: { ...getState().filtrosClientes, vencimiento: valor } });
+  aplicarFiltrosClientes();
+}
+export function setFiltroSistemaVisual(valor) {
+  setState({ filtrosClientes: { ...getState().filtrosClientes, sistemaVisual: valor } });
   aplicarFiltrosClientes();
 }

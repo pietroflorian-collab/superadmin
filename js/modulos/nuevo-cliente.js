@@ -14,11 +14,31 @@ import { cargarClientes } from './clientes.js';
 import { toast } from '../ui/notificaciones.js';
 import { activarFocusTrap } from '../ui/focus-trap.js';
 import { getState } from '../core/state.js';
+import { listaSistemas } from '../config/sistemas-visuales.js';
 
 // ---------- Estado local del módulo (no va al store global) ----------
 let redesNuevoCliente = [];
 let direccionesNuevoCliente = [];
 let ncTrapDesactivar = null;
+
+function renderizarSelectorSistemas() {
+  const grid = document.getElementById('nc-sistemas-grid');
+  if (!grid) return;
+  const sistemas = listaSistemas();
+  grid.innerHTML = sistemas.map((s) => `
+    <label class="border border-zinc-200 dark:border-zinc-700 rounded-md p-3 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800 has-[:checked]:border-zinc-900 dark:has-[:checked]:border-zinc-100 has-[:checked]:bg-zinc-50 dark:has-[:checked]:bg-zinc-800 transition-colors flex items-start gap-2.5">
+      <input type="radio" name="nc-sistema-visual" value="${s.key}" class="mt-0.5 accent-zinc-900 dark:accent-zinc-100">
+      <div class="min-w-0 flex-1">
+        <div class="flex items-center gap-1.5">
+          <i data-lucide="${s.icon}" class="w-3.5 h-3.5" style="color:${s.accent}" aria-hidden="true"></i>
+          <span class="text-[11px] font-semibold text-zinc-900 dark:text-zinc-100">${s.nombre}</span>
+        </div>
+        <p class="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5 leading-relaxed">${s.descripcion}</p>
+      </div>
+    </label>
+  `).join('');
+  if (window.lucide) window.lucide.createIcons();
+}
 
 // ---------- Abrir / Cerrar ----------
 export function abrirNuevoCliente() {
@@ -49,11 +69,24 @@ export function abrirNuevoCliente() {
   );
   verificarAdvertenciaRedes();
 
+    // Sistema visual: admin y ventas pueden asignar, producción no
+  const seccionSistemas = document.getElementById('nc-sistema-visual-section');
+  const rolActual = getState().rolActual || 'admin';
+  const puedeAsignarSistema = rolActual === 'admin' || rolActual === 'ventas';
+
+  if (puedeAsignarSistema) {
+    seccionSistemas?.classList.remove('hidden');
+    renderizarSelectorSistemas();
+    // Asegurar que no quede ningún radio marcado de un uso anterior
+    document.querySelectorAll('input[name="nc-sistema-visual"]').forEach((r) => { r.checked = false; });
+  } else {
+    seccionSistemas?.classList.add('hidden');
+  }
+
   drawerNuevo.classList.remove('-translate-x-full');
   backdrop.classList.remove('hidden');
   refrescarIconos();
 
-  // Focus trap del drawer
   if (ncTrapDesactivar) ncTrapDesactivar();
   ncTrapDesactivar = activarFocusTrap(drawerNuevo);
 }
@@ -190,9 +223,16 @@ export async function registrarNuevoCliente(event) {
     creadoPorNumDoc: usuario.numeroDocumento || ''
   };
 
-  // Admin agrega apariencia y fechas default; ventas no las incluye
+    // 1. Sistema visual: tanto admin como ventas lo pueden asignar
+  const sistemaVisual = document.querySelector('input[name="nc-sistema-visual"]:checked')?.value || null;
+  if (sistemaVisual) {
+    nuevoCliente.sistemaVisual = sistemaVisual;
+    nuevoCliente.apariencia = {}; // Arranca vacío, se llena en gestionar.html
+  }
+
+  // 2. Admin agrega fechas y asegura el objeto apariencia
   if (rolActual === 'admin') {
-    nuevoCliente.apariencia = { colorPrimario: '#18181b', tipografia: 'Inter', radioBordes: '8' };
+    if (!nuevoCliente.apariencia) nuevoCliente.apariencia = {};
     nuevoCliente.fechaProduccion = null;
     nuevoCliente.fechaVencimiento = null;
   }

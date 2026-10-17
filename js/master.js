@@ -6,6 +6,7 @@ import {
   doc, updateDoc, getDoc, getDocs, collection, setDoc
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { refrescarIconos } from './core/helpers.js';
+import { listaSistemas } from './config/sistemas-visuales.js';
 import { setState } from './core/state.js';
 import {
   cargarClientes,
@@ -99,6 +100,7 @@ document.addEventListener('change', (e) => {
   if (e.target.id === 'filtro-estado-cliente')  setFiltroEstadoCliente(e.target.value);
   if (e.target.id === 'filtro-estado-servicio') setFiltroEstadoServicio(e.target.value);
   if (e.target.id === 'filtro-vencimiento')     setFiltroVencimiento(e.target.value);
+  if (e.target.id === 'filtro-sistema-visual') setFiltroSistemaVisual(e.target.value);
 });
 
 // ==========================================
@@ -139,6 +141,17 @@ if (backdropUsuarios) {
   backdropUsuarios.addEventListener('click', () => {
     cerrarDrawerUsuarios();
   });
+}
+
+function poblarFiltroSistemas() {
+  const sel = document.getElementById('filtro-sistema-visual');
+  if (!sel) return;
+  const sistemas = listaSistemas();
+  sel.innerHTML = `
+    <option value="todos">Sistema: Todos</option>
+    <option value="ninguno">Sin sistema</option>
+    ${sistemas.map((s) => `<option value="${s.key}">${s.nombre}</option>`).join('')}
+  `;
 }
 
 // ==========================================
@@ -217,7 +230,7 @@ onAuthStateChanged(auth, async (user) => {
   setState({ rolActual: rol, usuarioActual: datosUsuario });
   aplicarPermisos(rol);
 
-  const overlay = document.getElementById('boot-overlay');
+    const overlay = document.getElementById('boot-overlay');
   if (overlay) overlay.remove();
 
   if (!initHecho) {
@@ -226,7 +239,8 @@ onAuthStateChanged(auth, async (user) => {
     cargarClientes();
     inicializarPagos();
     initPerfil();
-    initUsuarios();                                          // ← NUEVO
+    initUsuarios();
+    poblarFiltroSistemas();                                  // ← AGREGAR ESTA LÍNEA
     window.addEventListener('load', refrescarIconos);
     iniciarVigilancia();
   }
