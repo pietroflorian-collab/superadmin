@@ -179,7 +179,10 @@
             <option value="prorroga-vencida">⚪ Prórroga vencida</option>
             <option value="sin-fecha">⚪ Sin fecha</option>
           </select>
-        </div>
+            <select id="filtro-sistema-visual" class="text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-2 py-1.5 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500">
+            <option value="todos">Sistema: Todos</option>
+          </select>
+         </div>
             
          <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden shadow-sm">
           <div class="overflow-x-auto">
@@ -303,6 +306,20 @@
         <div id="nc-redes" class="space-y-3"></div>
         <p id="nc-redes-advertencia" class="text-[10px] text-amber-600 dark:text-amber-400 font-mono"></p>
       </section>
+      <!-- SISTEMA VISUAL -->
+<section id="nc-sistema-visual-section" class="border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 bg-white dark:bg-zinc-900 space-y-3">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <i data-lucide="layout-grid" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" aria-hidden="true"></i>
+      <h4 class="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Sistema Visual</h4>
+    </div>
+    <span class="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono">Opcional</span>
+  </div>
+  <p class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+    Si no elegís uno ahora, podés asignarlo después desde el panel del cliente.
+  </p>
+  <div id="nc-sistemas-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+</section>    
 
       <div class="pt-2 pb-4 flex justify-end gap-2">
         <button type="button" data-action="cerrar-nuevo-cliente" class="px-3.5 py-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md">Cancelar</button>
