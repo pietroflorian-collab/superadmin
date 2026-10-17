@@ -7,7 +7,7 @@ import {
   getAuth, setPersistence, browserSessionPersistence
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyBhfhusKZVL-CkRfUSOLh4W2vjQ_nENmLI",
   authDomain: "cuentas-cop.firebaseapp.com",
   projectId: "cuentas-cop",
@@ -21,7 +21,4 @@ export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 
-// Persistencia: la sesión muere al cerrar la pestaña/navegador.
-// Top-level await garantiza que ya está aplicada antes de que
-// cualquier otro módulo (master.js, login.js) lea auth.currentUser.
 await setPersistence(auth, browserSessionPersistence);

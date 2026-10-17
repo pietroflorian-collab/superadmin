@@ -28,7 +28,8 @@ import {
 } from './modulos/pagos.js';
 import {
   abrirDrawerUsuarios, cerrarDrawerUsuarios,
-  revocarUsuario, initUsuarios
+  revocarUsuario, initUsuarios,
+  abrirModalNuevoUsuario, cerrarModalNuevoUsuario // <-- NUEVOS
 } from './modulos/usuarios.js';
 import { auth } from './config/firebase.js';
 import { iniciarVigilancia } from './core/sesion.js';
@@ -74,6 +75,8 @@ const ACCIONES = {
   'abrir-usuarios':    () => abrirDrawerUsuarios(),
   'cerrar-usuarios':   () => cerrarDrawerUsuarios(),
   'usuarios-revocar':  (el) => revocarUsuario(el.dataset.uid),
+  'abrir-nuevo-usuario': () => abrirModalNuevoUsuario(),
+  'cerrar-nuevo-usuario': () => cerrarModalNuevoUsuario(),
 };
 
 document.addEventListener('click', (event) => {

@@ -1,9 +1,11 @@
 // ==========================================
 // MÓDULO: USUARIOS — Gestión de roles y accesos
 // ==========================================
-import { db, auth } from '../config/firebase.js';
+import { db, auth, firebaseConfig } from '../config/firebase.js';
+import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import {
-  collection, getDocs, doc, updateDoc
+  collection, getDocs, doc, updateDoc, setDoc
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import { esc } from '../core/helpers.js';
 import { toast, confirmar } from '../ui/notificaciones.js';
@@ -191,10 +193,82 @@ export function revocarUsuario(uid) {
   cambiarRolUsuario(uid, 'nulo');
 }
 
-// ---------- Filtros ----------
+// ---------- Crear Nuevo Usuario (S1) ----------
+export function abrirModalNuevoUsuario() {
+  const modal = document.getElementById('modal-nuevo-usuario');
+  const form = document.getElementById('form-nuevo-usuario');
+  if (!modal || !form) return;
+  form.reset();
+  modal.classList.remove('hidden');
+}
+
+export function cerrarModalNuevoUsuario() {
+  const modal = document.getElementById('modal-nuevo-usuario');
+  if (!modal) return;
+  modal.classList.add('hidden');
+}
+
+export async function registrarNuevoUsuario(event) {
+  event.preventDefault();
+  const btn = document.getElementById('btn-crear-usuario');
+  const textoOrig = btn.textContent;
+  
+  const nombre = document.getElementById('nu-nombre').value.trim();
+  const apellido = document.getElementById('nu-apellido').value.trim();
+  const tipoDocumento = document.getElementById('nu-tipo-doc').value;
+  const numeroDocumento = document.getElementById('nu-num-doc').value.trim();
+  const email = document.getElementById('nu-email').value.trim();
+  const password = document.getElementById('nu-password').value;
+  const rol = document.getElementById('nu-rol').value;
+
+  btn.disabled = true;
+  btn.textContent = 'Creando...';
+
+  // Inicializamos la App Secundaria para no desloguear al admin
+  const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
+  const secondaryAuth = getAuth(secondaryApp);
+
+  try {
+    // 1. Crear en Firebase Auth
+    const userCred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+    const nuevoUid = userCred.user.uid;
+
+    // 2. Crear el documento en Firestore
+    await setDoc(doc(db, 'usuarios', nuevoUid), {
+      nombre,
+      apellido,
+      tipoDocumento,
+      numeroDocumento,
+      email,
+      rol
+    });
+
+    toast('Usuario creado exitosamente.', 'exito');
+    cerrarModalNuevoUsuario();
+    cargarUsuarios(); // Recargar la tabla
+    
+  } catch (error) {
+    console.error("Error al crear usuario:", error);
+    if (error.code === 'auth/email-already-in-use') {
+      toast('El correo ya está en uso.', 'error');
+    } else if (error.code === 'auth/weak-password') {
+      toast('La contraseña debe tener al menos 6 caracteres.', 'error');
+    } else {
+      toast(`Error: ${error.message}`, 'error');
+    }
+  } finally {
+    // 3. Cerrar la app secundaria y destruirla
+    await deleteApp(secondaryApp);
+    btn.disabled = false;
+    btn.textContent = textoOrig;
+  }
+}
+
+// ---------- Filtros y Eventos ----------
 export function initUsuarios() {
   const inputBusqueda = document.getElementById('usuarios-busqueda');
   const selectRol     = document.getElementById('usuarios-filtro-rol');
+  const formNuevo     = document.getElementById('form-nuevo-usuario');
 
   if (inputBusqueda) {
     inputBusqueda.addEventListener('input', (e) => {
@@ -208,4 +282,30 @@ export function initUsuarios() {
       renderListaUsuarios();
     });
   }
+  
+  if (formNuevo) {
+    formNuevo.addEventListener('submit', registrarNuevoUsuario);
+  }
+
+  // Listeners para generación y toggle de contraseña
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-action="generar-password"]')) {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+      let pass = "";
+      for (let i = 0; i < 10; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+      const input = document.getElementById('nu-password');
+      if (input) {
+        input.value = pass;
+        input.type = 'text'; // Mostrarla para que el admin la copie
+      }
+    }
+    
+    if (e.target.closest('[data-action="toggle-password"]')) {
+      const btn = e.target.closest('[data-action="toggle-password"]');
+      const input = document.getElementById(btn.dataset.target);
+      if (input) {
+        input.type = input.type === 'password' ? 'text' : 'password';
+      }
+    }
+  });
 }
