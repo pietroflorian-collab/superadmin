@@ -104,7 +104,7 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 | # | Item | Contexto |
 |---|---|---|
 | P1 | **Portafolio de sistemas visuales** | ✅ Cerrado 15 oct 2026 — 5 sistemas disponibles: `sukidesu` (oscuro clásico), `shadcn` (claro elegante), `material` (Google), `editorial` (revista), `minimal` (Apple). Cada uno vive en `js/modulos/sistemas/{key}.js`. |
-| P2 | **Panel multi-sistema** | 🟡 Parcial — la asignación y cambio funciona desde `gestionar.html`. Falta: elegir el sistema **al crear** un cliente (drawer "Nuevo Cliente" en `superadmin.html`). |
+| P2 | **Panel multi-sistema** | ✅ Cerrado 16 oct 2026 — selector de sistema visual en el drawer "Nuevo Cliente" (admin + ventas). Filtro por sistema en la tabla principal. Apariencia inicializa vacía. |
 | P3 | **IA de onboarding** | Analizar Instagram/URL del cliente → extraer paleta + tipografía → pre-rellenar el Motor de Apariencia. |
 | P4 | **Usuario de ventas y producción reales** | Actualmente hay usuarios de prueba. Falta crear los definitivos con sus datos completos. |
 
@@ -135,9 +135,9 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 
 ## 📊 Métricas
 
-- **Pendientes vivos:** 6 (2 seguridad, 0 funcionales, 2 UX, 2 producto, 1 documentación)
+- **Pendientes vivos:** 5 (2 seguridad, 0 funcionales, 2 UX, 1 producto, 1 documentación)
 - **Sistemas visuales disponibles:** 5 (sukidesu, shadcn, material, editorial, minimal)
-- **Circuitos completados:** 2 (cliente de prueba end-to-end + arquitectura de plugins)
+- **Circuitos completados:** 3 (cliente end-to-end + arquitectura plugins + creación multi-sistema)
 - **Bugs activos:** 0
 - **Deuda técnica:** historial de git (S4), Worker Admin SDK (S1)
 
@@ -145,11 +145,10 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 
 ## 🎯 Orden sugerido de próximas sesiones
 
-1. **Sesión 1:** P2 — completar la asignación de sistema visual **al crear** cliente (drawer "Nuevo Cliente" en `superadmin.html`). Ahora que hay 5 sistemas, tiene sentido elegirlo desde el inicio.
-2. **Sesión 2:** S1 (Worker con Firestore Admin SDK) — desbloquea P4 y automatiza el alta de usuarios.
-3. **Sesión 3:** U1 (animaciones de transición) + D4 (README de sistemas visuales — documentar el contrato `{ meta, render, leer }`).
-4. **Sesión 4:** P3 (IA de onboarding) — el gancho comercial más fuerte: el cliente pega su Instagram y ve su paleta aplicada en segundos.
-5. **Cuando haya tiempo:** S4 (limpiar historial de git).
+1. **Sesión 1:** S1 (Worker con Firestore Admin SDK) — desbloquea P4 y automatiza el alta de usuarios. Es el mayor cuello de botella operativo actual.
+2. **Sesión 2:** D4 (README de sistemas visuales) + U1 (animaciones de transición). Ambas tareas de calidad de vida.
+3. **Sesión 3:** P3 (IA de onboarding) — el gancho comercial más fuerte.
+4. **Cuando haya tiempo:** S4 (limpiar historial de git).
 
 ---
 
