@@ -157,7 +157,7 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 | # | Item | Contexto | Estado |
 |---|---|---|---|
 | S0 | **Worker: validación de rol real** | El Worker consulta `usuarios/{uid}.rol` en Firestore. Admin y producción pueden publicar. Ventas solo accede a clientes. | ✅ Cerrado |
-| S1 | **Worker con Firestore Admin SDK** | Permite crear usuarios desde el panel sin hardcodear UIDs. Requiere plan Blaze o adaptar Worker con Admin SDK. | Bloqueado hasta tener 2+ admins reales |
+| S1 | **Worker con Firestore Admin SDK** | Permite crear usuarios desde el panel sin hardcodear UIDs. Requiere plan Blaze o adaptar Worker con Admin SDK. | Bloqueado hasta tener 2+ admins reales || S1 | **Creación de usuarios desde el panel** | ✅ Cerrado 16 oct 2026 — Implementado vía *Secondary App* en el frontend (sin necesidad de Worker ni plan Blaze). El admin crea cuentas desde el drawer de Usuarios sin perder su sesión. |
 | S2 | **Tokens en claro en Firestore** | Aceptado como riesgo. Los tokens viven en `clientes_agencia/{id}/secretos/*` protegidos por reglas. Solución futura: mover a Cloudflare secrets por cliente. | Aceptado |
 | S3 | **API key de Firebase en el código** | Pública por diseño. Evaluado, no es problema. | ✅ Cerrado |
 | S4 | **Limpiar historial de git** | El commit `c810347` todavía contiene `service-account.json` en el historial. La clave fue invalidada y el archivo removido de la rama actual, pero sigue en el historial. Solución: `git filter-repo` + `push --force`. | Pendiente (opcional, repo privado) |
@@ -282,10 +282,11 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 
 ## 📊 Métricas
 
-- **Pendientes vivos:** 7 (2 seguridad, 0 funcionales, 2 UX, 3 producto, 1 documentación)
-- **Circuitos completados:** 2 (cliente de prueba end-to-end + sistemas visuales plugin)
+- **Pendientes vivos:** 4 (1 seguridad, 0 funcionales, 2 UX, 0 producto, 1 documentación)
+- **Sistemas visuales disponibles:** 5 (sukidesu, shadcn, material, editorial, minimal)
+- **Circuitos completados:** 4 (end-to-end, plugins visuales, multi-sistema, alta de usuarios)
 - **Bugs activos:** 0
-- **Deuda técnica:** historial de git (S4), Worker Admin SDK (S1)
+- **Deuda técnica:** historial de git (S4)
 
 ---
 
