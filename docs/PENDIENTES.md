@@ -103,8 +103,8 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 
 | # | Item | Contexto |
 |---|---|---|
-| P1 | **3 sistemas visuales nuevos** | Material, Ant, Cloudscape. Cada uno es un archivo en `js/modulos/sistemas/` + entrada en el registro. El template base ya está resuelto (contrato `{ meta, render, leer }`). |
-| P2 | **Panel multi-sistema** | 🟡 Parcial — la asignación y cambio de sistema funciona desde `gestionar.html`. Falta: permitir elegir el sistema **al crear** un cliente (en `superadmin.html` → drawer "Nuevo Cliente"). |
+| P1 | **Portafolio de sistemas visuales** | ✅ Cerrado 15 oct 2026 — 5 sistemas disponibles: `sukidesu` (oscuro clásico), `shadcn` (claro elegante), `material` (Google), `editorial` (revista), `minimal` (Apple). Cada uno vive en `js/modulos/sistemas/{key}.js`. |
+| P2 | **Panel multi-sistema** | 🟡 Parcial — la asignación y cambio funciona desde `gestionar.html`. Falta: elegir el sistema **al crear** un cliente (drawer "Nuevo Cliente" en `superadmin.html`). |
 | P3 | **IA de onboarding** | Analizar Instagram/URL del cliente → extraer paleta + tipografía → pre-rellenar el Motor de Apariencia. |
 | P4 | **Usuario de ventas y producción reales** | Actualmente hay usuarios de prueba. Falta crear los definitivos con sus datos completos. |
 
@@ -135,8 +135,9 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 
 ## 📊 Métricas
 
-- **Pendientes vivos:** 7 (2 seguridad, 0 funcionales, 2 UX, 3 producto, 1 documentación)
-- **Circuitos completados:** 2 (cliente de prueba end-to-end + sistemas visuales plugin)
+- **Pendientes vivos:** 6 (2 seguridad, 0 funcionales, 2 UX, 2 producto, 1 documentación)
+- **Sistemas visuales disponibles:** 5 (sukidesu, shadcn, material, editorial, minimal)
+- **Circuitos completados:** 2 (cliente de prueba end-to-end + arquitectura de plugins)
 - **Bugs activos:** 0
 - **Deuda técnica:** historial de git (S4), Worker Admin SDK (S1)
 
@@ -144,15 +145,11 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 
 ## 🎯 Orden sugerido de próximas sesiones
 
-1. **Sesión 1:** P1 — los 3 sistemas visuales restantes (Material, Ant, Cloudscape). El template ya está resuelto, es trabajo de copiar el módulo de shadcn y ajustar colores/tipografías.
-2. **Sesión 2:** P2 — completar la asignación de sistema visual **al crear** cliente (drawer "Nuevo Cliente" en `superadmin.html`).
-3. **Sesión 3:** S1 (Worker con Firestore Admin SDK) — desbloquea P4 y automatiza el alta de usuarios.
-4. **Sesión 4:** U1 (animaciones de transición) + D4 (README de sistemas visuales).
-5. **Cuando haya tiempo:** P3 (IA de onboarding), S4 (limpiar historial de git).
-# 📋 PENDIENTES — Panel Superadmin
-
-> Listado consolidado de pendientes vivos. Actualizar al cierre de cada sesión.
-> **Última actualización:** 15 oct 2026
+1. **Sesión 1:** P2 — completar la asignación de sistema visual **al crear** cliente (drawer "Nuevo Cliente" en `superadmin.html`). Ahora que hay 5 sistemas, tiene sentido elegirlo desde el inicio.
+2. **Sesión 2:** S1 (Worker con Firestore Admin SDK) — desbloquea P4 y automatiza el alta de usuarios.
+3. **Sesión 3:** U1 (animaciones de transición) + D4 (README de sistemas visuales — documentar el contrato `{ meta, render, leer }`).
+4. **Sesión 4:** P3 (IA de onboarding) — el gancho comercial más fuerte: el cliente pega su Instagram y ve su paleta aplicada en segundos.
+5. **Cuando haya tiempo:** S4 (limpiar historial de git).
 
 ---
 
