@@ -181,8 +181,9 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 
 | # | Item | Contexto |
 |---|---|---|
-| U1 | **Animaciones de transición (7D)** | Transiciones entre vistas, apertura de modales, etc. Pendiente desde sesión 22-sep. |
+| U1 | **Animaciones de transición (7D)** | ✅ Cerrado 19 oct 2026 — Fade-in en pestañas, scale-up en modales, hover effects en botones. |
 | U2 | **FOUC del tema del menú** | Flash del tema al cargar el menú público. Descartado conscientemente. |
+| U3 | **Fondo visual global** | ✅ Cerrado 19 oct 2026 — Imagen de hexágonos en login, superadmin y gestionar con efecto Glassmorphism en las barras. |
 
 ---
 
@@ -282,9 +283,9 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 
 ## 📊 Métricas
 
-- **Pendientes vivos:** 4 (1 seguridad, 0 funcionales, 2 UX, 0 producto, 1 documentación)
+- **Pendientes vivos:** 2 (1 seguridad, 0 funcionales, 0 UX, 0 producto, 1 documentación)
 - **Sistemas visuales disponibles:** 5 (sukidesu, shadcn, material, editorial, minimal)
-- **Circuitos completados:** 4 (end-to-end, plugins visuales, multi-sistema, alta de usuarios)
+- **Circuitos completados:** 5 (end-to-end, plugins visuales, multi-sistema, alta usuarios, UI polish)
 - **Bugs activos:** 0
 - **Deuda técnica:** historial de git (S4)
 
@@ -292,8 +293,5 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 
 ## 🎯 Orden sugerido de próximas sesiones
 
-1. **Sesión 1:** P1 — los 3 sistemas visuales restantes (Material, Ant, Cloudscape). El template ya está resuelto, es trabajo de copiar el módulo de shadcn y ajustar colores/tipografías.
-2. **Sesión 2:** P2 — completar la asignación de sistema visual **al crear** cliente (drawer "Nuevo Cliente" en `superadmin.html`).
-3. **Sesión 3:** S1 (Worker con Firestore Admin SDK) — desbloquea P4 y automatiza el alta de usuarios.
-4. **Sesión 4:** U1 (animaciones de transición) + D4 (README de sistemas visuales).
-5. **Cuando haya tiempo:** P3 (IA de onboarding), S4 (limpiar historial de git).
+1. **Sesión 1:** P3 (IA de Onboarding) — El gancho comercial más fuerte para el portafolio.
+2. **Cuando haya tiempo:** S4 (limpiar historial de git).
