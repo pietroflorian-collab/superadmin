@@ -8,7 +8,6 @@
   <title>S I A - Panel Maestro</title>
 
   <link href="css/output.css" rel="stylesheet"/>
-</script>
   <script src="https://unpkg.com/lucide@latest" defer></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,6 +31,58 @@
       background: #18181b; cursor: pointer;
       border: 2px solid #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
+        /* ==========================================
+       FONDO GLOBAL Y MODO OSCURO
+       ========================================== */
+    body {
+      background-image: url('assets/bg-login.webp');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      position: relative;
+      z-index: 0;
+    }
+
+    /* Oscurecer el fondo automáticamente cuando el modo oscuro está activo */
+    .dark body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(9, 9, 11, 0.85); /* Un velo oscuro sobre la imagen */
+      z-index: -1;
+      pointer-events: none;
+    }
+    
+    /* ==========================================
+       ANIMACIONES (U1)
+       ========================================== */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Clases para usar en el HTML y JS */
+    .animate-fade-in {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+
+    .animate-modal-in {
+      animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .animate-tab-in {
+      animation: tabFadeIn 0.3s ease-out forwards;
+    }
   </style>
 </head>
 <body class="h-full bg-zinc-50 font-sans text-zinc-900 selection:bg-zinc-900 selection:text-white flex overflow-hidden">
@@ -43,21 +94,21 @@
 
      
   <!-- BACKDROP SIDEBAR (mobile) -->
-    <div id="sidebar-backdrop" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-40 hidden"></div>
+    <div id="sidebar-backdrop" class="animate-fade-in fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-40 hidden"></div>
     
     <!-- 1. ENSANCHAR EL SIDEBAR (Forzado con style) -->
-    <aside id="sidebar" style="width: 280px;" class="fixed md:static inset-y-0 left-0 z-50 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col justify-between shrink-0 select-none -translate-x-full md:translate-x-0 transition-transform duration-300">
+    <aside id="sidebar" style="width: 280px;" class="fixed md:static inset-y-0 left-0 z-50 border-r border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md flex flex-col justify-between shrink-0 select-none -translate-x-full md:translate-x-0 transition-transform duration-300">
     <div>
-      <!-- 2. HEADER (Forzado a 80px de alto) -->
+      <!-- 2. HEADER (Forzado a 64px de alto) -->
       <div style="height: 64px; padding-left: 24px; padding-right: 24px;" class="border-b border-zinc-200/80 dark:border-zinc-800 flex items-center gap-4">
         
-        <!-- 3. LOGO (Forzado a 48x48px) -->
+        <!-- 3. LOGO (Forzado a 60x60px) -->
         <div style="width: 60px; height: 60px;" class="rounded-md flex items-center justify-center overflow-hidden shrink-0">
-          <img src="logo1.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
+          <img src="assets/logo1.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;">
         </div>
         
         <div class="min-w-0">
-          <!-- 4. TEXTO UN POCO MÁS GRANDE -->
+          <!-- 4. TEXTO -->
           <h1 style="font-size: 14px;" class="font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight leading-none truncate">Soluciones de IA</h1>
           <p style="font-size: 11px; margin-top: 6px;" class="font-medium text-zinc-400 dark:text-zinc-500 leading-none tracking-tight">Gestión de Empresa</p>
         </div>
@@ -134,8 +185,8 @@
   </aside>
 
       <!-- ÁREA CENTRAL -->
-  <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-zinc-50 dark:bg-zinc-950">
-        <header class="h-16 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 md:px-8 flex items-center justify-between shrink-0 gap-3">
+  <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-transparent">
+        <header class="h-16 border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md px-4 md:px-8 flex items-center justify-between shrink-0 gap-3">
       <div class="flex items-center gap-3 min-w-0 flex-1">
         <button id="btn-sidebar-toggle" aria-label="Abrir menú" class="md:hidden w-8 h-8 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center shrink-0">
           <i data-lucide="menu" class="w-4 h-4" aria-hidden="true"></i>
@@ -214,7 +265,7 @@
     </main>
 
   <!-- BACKDROP -->
-  <div id="backdrop" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-40 hidden"></div>
+  <div id="backdrop" class="animate-fade-in fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-40 hidden"></div>
 
     <!-- DRAWER IZQUIERDO: NUEVO CLIENTE -->
   <aside
@@ -338,8 +389,8 @@
   </aside>
   
          <!-- MODAL: GESTIÓN DE PAGOS -->
-  <div id="modal-gestion-pagos" role="dialog" aria-modal="true" aria-labelledby="gp-titulo" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-2xl w-full max-w-md">
+  <div id="modal-gestion-pagos" role="dialog" aria-modal="true" aria-labelledby="gp-titulo" class="animate-fade-in fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-50 flex items-center justify-center hidden p-4">
+    <div class="animate-modal-in bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-2xl w-full max-w-md">
       <div class="px-4 py-2.5 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center bg-zinc-50 dark:bg-zinc-800 rounded-t-lg">
         <div class="flex items-center gap-2">
           <i data-lucide="credit-card" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" aria-hidden="true"></i>
@@ -418,8 +469,8 @@
 
    <!-- MODAL: Confirmar -->
 
-<div id="modal-confirmar" role="dialog" aria-modal="true" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-[90] flex items-center justify-center hidden p-4">
-  <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-2xl w-full max-w-2xl">
+<div id="modal-confirmar" role="dialog" aria-modal="true" class="animate-fade-in fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-[90] flex items-center justify-center hidden p-4">
+  <div class="animate-modal-in bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-2xl w-full max-w-2xl">
     <div class="px-5 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800">
       <h3 data-role="titulo" class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Confirmar</h3>
     </div>
@@ -434,8 +485,8 @@
 </div>
 
   <!-- MODAL: BACKUP -->
-  <div id="modal-backup" role="dialog" aria-modal="true" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-[95] flex items-center justify-center hidden p-4">
-    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-2xl w-full max-w-md">
+  <div id="modal-backup" role="dialog" aria-modal="true" class="animate-fade-in fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-[95] flex items-center justify-center hidden p-4">
+    <div class="animate-modal-in bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-2xl w-full max-w-md">
       <div class="px-5 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 rounded-t-lg flex justify-between items-center">
         <div class="flex items-center gap-2">
           <i data-lucide="download" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" aria-hidden="true"></i>
@@ -481,7 +532,7 @@
   <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- BACKDROP: USUARIOS -->
-<div id="backdrop-usuarios" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-40 hidden"></div>
+<div id="backdrop-usuarios" class="animate-fade-in fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-40 hidden"></div>
 
 <!-- DRAWER: USUARIOS -->
 <aside
@@ -560,8 +611,8 @@
 </aside>
 
 <!-- MODAL: NUEVO USUARIO -->
-<div id="modal-nuevo-usuario" role="dialog" aria-modal="true" class="fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-[95] flex items-center justify-center hidden p-4">
-  <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-2xl w-full max-w-md">
+<div id="modal-nuevo-usuario" role="dialog" aria-modal="true" class="animate-fade-in fixed inset-0 bg-zinc-950/40 backdrop-blur-[2px] z-[95] flex items-center justify-center hidden p-4">
+  <div class="animate-modal-in bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-2xl w-full max-w-md">
     <div class="px-5 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 rounded-t-lg flex justify-between items-center">
       <div class="flex items-center gap-2">
         <i data-lucide="user-plus" class="w-4 h-4 text-zinc-500 dark:text-zinc-400" aria-hidden="true"></i>

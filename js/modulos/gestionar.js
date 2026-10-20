@@ -93,6 +93,12 @@ async function renderPanelApariencia(sistemaKey, apariencia) {
 
   try {
     moduloSistemaActual = await cargarModuloSistema(sistemaKey);
+    
+    // --- ANIMACIÓN U1 (Paso 4) ---
+    contenedor.classList.remove('animate-tab-in'); 
+    void contenedor.offsetWidth;                   
+    contenedor.classList.add('animate-tab-in');    
+    
     moduloSistemaActual.render(contenedor, apariencia || {}, {
       onCambio: () => onCambioApariencia()
     });

@@ -106,9 +106,19 @@ function activarTab(nombre) {
     btn.classList.toggle('text-zinc-500', !activo);
     btn.classList.toggle('dark:text-zinc-400', !activo);
   });
+  
   document.querySelectorAll('.tab-content').forEach((sec) => {
-    sec.classList.toggle('hidden', sec.dataset.tabContent !== nombre);
+    const esActivo = sec.dataset.tabContent === nombre;
+    sec.classList.toggle('hidden', !esActivo);
+    
+    // --- ANIMACIÓN U1 (Paso 3) ---
+    if (esActivo) {
+      sec.classList.remove('animate-tab-in'); // Resetea la animación
+      void sec.offsetWidth;                   // Truco de reflow
+      sec.classList.add('animate-tab-in');    // Vuelve a animar
+    }
   });
+  
   if (window.lucide) window.lucide.createIcons();
 }
 
