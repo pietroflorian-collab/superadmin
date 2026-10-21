@@ -160,7 +160,7 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 | S1 | **Worker con Firestore Admin SDK** | Permite crear usuarios desde el panel sin hardcodear UIDs. Requiere plan Blaze o adaptar Worker con Admin SDK. | Bloqueado hasta tener 2+ admins reales || S1 | **Creación de usuarios desde el panel** | ✅ Cerrado 16 oct 2026 — Implementado vía *Secondary App* en el frontend (sin necesidad de Worker ni plan Blaze). El admin crea cuentas desde el drawer de Usuarios sin perder su sesión. |
 | S2 | **Tokens en claro en Firestore** | Aceptado como riesgo. Los tokens viven en `clientes_agencia/{id}/secretos/*` protegidos por reglas. Solución futura: mover a Cloudflare secrets por cliente. | Aceptado |
 | S3 | **API key de Firebase en el código** | Pública por diseño. Evaluado, no es problema. | ✅ Cerrado |
-| S4 | **Limpiar historial de git** | El commit `c810347` todavía contiene `service-account.json` en el historial. La clave fue invalidada y el archivo removido de la rama actual, pero sigue en el historial. Solución: `git filter-repo` + `push --force`. | Pendiente (opcional, repo privado) |
+| S4 | **Limpiar historial de git** | ✅ Cerrado 20 oct 2026 — Archivo `service-account.json` eliminado de todo el historial usando `git filter-branch` y `push --force`. Repo limpio. |
 
 ---
 
@@ -283,11 +283,13 @@ Primera implementación funcional del flujo SaaS end-to-end para un cliente.
 
 ## 📊 Métricas
 
-- **Pendientes vivos:** 2 (1 seguridad, 0 funcionales, 0 UX, 0 producto, 1 documentación)
+## 📊 Métricas
+
+- **Pendientes vivos:** 1 (0 seguridad, 0 funcionales, 0 UX, 1 producto, 0 documentación)
 - **Sistemas visuales disponibles:** 5 (sukidesu, shadcn, material, editorial, minimal)
-- **Circuitos completados:** 5 (end-to-end, plugins visuales, multi-sistema, alta usuarios, UI polish)
+- **Circuitos completados:** 6 (end-to-end, plugins visuales, multi-sistema, alta usuarios, UI polish, limpieza git)
 - **Bugs activos:** 0
-- **Deuda técnica:** historial de git (S4)
+- **Deuda técnica:** 0
 
 ---
 
